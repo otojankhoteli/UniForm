@@ -1,0 +1,36 @@
+setup:
+    addons:
+    - plan: heroku-mongodb
+      as: DATABASE
+  build:
+    docker:
+      web: services/user.service/Dockerfile
+  run:
+    web: bundle exec puma -C config/puma.rb
+
+    # Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+# trigger:
+#     - master
+    
+#     pool:
+#       vmImage: 'ubuntu-latest'
+    
+#     steps:
+#     - script: echo Hello, world!
+#       displayName: 'Run a one-line script'
+#     - task: PowerShell@2
+#       inputs:
+#         targetType: 'inline'
+#         script: |
+#           git checkout $(Build.SourceBranchName)
+#           git remote add heroku https://heroku:$(pat)@git.heroku.com/arithmath.git
+#           git push heroku $(Build.SourceBranchName)
+    
+#     - script: |
+#         echo Add other tasks to build, test, and deploy your project.
+#         echo See https://aka.ms/yaml
+#       displayName: 'Run a multi-line script'
+    

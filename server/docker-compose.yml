@@ -4,7 +4,7 @@ services:
   user.service:
     container_name: user.service
     build:
-      context: ./user.service
+      context: ./services/user.service
     ports:
       - 3000:3000
     links:
@@ -12,8 +12,6 @@ services:
 
   mongo:
     image: mongo
-    #    env_file:
-    #      - docker-compose.env
     environment:
       - MONGO_INITDB_DATABASE=user.mongodb
       - MONGO_INITDB_ROOT_USERNAME=test
@@ -22,4 +20,3 @@ services:
       - /data/user.service/data:/data/db
     ports:
       - 27017:27017
-
