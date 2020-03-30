@@ -1,22 +1,21 @@
 trigger:
-- master
+  - master
 
 pool:
-    vmImage: 'ubuntu-latest'
+  vmImage: "ubuntu-latest"
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: |
+  - script: echo Hello, world!
+    displayName: "Run a one-line script"
+  - task: PowerShell@2
+    inputs:
+      targetType: "inline"
+      script: |
         git checkout $(Build.SourceBranchName)
         git remote add heroku https://heroku:$(pat)@git.heroku.com/bpuniform.git
-        git push heroku $(Build.SourceBranchName)
+        git subtree push --prefix server heroku $(Build.SourceBranchName)
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-    displayName: 'Run a multi-line script'
-    
+  - script: |
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+      displayName: 'Run a multi-line script'
