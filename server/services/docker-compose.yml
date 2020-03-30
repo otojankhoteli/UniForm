@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  user.service:
+    container_name: user.service
+    build:
+      context: ./user.service
+    ports:
+      - 3000:3000
+    links:
+      - mongo
+
+  mongo:
+    image: mongo
+    #    env_file:
+    #      - docker-compose.env
+    environment:
+      - MONGO_INITDB_DATABASE=user.mongodb
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/user.service/data:/data/db
+    ports:
+      - 27017:27017
+
