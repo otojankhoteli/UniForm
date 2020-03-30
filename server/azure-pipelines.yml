@@ -6,9 +6,9 @@ pool:
 
 steps:
 - script: echo Hello, world!
-    displayName: 'Run a one-line script'
+  displayName: 'Run a one-line script'
 - task: PowerShell@2
-    inputs:
+  inputs:
     targetType: 'inline'
     script: |
         git checkout $(Build.SourceBranchName)
