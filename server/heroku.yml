@@ -1,5 +1,3 @@
 build:
   docker:
     web: services/user.service/Dockerfile
-run:
-  web: bundle exec puma -C config/puma.rb
