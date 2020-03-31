@@ -12,5 +12,5 @@ app.get('/ping', (req, res, next) => {
 app.use(errorHandler);
 
 app.listen(port, () => {
-  logger.info(`migration-service listening on port ${port}`);
+  logger.info(`user.service listening on port ${port}`);
 });
