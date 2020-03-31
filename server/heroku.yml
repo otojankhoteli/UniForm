@@ -1,0 +1,7 @@
+setup:
+  addons:
+  - plan: MONGODB
+    as: Database
+build:
+  docker:
+    web: services/user.service/Dockerfile

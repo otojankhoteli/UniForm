@@ -1,6 +1,8 @@
 FROM node:12.16-alpine as builder
 
 WORKDIR /user.service
+EXPOSE 80
+EXPOSE 443
 
 COPY package.json .
 COPY yarn.lock .
