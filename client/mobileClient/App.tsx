@@ -1,12 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import { AuthScreen } from './src/components/login/LoginScreen';
 
 export default function App() {
-  var ar =0;
-  
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      <AuthScreen></AuthScreen>
     </View>
   );
 }
