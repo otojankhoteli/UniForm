@@ -1,0 +1,1 @@
+export type ApiStatusCode = 200 | 400 | 401 | 404 | 500;
