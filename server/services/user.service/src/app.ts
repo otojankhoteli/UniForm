@@ -3,7 +3,7 @@ import logger from './util/logger';
 import errorHandler from './util/ErrorHandler';
 
 const app = express();
-const port = process.env.PORT ?? 80;
+const port = process.env.PORT ?? 3000;
 
 app.get('/ping', (req, res, next) => {
   res.send('pong');
