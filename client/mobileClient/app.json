@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile-client",
-    "slug": "mobileClient",
+    "name": "UniForm",
+    "slug": "UniForm",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": ["ios", "android", "web"],
