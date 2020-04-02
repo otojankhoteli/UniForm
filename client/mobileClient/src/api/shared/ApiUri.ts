@@ -1,4 +1,4 @@
-const LocalHost = "https://localhost:44395/";
-const DevHost = "https://api.cafmm.com/";
-export const CurrentHost = DevHost;
+const LocalHost = "http://localhost:3000/";
+const DevHost = "";
+export const CurrentHost = LocalHost;
 export const Uri = `${CurrentHost}api/v1/`;
