@@ -1,12 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, } from 'react-native';
+import { LoginScreen } from './src/screens/login/LoginScreen';
 
 export default function App() {
-  var ar =0;
-  
   return (
     <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+      <LoginScreen></LoginScreen>
     </View>
   );
 }
@@ -15,7 +14,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
