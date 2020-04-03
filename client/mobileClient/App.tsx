@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, View, } from 'react-native';
 import { LoginScreen } from './src/screens/login/LoginScreen';
 
 export default function App() {

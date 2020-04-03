@@ -4,6 +4,9 @@
   "main": "index.ts",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "start:debug": "node --inspect=0.0.0.0 -r ts-node/register index.ts"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "winston": "^3.2.1"
