@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { SearchBar } from 'react-native-elements'
 
 interface Props {

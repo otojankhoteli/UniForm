@@ -5,12 +5,11 @@ import * as GoogleSignIn from 'expo-google-sign-in';
 // const BackgroundImage = require('../../../assets/backgroundImage.jpg');
 const BackgroundImage2 = require('../../../assets/backgroundImage2.jpg');
 
-export function LoginScreen() {
+export default function LoginScreen() {
   const [user, setUser] = useState<GoogleSignIn.GoogleUser | null>();
 
   useEffect(() => {
     GoogleSignIn.initAsync({
-      clientId: '389562208147-08m519e1cceh7ffb4l415jmu5ijqag8i.apps.googleusercontent.com'
     }).then(async () => {
       await fetchUser();
     })
@@ -52,7 +51,7 @@ export function LoginScreen() {
   }, [user]);
 
   return <React.Fragment>
-    <ImageBackground source={BackgroundImage2} style={styles.backgroundImageStyle} blurRadius={2}>
+    <ImageBackground source={BackgroundImage2} style={styles.backgroundImage} blurRadius={2}>
       <Text style={styles.welcomeText}>Welcome</Text>
       <View style={styles.signInButtons}>
         <Button type="solid"
@@ -72,7 +71,7 @@ export function LoginScreen() {
 
 const mainColor = "#0d2b5b"
 const styles = StyleSheet.create({
-  backgroundImageStyle: {
+  backgroundImage: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
