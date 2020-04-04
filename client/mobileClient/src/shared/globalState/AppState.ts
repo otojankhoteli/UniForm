@@ -1,3 +1,6 @@
+import { ExceptionState } from "../exceptionHandling/ExceptionHandlingModels";
+import { PersistAccount } from "../persist/PersistModels";
+
 export enum MessageStatus {
   success,
   info,
@@ -10,20 +13,12 @@ interface ToastMessageState {
   text: string;
 }
 
-export interface AccountState {
-  id: string;
-  deviceId: string;
-  username: string;
-  token: string;
-}
-
-
 export interface State {
   message?: ToastMessageState;
-  account?: AccountState;
+  account?: PersistAccount;
+  exception?: ExceptionState;
 }
 
-export const InitialAppState: State = {
-};
+export const InitialAppState: State = {};
 
 export type ReduxState = State;

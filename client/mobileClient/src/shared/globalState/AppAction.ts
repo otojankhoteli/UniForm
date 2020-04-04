@@ -1,10 +1,17 @@
-import { AccountState } from "./AppState";
+import { ExceptionState } from "../exceptionHandling/ExceptionHandlingModels";
+import { PersistAccount } from "../persist/PersistModels";
 
+
+interface SetErrorAction {
+  type: "setError";
+  exception: ExceptionState
+}
 
 interface SetLoggedInUserAction {
   type: "setLoggedInUser";
-  user: AccountState;
+  account: PersistAccount;
 }
 
 export type AppAction =
   | SetLoggedInUserAction
+  | SetErrorAction

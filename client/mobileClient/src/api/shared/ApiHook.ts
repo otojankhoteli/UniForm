@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import {
-  ApiErrorUnion,
   ApiErrorResponse,
-  TokenErrorResponse
 } from "./ApiResponse";
-import { ApiStatusCode } from "./ApiConst";
+import { ApiStatusCode, PagingLimit, PagingOffset } from "./ApiConst";
 import {
   getWithAuthorizeHeader,
   getUri,
@@ -14,27 +12,28 @@ import { GetRequestInfo } from "./ApiResponse";
 import {
   getBodyAndHeaderFromType
 } from "./ApiUtils";
-import useErrorHandling from "../../shared/hooks/ErrorHandlingHooks";
+import { ExceptionHandlingHooks } from "../../shared/exceptionHandling/ExceptionHandlingHooks";
+import { useGlobalState } from "../../shared/globalState/AppContext";
 
 interface PostApiHookResult<TRequest, TResponse> {
-  error: ApiHookError;
-  result: TResponse;
+  error: ApiHookError | undefined;
+  result: TResponse | undefined;
   isError: boolean;
   isLoading: boolean;
-  post: React.Dispatch<React.SetStateAction<TRequest>>;
+  post: React.Dispatch<React.SetStateAction<TRequest | undefined>>;
 }
 
 interface DeleteApiHookResult<TRequest, TResponse> {
-  error: ApiHookError;
-  result: TResponse;
+  error: ApiHookError | undefined;
+  result: TResponse | undefined;
   isError: boolean;
   isLoading: boolean;
-  delete: React.Dispatch<React.SetStateAction<TRequest>>;
+  delete: React.Dispatch<React.SetStateAction<TRequest | undefined>>;
 }
 
 export interface GetApiHookResult<TResponse, TResponseViewModel = {}> {
-  error: ApiHookError;
-  result: TResponse;
+  error: ApiHookError | undefined;
+  result: TResponse | undefined;
   isError: boolean;
   isLoading: boolean;
   setRequestInfo: React.Dispatch<
@@ -64,13 +63,14 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
   bodyType: ApiBodyType = "json",
   includeAuthroize: boolean = true
 ): PostApiHookResult<TRequest, TResponse> {
-  const [requestBody, setRequestBody] = useState<TRequest>(undefined);
+  const [requestBody, setRequestBody] = useState<TRequest | undefined>(undefined);
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
     isError: false
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  useErrorHandling(responseState.error);
+  ExceptionHandlingHooks.useApiErrorHandling(responseState.error);
+  const [{ account: loggedUser }] = useGlobalState();
 
   useEffect(() => {
     if (requestBody) {
@@ -79,7 +79,7 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
 
       fetch(uri, {
         method: "post",
-        headers: getWithAuthorizeHeader(headers, includeAuthroize),
+        headers: getWithAuthorizeHeader(loggedUser && loggedUser.token, headers, includeAuthroize),
         body
       })
         .then(async value => {
@@ -87,7 +87,7 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
             let errorObject = undefined;
             try {
               errorObject = await value.json();
-            } catch (error) {}
+            } catch (error) { }
             throw { statusCode: value.status, errorObject };
           }
 
@@ -105,7 +105,8 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
           setIsLoading(false);
         });
     }
-  }, [requestBody]);
+
+  }, [requestBody, loggedUser]);
 
   return {
     result: responseState.result,
@@ -121,13 +122,14 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
   bodyType: ApiBodyType = "json",
   includeAuthroize: boolean = true
 ): PostApiHookResult<TRequest, TResponse> {
-  const [requestBody, setRequestBody] = useState<TRequest>(undefined);
+  const [requestBody, setRequestBody] = useState<TRequest | undefined>(undefined);
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
     isError: false
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  useErrorHandling(responseState.error);
+  ExceptionHandlingHooks.useApiErrorHandling(responseState.error);
+  const [{ account: loggedUser }] = useGlobalState();
 
   useEffect(() => {
     if (requestBody) {
@@ -136,7 +138,7 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
 
       fetch(uri, {
         method: "put",
-        headers: getWithAuthorizeHeader(headers, includeAuthroize),
+        headers: getWithAuthorizeHeader(loggedUser && loggedUser.token, headers, includeAuthroize),
         body
       })
         .then(async value => {
@@ -144,7 +146,7 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
             let errorObject = undefined;
             try {
               errorObject = await value.json();
-            } catch (error) {}
+            } catch (error) { }
             throw { statusCode: value.status, errorObject };
           }
 
@@ -162,7 +164,7 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
           setIsLoading(false);
         });
     }
-  }, [requestBody]);
+  }, [requestBody, loggedUser]);
 
   return {
     result: responseState.result,
@@ -177,13 +179,14 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
   uri: string,
   includeAuthroize: boolean = true
 ): DeleteApiHookResult<TRequest, TResponse> {
-  const [requestQuery, setRequestQuery] = useState<TRequest>(undefined);
+  const [requestQuery, setRequestQuery] = useState<TRequest | undefined>(undefined);
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
     isError: false
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  useErrorHandling(responseState.error);
+  ExceptionHandlingHooks.useApiErrorHandling(responseState.error);
+  const [{ account: loggedUser }] = useGlobalState();
 
   useEffect(() => {
     if (requestQuery) {
@@ -194,7 +197,7 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
 
       fetch(getUriFromQueryObject<TRequest>(uri, requestQuery), {
         method: "delete",
-        headers: getWithAuthorizeHeader(headers, includeAuthroize),
+        headers: getWithAuthorizeHeader(loggedUser && loggedUser.token, headers, includeAuthroize),
         body
       })
         .then(async value => {
@@ -202,7 +205,7 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
             let errorObject = undefined;
             try {
               errorObject = await value.json();
-            } catch (error) {}
+            } catch (error) { }
             throw { statusCode: value.status, errorObject };
           }
 
@@ -220,7 +223,7 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
           setIsLoading(false);
         });
     }
-  }, [requestQuery]);
+  }, [requestQuery, loggedUser]);
 
   return {
     result: responseState.result,
@@ -257,35 +260,46 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
   });
   const [isLoading, setIsLoading] = useState(!requestInfo.wait);
 
-  useErrorHandling(responseState.error);
+  ExceptionHandlingHooks.useApiErrorHandling(responseState.error);
+  const [{ account: loggedUser }] = useGlobalState();
 
   const fetchNextPage = () => {
     if (responseState.isError) return;
-    setInternalRequestInfo(prev => ({
-      wait: prev.wait,
-      info: {
-        limit: prev.info.limit,
-        offSet: prev.info.offSet + prev.info.limit,
-        orderBy: prev.info.orderBy,
-        queryParams: prev.info.queryParams
-      }
-    }));
+    setInternalRequestInfo(prev => {
+      const limit = (prev && prev.info && prev.info.limit) || PagingLimit;
+      const offset = (prev && prev.info && prev.info.offSet) || PagingOffset;
+
+      return {
+        wait: prev.wait,
+        info: {
+          limit,
+          offSet: offset + limit,
+          orderBy: prev && prev.info && prev.info.orderBy,
+          queryParams: (prev && prev.info && prev.info.queryParams) || []
+        }
+      };
+    });
   };
 
   const fetchPrevPage = () => {
     if (responseState.isError) return;
-    setInternalRequestInfo(prev => ({
-      wait: prev.wait,
-      info: {
-        limit: prev.info.limit,
-        offSet:
-          prev.info.offSet > 0
-            ? prev.info.offSet - prev.info.limit
-            : prev.info.offSet,
-        orderBy: prev.info.orderBy,
-        queryParams: prev.info.queryParams
-      }
-    }));
+    setInternalRequestInfo(prev => {
+      const limit = (prev && prev.info && prev.info.limit) || PagingLimit;
+      const offset = (prev && prev.info && prev.info.offSet) || PagingOffset;
+
+      return {
+        wait: prev.wait,
+        info: {
+          limit,
+          offSet:
+            offset > 0
+              ? offset - limit
+              : offset,
+          orderBy: prev && prev.info && prev.info.orderBy,
+          queryParams: (prev && prev.info && prev.info.queryParams) || []
+        }
+      };
+    });
   };
 
   useEffect(() => {
@@ -307,14 +321,14 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
 
       fetch(finalUri.uri, {
         method: "get",
-        headers: getWithAuthorizeHeader(headers, includeAuthorize)
+        headers: getWithAuthorizeHeader(loggedUser && loggedUser.token, headers, includeAuthorize)
       })
         .then(async value => {
           if (!value.ok) {
             let errorObject = undefined;
             try {
               errorObject = await value.json();
-            } catch (error) {}
+            } catch (error) { }
             throw { statusCode: value.status, errorObject };
           }
 
@@ -332,7 +346,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
           setIsLoading(false);
         });
     }
-  }, [finalUri]);
+  }, [finalUri, loggedUser]);
 
   return {
     result: responseState.result,

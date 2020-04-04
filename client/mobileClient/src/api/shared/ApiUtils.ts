@@ -1,40 +1,23 @@
 import { ApiBodyType } from "./ApiHook";
-import { ApiErrorUnion, ApiErrorResponse, TokenErrorResponse, QueryParamsType, GetRequestInfo } from "./ApiResponse";
-import { AsyncStorage } from "react-native";
+import { QueryParamsType, GetRequestInfo } from "./ApiResponse";
+import { PersistUtils } from "../../shared/persist/PersistUtils";
 
 export function getEncodedUri<TRequest>(requestBody: TRequest) {
   return Object.keys(requestBody)
     .map(key => {
       return (
-        encodeURIComponent(key) + "=" + encodeURIComponent(requestBody[key])
+        encodeURIComponent(key) + "=" + encodeURIComponent((requestBody as any)[key])
       );
     })
     .join("&");
 }
 
-export function getWithAuthorizeHeader(headers: HeadersInit, affect = true) {
-  const loggedIn = isLoggedIn();
-  if (loggedIn && affect) {
-    return Object.assign(headers, { Authorization: `bearer ${getToken()}` });
+// Todo is logged in and token is from async storage
+export function getWithAuthorizeHeader(token: string | undefined, headers: HeadersInit, affect = true): HeadersInit {
+  if (token && affect) {
+    return { ...headers, Authorization: `bearer ${token}` };
   }
   return headers;
-}
-
-export async function PersistLoggedInUserInStorage(loggedInUser: any) {
-  try {
-    await AsyncStorage.setItem("User", JSON.stringify(loggedInUser));
-  } catch (error) {
-    console.log("error", error);
-    // Error saving data
-  }
-}
-
-export function isLoggedIn(): boolean {
-  return true;
-}
-
-export function getToken(): string {
-  return 'token'
 }
 
 export function getBodyAndHeaderFromType<TRequest>(
