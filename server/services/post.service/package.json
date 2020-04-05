@@ -5,16 +5,22 @@
   "license": "MIT",
   "private": false,
   "scripts": {
+    "start": "ts-node index.ts",
     "start:debug": "node --inspect=0.0.0.0:9230 -r ts-node/register index.ts",
     "start:nodemon": "nodemon",
-    "build": "tsc"
+    "build": "rm -r build || tsc",
+    "rm:build": "rm -r build"
   },
   "dependencies": {
     "express": "^4.17.1",
+    "express-jwt": "^5.3.1",
+    "mongoose": "^5.9.7",
+    "typedi": "^0.8.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {
     "@types/express": "^4.17.3",
+    "@types/mongoose": "^5.7.8",
     "@types/node": "^13.9.5",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",

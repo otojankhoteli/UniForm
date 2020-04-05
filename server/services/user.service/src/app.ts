@@ -1,9 +1,8 @@
 import express from 'express';
 import logger from './util/logger';
 import errorHandler from './util/ErrorHandler';
-
+import {config} from './config';
 const app = express();
-const port = process.env.PORT ?? 3000;
 
 app.get('/ping', (req, res, next) => {
   res.send('pong');
@@ -11,6 +10,6 @@ app.get('/ping', (req, res, next) => {
 
 app.use(errorHandler);
 
-app.listen(port, () => {
-  logger.info(`user.service listening on port ${port}`);
+app.listen(config.port, () => {
+  logger.info(`user.service listening on port ${config.port}`);
 });
