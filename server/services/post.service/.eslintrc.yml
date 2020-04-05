@@ -12,4 +12,7 @@ parserOptions:
   sourceType: module
 plugins:
   - '@typescript-eslint'
-rules: {}
+rules: {
+  new-cap: off,
+  require-jsdoc: off
+}

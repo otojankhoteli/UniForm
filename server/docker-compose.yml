@@ -9,15 +9,15 @@ services:
       - 3000:3000
       - 9229:9229
     links:
-      - mongo-user-service
+      - mongo-user
 
-  mongo-user-service:
-    container_name: mongo-user-service
+  mongo-user:
+    container_name: mongo-user
     image: mongo
     environment:
-      - MONGO_INITDB_DATABASE=user.mongodb
-      - MONGO_INITDB_ROOT_USERNAME=test
-      - MONGO_INITDB_ROOT_PASSWORD=test
+      - MONGO_INITDB_DATABASE=user-mongodb
+#      - MONGO_INITDB_ROOT_USERNAME=test
+#      - MONGO_INITDB_ROOT_PASSWORD=test
     volumes:
       - /data/user.service/data:/data/db
     ports:
@@ -32,13 +32,13 @@ services:
       - 3001:3001
       - 9230:9230
     links:
-      - mongo-post-service
+      - mongo-post
 
-  mongo-post-service:
-    container_name: mongo-post-service
+  mongo-post:
+    container_name: mongo-post
     image: mongo
     environment:
-      - MONGO_INITDB_DATABASE=post.mongodb
+      - MONGO_INITDB_DATABASE=post-mongodb
       - MONGO_INITDB_ROOT_USERNAME=test
       - MONGO_INITDB_ROOT_PASSWORD=test
     volumes:
