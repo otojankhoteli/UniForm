@@ -12,8 +12,8 @@ import { GetRequestInfo } from "./ApiResponse";
 import {
   getBodyAndHeaderFromType
 } from "./ApiUtils";
-import { ExceptionHandlingHooks } from "../../shared/exceptionHandling/ExceptionHandlingHooks";
 import { useGlobalState } from "../../shared/globalState/AppContext";
+import { useApiErrorHandling } from "../../shared/exceptionHandling/ExceptionHandlingHooks";
 
 interface PostApiHookResult<TRequest, TResponse> {
   error: ApiHookError | undefined;
@@ -69,7 +69,7 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  ExceptionHandlingHooks.useApiErrorHandling(responseState.error);
+  useApiErrorHandling(responseState.error);
   const [{ account: loggedUser }] = useGlobalState();
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  ExceptionHandlingHooks.useApiErrorHandling(responseState.error);
+  useApiErrorHandling(responseState.error);
   const [{ account: loggedUser }] = useGlobalState();
 
   useEffect(() => {
@@ -185,7 +185,7 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  ExceptionHandlingHooks.useApiErrorHandling(responseState.error);
+  useApiErrorHandling(responseState.error);
   const [{ account: loggedUser }] = useGlobalState();
 
   useEffect(() => {
@@ -260,7 +260,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
   });
   const [isLoading, setIsLoading] = useState(!requestInfo.wait);
 
-  ExceptionHandlingHooks.useApiErrorHandling(responseState.error);
+  useApiErrorHandling(responseState.error);
   const [{ account: loggedUser }] = useGlobalState();
 
   const fetchNextPage = () => {
