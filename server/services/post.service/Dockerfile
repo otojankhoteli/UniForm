@@ -1,8 +1,6 @@
 FROM node:12.16-alpine as builder
 
-WORKDIR /user.service
-EXPOSE 80
-EXPOSE 443
+WORKDIR /post.service
 
 COPY package.json .
 COPY yarn.lock .
@@ -16,11 +14,11 @@ COPY index.ts .
 RUN npx tsc
 
 FROM node:12.16-alpine
-WORKDIR /user.service
+WORKDIR /post.service
 
-COPY --from=builder /user.service/build .
+COPY --from=builder /post.service/build .
 COPY yarn.lock .
 COPY package.json .
 RUN yarn install --production
 
-CMD ["node", "--inspect=0.0.0.0:9229", "./index.js"]
+CMD ["node", "--inspect=0.0.0.0:9230", "./index.js"]

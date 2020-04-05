@@ -5,13 +5,12 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start:debug": "node --inspect=0.0.0.0 -r ts-node/register index.ts",
+    "start:debug": "node --inspect=0.0.0.0:9230 -r ts-node/register index.ts",
     "start:nodemon": "nodemon",
     "build": "tsc"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "typedi": "^0.8.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {
