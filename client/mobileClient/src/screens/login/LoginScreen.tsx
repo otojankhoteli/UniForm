@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, StatusBar, ImageBackground } from 'react-native';
 import { Button, SocialIcon } from 'react-native-elements';
 import * as GoogleSignIn from 'expo-google-sign-in';
+import { MainColor } from '../../shared/Const';
 // const BackgroundImage = require('../../../assets/backgroundImage.jpg');
 const BackgroundImage2 = require('../../../assets/backgroundImage2.jpg');
 
@@ -60,7 +61,6 @@ export default function LoginScreen() {
           icon={<SocialIcon style={styles.googleSignInButtonIcon} iconSize={24} type="google"></SocialIcon>}
           title="Sign in with Google" onPress={onPress} />
       </View>
-      <Text>test 1</Text>
       <Text>{user && user.auth && user.auth.accessToken}</Text>
       <Text>{user && user.photoURL}</Text>
       <Text>{user && user.firstName}</Text>
@@ -69,7 +69,6 @@ export default function LoginScreen() {
   </React.Fragment>;
 }
 
-const mainColor = "#0d2b5b"
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
@@ -83,7 +82,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   googleSignInButtonTitle: {
-    color: mainColor,
+    color: MainColor,
   },
   googleSignInButtonIcon: {
     height: 40,

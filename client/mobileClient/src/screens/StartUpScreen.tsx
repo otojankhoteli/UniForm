@@ -6,6 +6,7 @@ import LoginScreen from './login/LoginScreen';
 import SplashScreen from '../shared/components/SplashScreen';
 import { useGlobalState } from '../shared/globalState/AppContext';
 import { useAccount } from '../shared/persist/PersistHooks';
+import AddPostScreen from './addPost/AddPostScreen';
 
 const Stack = createStackNavigator();
 
@@ -40,6 +41,10 @@ export default function StartUpScreen() {
             component={HomeScreen}
             options={{ headerShown: false }} />
         )}
+      <Stack.Screen
+        name="AddPost"
+        component={AddPostScreen}
+        options={{ headerTitle: "Add Post" }}></Stack.Screen>
     </Stack.Navigator>
   </NavigationContainer>
 }
