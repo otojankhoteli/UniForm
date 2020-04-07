@@ -11,4 +11,8 @@ export const config = {
   logs: {
     level: process.env.LOG_LEVEL || 'info',
   },
+  authentication: {
+    secret: 'secret',
+    refreshSecret: 'refreshSecret'
+  }
 };
