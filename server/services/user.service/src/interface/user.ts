@@ -1,6 +1,7 @@
-export interface IUserInputDTO {
+export interface ISignUpUserInputDTO {
   name: string;
   email: string;
+  refreshToken: string;
 }
 
 export interface IUser {

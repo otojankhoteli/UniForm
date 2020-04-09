@@ -1,7 +1,7 @@
 import 'reflect-metadata'; // We need this in order to use @Decorators
 import express from 'express';
 import logger from './util/logger';
-import errorHandler from './util/ErrorHandler';
+import errorHandler from './util/error/ErrorHandler';
 import { config } from './config';
 import fillContainer from './util/dependencyInjector';
 import { authRouter } from './api/route/auth';
