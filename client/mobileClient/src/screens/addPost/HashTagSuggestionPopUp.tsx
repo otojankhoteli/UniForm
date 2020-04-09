@@ -1,9 +1,7 @@
 
-import React, { useState, memo, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text } from 'react-native-elements'
-import useFloatingHeaderHeight from '@react-navigation/stack/lib/typescript/src/utils/useHeaderHeight';
-
 
 export interface PostHashTag {
   tag: string;
@@ -25,7 +23,7 @@ export const HashTagSuggestionPopUp = ({ hashTags, isVisible, onSelect }: Props)
     onSelect(selectedTag);
   }
 
-  return isVisibleInternal ?
+  return isVisibleInternal && hashTags.length > 0 ?
     <View style={styles.container}>
       {hashTags.map(hashTag => <TouchableOpacity key={hashTag.tag}
         onPress={() => onSelectInternal(hashTag.tag)}

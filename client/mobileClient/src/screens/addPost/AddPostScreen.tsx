@@ -14,6 +14,7 @@ export default function AddPostScreen() {
   const [userTags, setUserTags] = useState<UserTag[]>(initialUserTags);
   const [postTags, setPostTags] = useState<PostHashTag[]>(initialPostTags);
   const [choosenTags, setChoosenTags] = useState<PostHashTag[]>([]);
+  const [text, setText] = useState("");
 
   const onSubmit = () => {
     //
@@ -37,7 +38,10 @@ export default function AddPostScreen() {
     <View style={styles.container}>
       <PostCategories />
       <HashTags hashTags={choosenTags} />
-      <PostText onHashTagChange={onHashTagChange} onUserTagChange={onUserTagChange} postHashTags={postTags} userTags={userTags} updateHashTags={updateHashTags} />
+      <PostText
+        onHashTagChange={onHashTagChange} onUserTagChange={onUserTagChange}
+        updateHashTags={updateHashTags} onTextChange={setText}
+        postHashTags={postTags} userTags={userTags} />
       <View style={styles.submitButtonContainer}>
         <Button
           buttonStyle={styles.submitButton}

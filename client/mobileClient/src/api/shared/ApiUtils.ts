@@ -1,12 +1,11 @@
 import { ApiBodyType } from "./ApiHook";
 import { QueryParamsType, GetRequestInfo } from "./ApiResponse";
-import { PersistUtils } from "../../shared/persist/PersistUtils";
 
 export function getEncodedUri<TRequest>(requestBody: TRequest) {
   return Object.keys(requestBody)
     .map(key => {
       return (
-        encodeURIComponent(key) + "=" + encodeURIComponent((requestBody as any)[key])
+        `${encodeURIComponent(key)}=${encodeURIComponent((requestBody as any)[key])}`
       );
     })
     .join("&");
@@ -36,17 +35,32 @@ export function getBodyAndHeaderFromType<TRequest>(
       headers = { "Content-Type": "application/x-www-form-urlencoded" };
       body = getEncodedUri(request);
       break;
-    case "multipart":
+    case "multipart": {
       const data = new FormData();
       data.append("file", request as any);
       body = data;
       break;
+    }
     default:
       break;
   }
 
   return [headers, body];
 }
+
+export function generateQueryParamString(queryParams: QueryParamsType[]) {
+  return queryParams.reduce((prev, cur) => {
+    if (!cur.value) {
+      return prev;
+    }
+
+    if (prev === "") {
+      return `${cur.key}=${cur.value}`;
+    }
+    return `${prev}&${cur.key}=${cur.value}`;
+  }, "");
+}
+
 
 export function getUri<TResponseViewModel>(
   uri: string,
@@ -64,6 +78,17 @@ export function getUri<TResponseViewModel>(
   return encodeURI(paged);
 }
 
+export function generateQueryParamStringFromObject<TRequest>(object: TRequest) {
+  return generateQueryParamString(
+    Object.entries(object).map<QueryParamsType>(([key, value]) => {
+      return {
+        key,
+        value
+      };
+    })
+  );
+}
+
 export function getUriFromQueryObject<TRequest>(
   uri: string,
   request: TRequest
@@ -76,26 +101,4 @@ export function getUriFromQueryObject<TRequest>(
   return uri;
 }
 
-export function generateQueryParamStringFromObject<TRequest>(object: TRequest) {
-  return generateQueryParamString(
-    Object.entries(object).map<QueryParamsType>(([key, value]) => {
-      return {
-        key,
-        value
-      };
-    })
-  );
-}
 
-export function generateQueryParamString(queryParams: QueryParamsType[]) {
-  return queryParams.reduce((prev, cur) => {
-    if (!cur.value) {
-      return prev;
-    }
-
-    if (prev == "") {
-      return `${cur.key}=${cur.value}`;
-    }
-    return `${prev}&${cur.key}=${cur.value}`;
-  }, "");
-}

@@ -16,6 +16,7 @@ interface Props {
   onHashTagChange: (searchText: string) => void;
   onUserTagChange: (searchText: string) => void;
   updateHashTags: (tags: string[]) => void;
+  onTextChange?: (text: string) => void;
 }
 
 interface State {
@@ -23,9 +24,9 @@ interface State {
   activeNode?: TextNode;
   isTextUpdated: boolean,
   textNodes: TextNode[];
-  index: TextIndexState;
+  selection: TextSelectionState;
 }
-interface TextIndexState {
+interface TextSelectionState {
   start: number;
   end: number;
 }
@@ -33,7 +34,7 @@ const initialState: State = {
   postText: "",
   isTextUpdated: false,
   textNodes: [],
-  index: { end: 0, start: 0 }
+  selection: { end: 0, start: 0 }
 };
 
 
@@ -42,17 +43,11 @@ const regexForHashTag = /((?:#[^#\r\n\ \@]*){1})$/;
 // eslint-disable-next-line no-useless-escape
 const regexUserTag = /((?:@[^@\r\n\ \#]*){1})$/;
 const delimiters = [typeof hashTagSymbol, typeof userTagSymbol, ' '];
-export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, onHashTagChange, updateHashTags }: Props) => {
+export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, onHashTagChange, updateHashTags, onTextChange }: Props) => {
   const [state, setState] = useState(initialState);
-  const isHashTagSuggestionsVisible = useMemo(() => state.activeNode && state.activeNode.type === "#"
-    && state.index.end <= state.activeNode.endIndex
-    && state.index.end >= state.activeNode.startIndex, [state]);
-  const isUserTagSuggestionsVisible = useMemo(() => state.activeNode && state.activeNode.type === "@"
-    && state.index.end <= state.activeNode.endIndex
-    && state.index.end >= state.activeNode.startIndex, [state]);
+  const postTagsInText = useMemo(() => state.textNodes.filter(n => n.type === "#").map(n => n.value), [state.textNodes]);
 
   useEffect(() => {
-    console.log("useEffect", state)
     if (state.activeNode) {
       switch (state.activeNode.type) {
         case "#":
@@ -71,9 +66,9 @@ export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, 
           break;
       }
     }
-    updateHashTags(state.textNodes.filter(n => n.type === "#").map(n => n.value));
+    updateHashTags(postTagsInText);
+    onTextChange(state.postText);
   }, [state]);
-
 
   const onChangeText = useCallback((text: string) => {
     setState(state => ({ ...state, postText: text, isTextUpdated: state.postText !== text }));
@@ -81,34 +76,28 @@ export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, 
 
   const onSelectionChange = useCallback(({ nativeEvent: { selection } }: NativeSyntheticEvent<TextInputSelectionChangeEventData>) => {
     if (!state.isTextUpdated) {
-      setState(state => ({ ...state, index: selection }));
+      setState(state => ({ ...state, selection }));
       return;
     }
-    const text = state.postText;
+    const { postText } = state;
     const cursorPosition = selection.end;
     const endIndex = findFirst(state.postText, delimiters, cursorPosition);
-    const textStr = text.substring(0, endIndex);
+    const textStr = postText.substring(0, endIndex);
 
     const hashTagMatch = textStr.match(regexForHashTag);
     const userTagMatch = textStr.match(regexUserTag);
-    const textNodes = extractNodesFromInputText(text);
+    const textNodes = extractNodesFromInputText(postText);
 
     if (hashTagMatch && hashTagMatch.length > 0) {
       const match = hashTagMatch[0];
       const activeNode: HashTagNode = { value: match, startIndex: endIndex - match.length, endIndex, type: "#" };
-      setState(prevState => {
-        return { ...prevState, activeNode, postText: text, isTextUpdated: false, textNodes, index: selection };
-      });
+      setState(prevState => ({ ...prevState, activeNode, postText, isTextUpdated: false, textNodes, selection }));
     } else if (userTagMatch && userTagMatch.length > 0) {
       const match = userTagMatch[0];
       const activeNode: UserTagNode = { value: match, startIndex: endIndex - match.length, endIndex, type: "@" };
-      setState(prevState => {
-        return { ...prevState, activeNode, postText: text, isTextUpdated: false, textNodes, index: selection };
-      });
+      setState(prevState => ({ ...prevState, activeNode, postText, isTextUpdated: false, textNodes, selection }));
     } else {
-      setState(prevState => {
-        return { ...prevState, postText: text, isTextUpdated: false, textNodes, activeNode: undefined, index: selection };
-      });
+      setState(prevState => ({ ...prevState, postText, isTextUpdated: false, textNodes, activeNode: undefined, selection }));
     }
   }, [state]);
 
@@ -122,8 +111,8 @@ export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, 
     const textNodes = extractNodesFromInputText(postText);
     setState({
       ...state, postText, textNodes,
-      activeNode: { value: middle, startIndex: active.startIndex, endIndex: active.endIndex + middle.length, type: textNodeType },
-      index: { start: active.startIndex + middle.length, end: active.startIndex + middle.length }
+      activeNode: { value: middle, startIndex: active.startIndex, endIndex: active.startIndex + middle.length, type: textNodeType },
+      selection: { start: active.startIndex + middle.length, end: active.startIndex + middle.length }
     });
   }
 
@@ -137,13 +126,19 @@ export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, 
     tagSelect(state, selectedTag, "@")
   }, [state]);
 
+  const getIsSuggestionVisible = (type: TextNodeType) => state.activeNode
+    && state.activeNode.type === type
+    && state.selection.end <= state.activeNode.endIndex
+    && state.selection.end >= state.activeNode.startIndex;
+
+
   return (
     <View style={style}>
-      <Input selection={state.index} onSelectionChange={onSelectionChange} multiline onChangeText={onChangeText} placeholder="Your post text">
+      <Input selection={state.selection} onSelectionChange={onSelectionChange} multiline onChangeText={onChangeText} placeholder="Your post text">
         <TextWithTags nodes={state.textNodes} />
       </Input>
-      <HashTagSuggestionPopUp isVisible={isHashTagSuggestionsVisible} hashTags={postHashTags} onSelect={onHashTagSelect} />
-      <UserTagSuggestionPopUp isVisible={isUserTagSuggestionsVisible} userTags={userTags} onSelect={onUserTagSelect} />
+      <HashTagSuggestionPopUp isVisible={getIsSuggestionVisible("#")} hashTags={postHashTags} onSelect={onHashTagSelect} />
+      <UserTagSuggestionPopUp isVisible={getIsSuggestionVisible("@")} userTags={userTags} onSelect={onUserTagSelect} />
     </View>
   );
 });

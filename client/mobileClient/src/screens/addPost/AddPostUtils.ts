@@ -1,5 +1,3 @@
-import { useApiErrorHandling } from "../../shared/exceptionHandling/ExceptionHandlingHooks";
-
 export type TextNode = HashTagNode | UserTagNode | PlainTextNode;
 export type TextNodeType = typeof hashTagSymbol | typeof userTagSymbol | typeof plainText;
 export interface TextNodeBase {

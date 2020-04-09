@@ -15,7 +15,7 @@ interface Props {
 }
 export default function UserTagSuggestionPopUp({ userTags, isVisible, onSelect }: Props) {
 
-  return isVisible ?
+  return isVisible && userTags.length > 0 ?
     <View style={styles.container}>
       {userTags.map(hashTag => <TouchableOpacity key={hashTag.username}
         onPress={() => onSelect(hashTag.username)}
