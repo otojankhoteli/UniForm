@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleSheet, View, } from 'react-native';
-import AvatarCustom from '../../shared/components/Avatar';
-import SearchBar from '../../shared/components/SearchBar';
 import { Header } from 'react-native-elements';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import SearchBar from '../../shared/components/SearchBar';
+import AvatarCustom from '../../shared/components/Avatar';
 import BottomNavigationPanel from '../../shared/components/BottomNavigationPanel';
 
 type RootStackParamList = {
@@ -36,16 +36,16 @@ export default function HomeScreen() {
       backgroundImageStyle={{ backgroundColor: 'white', borderBottomWidth: 1 }}
       barStyle="light-content"
       centerContainerStyle={{ flex: 1, borderWidth: 1, borderColor: "red" }}
-      leftComponent={<AvatarCustom></AvatarCustom>}
-      centerComponent={<SearchBar></SearchBar>}
+      leftComponent={<AvatarCustom />}
+      centerComponent={<SearchBar />}
     />
-    <BottomNavigationPanel onAddClick={onAddClick}></BottomNavigationPanel>
+    <BottomNavigationPanel onAddClick={onAddClick} />
   </View>;
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
+    flex: 1,
   },
 });
