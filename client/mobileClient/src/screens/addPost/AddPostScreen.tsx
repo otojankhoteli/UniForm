@@ -41,7 +41,8 @@ export default function AddPostScreen() {
       <PostText
         onHashTagChange={onHashTagChange} onUserTagChange={onUserTagChange}
         updateHashTags={updateHashTags} onTextChange={setText}
-        postHashTags={postTags} userTags={userTags} />
+        placeHolder="Your post text"
+        hashTags={postTags} userTags={userTags} />
       <View style={styles.submitButtonContainer}>
         <Button
           buttonStyle={styles.submitButton}

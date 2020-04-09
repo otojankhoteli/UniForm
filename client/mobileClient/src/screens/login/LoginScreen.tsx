@@ -39,7 +39,8 @@ export default function LoginScreen() {
   useEffect(() => {
     if (user) {
       post({
-        googleAccessToken: user.auth.accessToken
+        googleAccessToken: user.auth.accessToken,
+        googleClientId: user.auth.clientId
       });
     }
   }, [user])
