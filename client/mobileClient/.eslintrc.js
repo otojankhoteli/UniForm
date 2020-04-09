@@ -10,7 +10,6 @@ module.exports = {
     'plugin:react-native/all',
     'plugin:@typescript-eslint/recommended',
     'prettier',
-    'plugin:prettier/recommended',
     'prettier/react',
     'prettier/@typescript-eslint',
   ],
@@ -69,6 +68,16 @@ module.exports = {
     'no-unused-expressions': 0,
     'no-plusplus': 0,
     'no-nested-ternary': 0,
+    "no-shadow": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "ts": "never",
+        "mjs": "never",
+        "tsx": "never"
+      }
+    ],
     'lines-between-class-members': [
       1,
       'always',

@@ -1,7 +1,8 @@
 import { ApiMethodType } from "../../api/auth/AuthApiModel";
 
 interface GoogleSignInException {
-  type: "GoogleSignInException"
+  type: "GoogleSignInException",
+  message: string;
 }
 type ExternalApiException = GoogleSignInException;
 interface BackendApiException {

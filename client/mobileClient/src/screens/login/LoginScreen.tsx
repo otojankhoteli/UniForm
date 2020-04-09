@@ -1,32 +1,57 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, StatusBar, ImageBackground } from 'react-native';
-import { Button, SocialIcon } from 'react-native-elements';
-import * as GoogleSignIn from 'expo-google-sign-in';
-import { MainColor } from '../../shared/Const';
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  ImageBackground,
+} from "react-native";
+import { Button, SocialIcon } from "react-native-elements";
+import * as GoogleSignIn from "expo-google-sign-in";
+import { MainColor } from "../../shared/Const";
+import { useGlobalState } from "../../shared/globalState/AppContext";
+import { useSignUp } from "../../api/auth/AuthApiHook";
 // const BackgroundImage = require('../../../assets/backgroundImage.jpg');
-const BackgroundImage2 = require('../../../assets/backgroundImage2.jpg');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const BackgroundImage2 = require("../../../assets/backgroundImage2.jpg");
 
 export default function LoginScreen() {
+  const [, dispatch] = useGlobalState();
   const [user, setUser] = useState<GoogleSignIn.GoogleUser | null>();
+  const { post } = useSignUp();
 
   useEffect(() => {
-    GoogleSignIn.initAsync({
-    }).then(async () => {
-      await fetchUser();
-    })
-      .catch((error) => {
-        alert("error in initAsync" + JSON.stringify(error));
+    GoogleSignIn.initAsync({})
+      .then(async () => {
+        await fetchUser();
       })
+      .catch((error) => {
+        dispatch({
+          type: "setError",
+          exception: {
+            type: "GoogleSignInException",
+            message: "Failed to setup google sign in"
+          }
+        });
+      });
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      post({
+        googleAccessToken: user.auth.accessToken
+      });
+    }
+  }, [user])
 
   const fetchUser = async () => {
     const user = await GoogleSignIn.signInSilentlyAsync();
-    setUser(user)
-  }
+    setUser(user);
+  };
 
   const signOutAsync = async () => {
-    await GoogleSignIn.signOutAsync().catch(error => {
-      alert("error in signOutAsync" + JSON.stringify(error));
+    await GoogleSignIn.signOutAsync().catch((error) => {
+      alert(`error in signOutAsync${JSON.stringify(error)}`);
     });
     setUser(null);
   };
@@ -34,12 +59,18 @@ export default function LoginScreen() {
   const signInAsync = async () => {
     try {
       await GoogleSignIn.askForPlayServicesAsync();
-      const { type, } = await GoogleSignIn.signInAsync();
-      if (type === 'success') {
+      const { type } = await GoogleSignIn.signInAsync();
+      if (type === "success") {
         await fetchUser();
       }
     } catch (exception) {
-      alert('login: Error:' + exception);
+      dispatch({
+        type: "setError",
+        exception: {
+          type: "GoogleSignInException",
+          message: "Failed to sign in"
+        }
+      })
     }
   };
 
@@ -51,57 +82,64 @@ export default function LoginScreen() {
     }
   }, [user]);
 
-  return <React.Fragment>
-    <ImageBackground source={BackgroundImage2} style={styles.backgroundImage} blurRadius={2}>
+  return (
+    <ImageBackground
+      source={BackgroundImage2}
+      style={styles.backgroundImage}
+      blurRadius={2}
+    >
       <Text style={styles.welcomeText}>Welcome</Text>
       <View style={styles.signInButtons}>
-        <Button type="solid"
+        <Button
+          type="solid"
           buttonStyle={styles.googleSignInButton}
           titleStyle={styles.googleSignInButtonTitle}
-          icon={<SocialIcon style={styles.googleSignInButtonIcon} iconSize={24} type="google"></SocialIcon>}
-          title="Sign in with Google" onPress={onPress} />
+          icon={
+            <SocialIcon
+              style={styles.googleSignInButtonIcon}
+              iconSize={24}
+              type="google"
+            />
+          }
+          title="Sign in with Google"
+          onPress={onPress}
+        />
       </View>
       <Text>{user && user.auth && user.auth.accessToken}</Text>
       <Text>{user && user.photoURL}</Text>
       <Text>{user && user.firstName}</Text>
       <Text>{user && user.lastName}</Text>
     </ImageBackground>
-  </React.Fragment>;
+  );
 }
 
 const styles = StyleSheet.create({
   backgroundImage: {
+    alignItems: "center",
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   googleSignInButton: {
+    backgroundColor: "white",
     borderRadius: 30,
-    height: 60,
     elevation: 2,
-    backgroundColor: 'white',
+    height: 60,
+  },
+  googleSignInButtonIcon: {
+    height: 40,
+    width: 40,
   },
   googleSignInButtonTitle: {
     color: MainColor,
   },
-  googleSignInButtonIcon: {
-    height: 40,
-    width: 40
-  },
   signInButtons: {
-    marginBottom: "auto"
+    marginBottom: "auto",
   },
   welcomeText: {
+    color: "white",
     fontSize: 40,
     fontWeight: "bold",
-    marginTop: (StatusBar.currentHeight || 0) + 60,
     marginBottom: "auto",
-    color: 'white'
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: (StatusBar.currentHeight || 0) + 60,
   },
 });

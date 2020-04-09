@@ -1,7 +1,7 @@
 import { usePostApi } from "../shared/ApiHook";
-import { AuthRequest, AuthResponse } from "./AuthApiModel";
-import { AuthUri } from "./AuthApiUri";
+import { SignUpRequest, SignUpResponse } from "./AuthApiModel";
+import { SignUpUri } from "./AuthApiUri";
 
-export function useAuth() {
-    return usePostApi<AuthRequest, AuthResponse>(AuthUri, 'json', false);
+export function useSignUp() {
+    return usePostApi<SignUpRequest, SignUpResponse>(SignUpUri, 'json', false);
 }

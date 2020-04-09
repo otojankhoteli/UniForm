@@ -1,5 +1,5 @@
 import { CurrentHost } from "../shared/ApiUri";
 
-export const AuthUri = `${CurrentHost}token`;
+export const SignUpUri = `${CurrentHost}auth/sign`;
 
-export type AuthUriUnion = typeof AuthUri
+export type AuthUriUnion = typeof SignUpUri

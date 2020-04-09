@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import {
   ApiErrorResponse,
+  GetRequestInfo
 } from "./ApiResponse";
 import { ApiStatusCode, PagingLimit, PagingOffset } from "./ApiConst";
 import {
   getWithAuthorizeHeader,
   getUri,
   getUriFromQueryObject
-} from "./ApiUtils";
-import { GetRequestInfo } from "./ApiResponse";
-import {
+  ,
   getBodyAndHeaderFromType
 } from "./ApiUtils";
+
+
 import { useGlobalState } from "../../shared/globalState/AppContext";
 import { useApiErrorHandling } from "../../shared/exceptionHandling/ExceptionHandlingHooks";
 
@@ -61,16 +62,17 @@ export interface ResponseState<TResponse> {
 export function usePostApi<TRequest = {}, TResponse = {}>(
   uri: string,
   bodyType: ApiBodyType = "json",
-  includeAuthroize: boolean = true
+  includeAuthroize = true,
+  authorizeToken: string = undefined
 ): PostApiHookResult<TRequest, TResponse> {
   const [requestBody, setRequestBody] = useState<TRequest | undefined>(undefined);
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
     isError: false
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [{ account: loggedUser }] = useGlobalState();
 
   useApiErrorHandling(responseState.error);
-  const [{ account: loggedUser }] = useGlobalState();
 
   useEffect(() => {
     if (requestBody) {
@@ -79,16 +81,18 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
 
       fetch(uri, {
         method: "post",
-        headers: getWithAuthorizeHeader(loggedUser && loggedUser.token, headers, includeAuthroize),
+        headers: getWithAuthorizeHeader((loggedUser && loggedUser.token) || authorizeToken, headers, includeAuthroize),
         body
       })
         .then(async value => {
           if (!value.ok) {
-            let errorObject = undefined;
+            let errorObject;
             try {
               errorObject = await value.json();
-            } catch (error) { }
-            throw { statusCode: value.status, errorObject };
+            } catch (error) {
+              throw { statusCode: value.status, errorObject };
+            }
+
           }
 
           return value.json();
@@ -120,7 +124,7 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
 export function usePutApi<TRequest = {}, TResponse = {}>(
   uri: string,
   bodyType: ApiBodyType = "json",
-  includeAuthroize: boolean = true
+  includeAuthroize = true
 ): PostApiHookResult<TRequest, TResponse> {
   const [requestBody, setRequestBody] = useState<TRequest | undefined>(undefined);
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
@@ -143,11 +147,12 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
       })
         .then(async value => {
           if (!value.ok) {
-            let errorObject = undefined;
+            let errorObject;
             try {
               errorObject = await value.json();
-            } catch (error) { }
-            throw { statusCode: value.status, errorObject };
+            } catch (error) {
+              throw { statusCode: value.status, errorObject };
+            }
           }
 
           return value.json();
@@ -177,7 +182,7 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
 
 export function useDeleteApi<TRequest = {}, TResponse = {}>(
   uri: string,
-  includeAuthroize: boolean = true
+  includeAuthroize = true
 ): DeleteApiHookResult<TRequest, TResponse> {
   const [requestQuery, setRequestQuery] = useState<TRequest | undefined>(undefined);
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
@@ -202,11 +207,12 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
       })
         .then(async value => {
           if (!value.ok) {
-            let errorObject = undefined;
+            let errorObject;
             try {
               errorObject = await value.json();
-            } catch (error) { }
-            throw { statusCode: value.status, errorObject };
+            } catch (error) {
+              throw { statusCode: value.status, errorObject };
+            }
           }
 
           return value.json();
@@ -249,7 +255,7 @@ interface FinalUriType {
 
 export function useGetApi<TResponse, TResponseViewModel = {}>(
   uri: string,
-  includeAuthorize: boolean = true,
+  includeAuthorize = true,
   requestInfo: GetRequestOptions<TResponseViewModel> = { wait: false }
 ): GetApiHookResult<TResponse, TResponseViewModel> {
   const [finalUri, setFinalUri] = useState<FinalUriType>();
@@ -325,11 +331,12 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
       })
         .then(async value => {
           if (!value.ok) {
-            let errorObject = undefined;
+            let errorObject;
             try {
               errorObject = await value.json();
-            } catch (error) { }
-            throw { statusCode: value.status, errorObject };
+            } catch (error) {
+              throw { statusCode: value.status, errorObject };
+            }
           }
 
           return value.json();
@@ -358,7 +365,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
     fetchNextPage,
     fetchPrevPage,
     refetch: () => {
-      setInternalRequestInfo(prev => Object.assign({}, prev));
+      setInternalRequestInfo(prev => ({ ...prev }));
     }
   };
 }
