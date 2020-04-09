@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo, useCallback } from "react";
+import React, { useState, useEffect, memo, useCallback, useMemo } from "react";
 import { View, StyleProp, ViewStyle, NativeSyntheticEvent, TextInputSelectionChangeEventData } from "react-native";
 import { Input, Text } from "react-native-elements";
 import { PostHashTag, HashTagSuggestionPopUp } from "./HashTagSuggestionPopUp";
@@ -44,6 +44,12 @@ const regexUserTag = /((?:@[^@\r\n\ \#]*){1})$/;
 const delimiters = [typeof hashTagSymbol, typeof userTagSymbol, ' '];
 export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, onHashTagChange, updateHashTags }: Props) => {
   const [state, setState] = useState(initialState);
+  const isHashTagSuggestionsVisible = useMemo(() => state.activeNode && state.activeNode.type === "#"
+    && state.index.end <= state.activeNode.endIndex
+    && state.index.end >= state.activeNode.startIndex, [state]);
+  const isUserTagSuggestionsVisible = useMemo(() => state.activeNode && state.activeNode.type === "@"
+    && state.index.end <= state.activeNode.endIndex
+    && state.index.end >= state.activeNode.startIndex, [state]);
 
   useEffect(() => {
     console.log("useEffect", state)
@@ -55,11 +61,12 @@ export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, 
             onHashTagChange(hashTag.length > 1 ? hashTag.substr(1) : "");
             break;
           }
-        case "@": {
-          const hashTag = state.activeNode.value;
-          onUserTagChange(hashTag.length > 1 ? hashTag.substr(1) : "");
-          break;
-        }
+        case "@":
+          {
+            const hashTag = state.activeNode.value;
+            onUserTagChange(hashTag.length > 1 ? hashTag.substr(1) : "");
+            break;
+          }
         default:
           break;
       }
@@ -116,7 +123,7 @@ export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, 
     setState({
       ...state, postText, textNodes,
       activeNode: { value: middle, startIndex: active.startIndex, endIndex: active.endIndex + middle.length, type: textNodeType },
-      index: { start: active.endIndex + middle.length - 1, end: active.endIndex + middle.length - 1 }
+      index: { start: active.startIndex + middle.length, end: active.startIndex + middle.length }
     });
   }
 
@@ -130,14 +137,13 @@ export const PostText = memo(({ style, userTags, postHashTags, onUserTagChange, 
     tagSelect(state, selectedTag, "@")
   }, [state]);
 
-
   return (
     <View style={style}>
-      <Input selection={state.index} onSelectionChange={onSelectionChange} multiline onChangeText={onChangeText} placeholder="Your post text"  >
+      <Input selection={state.index} onSelectionChange={onSelectionChange} multiline onChangeText={onChangeText} placeholder="Your post text">
         <TextWithTags nodes={state.textNodes} />
       </Input>
-      <HashTagSuggestionPopUp isVisible={state.activeNode && state.activeNode.type === "#"} hashTags={postHashTags} onSelect={onHashTagSelect} />
-      <UserTagSuggestionPopUp isVisible={state.activeNode && state.activeNode.type === "@"} userTags={userTags} onSelect={onUserTagSelect} />
+      <HashTagSuggestionPopUp isVisible={isHashTagSuggestionsVisible} hashTags={postHashTags} onSelect={onHashTagSelect} />
+      <UserTagSuggestionPopUp isVisible={isUserTagSuggestionsVisible} userTags={userTags} onSelect={onUserTagSelect} />
     </View>
   );
 });

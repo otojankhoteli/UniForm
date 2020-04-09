@@ -10,7 +10,7 @@ import { AppAction } from "./AppAction";
 
 type AppState = [State, Dispatch<AppAction>];
 
-const AppContext = createContext<AppState>([InitialAppState, () => {}]);
+const AppContext = createContext<AppState>([InitialAppState, () => { }]);
 
 const StateProvider = ({
   reducer,

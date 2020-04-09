@@ -68,7 +68,6 @@ const getNode = (text: string, index: number, isDeilimiter: (char: string) => bo
     newIndex: localIndex,
     node: { startIndex, endIndex: localIndex, value: name, type: nodeType }
   };
-
 }
 const getNodeType = (char: string): TextNodeType => {
   switch (char) {

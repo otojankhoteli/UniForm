@@ -9,12 +9,16 @@ import {
 import { Button, SocialIcon } from "react-native-elements";
 import * as GoogleSignIn from "expo-google-sign-in";
 import { MainColor } from "../../shared/Const";
+import { useGlobalState } from "../../shared/globalState/AppContext";
+import { useSignUp } from "../../api/auth/AuthApiHook";
 // const BackgroundImage = require('../../../assets/backgroundImage.jpg');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const BackgroundImage2 = require("../../../assets/backgroundImage2.jpg");
 
 export default function LoginScreen() {
+  const [, dispatch] = useGlobalState();
   const [user, setUser] = useState<GoogleSignIn.GoogleUser | null>();
+  const { post } = useSignUp();
 
   useEffect(() => {
     GoogleSignIn.initAsync({})
@@ -22,9 +26,23 @@ export default function LoginScreen() {
         await fetchUser();
       })
       .catch((error) => {
-        alert(`error in initAsync${JSON.stringify(error)}`);
+        dispatch({
+          type: "setError",
+          exception: {
+            type: "GoogleSignInException",
+            message: "Failed to setup google sign in"
+          }
+        });
       });
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      post({
+        googleAccessToken: user.auth.accessToken
+      });
+    }
+  }, [user])
 
   const fetchUser = async () => {
     const user = await GoogleSignIn.signInSilentlyAsync();
@@ -46,7 +64,13 @@ export default function LoginScreen() {
         await fetchUser();
       }
     } catch (exception) {
-      alert(`login: Error:${exception}`);
+      dispatch({
+        type: "setError",
+        exception: {
+          type: "GoogleSignInException",
+          message: "Failed to sign in"
+        }
+      })
     }
   };
 
