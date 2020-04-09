@@ -1,52 +1,43 @@
 import { Inject, Service } from 'typedi';
-import { IUserInputDTO, IUser } from '../interface/user';
-import jwt from 'jsonwebtoken';
-import getRole from '../util/getRole';
-import  { Document, Model } from 'mongoose'
+import { ISignUpUserInputDTO, IUser } from '../interface/user';
+import getRole from './util/helper/getRole';
+import { Document, Model } from 'mongoose';
+import { IAuthenticatedUser } from '../interface/authenticatedUser';
+import ApplicationError from '../util/error/ApplicationError';
+import { config } from '../config/index';
 
 @Service()
 export class AuthService {
   constructor(
-    @Inject('UserModel') private UserModel : Model<IUser & Document>,
+    @Inject('UserModel') private UserModel: Model<IUser & Document>,
+    @Inject('AuthenticatedUserModel') private AuthenticatedUserModel: Model<IAuthenticatedUser & Document>,
   ) { }
-  
-  public async logIn(userInputDTO: IUserInputDTO) {
-    console.log(this.UserModel);
+
+  public async logIn(userInputDTO: ISignUpUserInputDTO) {
 
     let user = await this.UserModel.findOne({ email: userInputDTO.email });
     if (!user) {
       const role = getRole(userInputDTO.email);
       user = await this.UserModel.create({ ...userInputDTO, role: role });
     }
-    const token = this.generateToken(user);
-    console.log(user);
-    return { token, user };
+    let today = new Date();
+    const authenticatedUser = await this.AuthenticatedUserModel.create({
+      email: user.email,
+      expirationDate: today.setDate(today.getDate() + config.authentication.refreshTokenValid),
+      refreshToken: userInputDTO.refreshToken
+    });
+    return { user, authenticatedUser };
   }
 
-
-  private generateToken(user) {
-    const today = new Date();
-    const exp = new Date(today);
-    exp.setDate(today.getDate() + 60);
-
-    /**
-     * A JWT means JSON Web Token, so basically it's a json that is _hashed_ into a string
-     * The cool thing is that you can add custom properties a.k.a metadata
-     * Here we are adding the userId, role and name
-     * Beware that the metadata is public and can be decoded without _the secret_
-     * but the client cannot craft a JWT to fake a userId
-     * because it doesn't have _the secret_ to sign it
-     * more information here: https://softwareontheroad.com/you-dont-need-passport
-     */
-    return jwt.sign(
-      {
-        _id: user._id, // We are gonna use this in the middleware 'isAuth'
-        role: user.role,
-        name: user.name,
-        exp: exp.getTime() / 1000,
-      },
-      'secret',
-    );
+  public async validateTokenRefresh(refreshToken: String, user: IUser) {
+    var authenticatedUser = await this.AuthenticatedUserModel.findOne({ email: user.email });
+    if (authenticatedUser.refreshToken != refreshToken)
+      throw new ApplicationError("wrong user");
+    if (authenticatedUser.expirationDate < new Date())
+      throw new ApplicationError("refresh token has expired");//TODO create specific error type?!
+    return true;
   }
+
 
 }
+//TODO remove dependency on Mongo specific repository
