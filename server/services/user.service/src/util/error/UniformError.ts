@@ -6,8 +6,8 @@ export default class UniformError extends Error {
 
   /**
    * AppError default constructor
-   * @param {number} [status]
    * @param {string} [message]
+   * @param {number} [status]
    */
   constructor(message, status?) {
     super();

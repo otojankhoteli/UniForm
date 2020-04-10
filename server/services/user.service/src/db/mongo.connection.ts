@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import { config } from '../config';
+import {config} from '../config';
 import logger from '../util/logger';
 
-const { host, port, db, user, password } = config.mongo;
+const {host, port, db, user, password} = config.mongo;
 
 const mongoURI = `mongodb://${host}:${port}/${db}`;
 
@@ -19,11 +19,11 @@ const options = {
 
 export default async () => {
   await mongoose.connect(mongoURI, options)
-    .then(() => logger.info('connected to mongo'))
-    .catch((error) => {
-      console.error('Unable to connect to the mongodb instance.Error: ', error);
-      process.exit(1);
-    });
+      .then(() => logger.info('connected to mongo'))
+      .catch((error) => {
+        console.error('Unable to connect to the mongodb instance.Error: ', error);
+        process.exit(1);
+      });
 };
 
-//TODO refactor 
+// TODO refactor

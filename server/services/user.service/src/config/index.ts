@@ -15,8 +15,8 @@ export const config = {
     secret: 'secret',
     refreshSecret: 'refreshSecret',
     refreshTokenLength: 20,
-    refreshTokenValid: 30
-  }
+    refreshTokenValid: 30,
+  },
 };
 
-//TODO change config from buildable file to cfg file 
+// TODO change config from buildable file to cfg file

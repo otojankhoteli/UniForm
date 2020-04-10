@@ -1,9 +1,8 @@
 import UniformError from './UniformError';
 
 export default class NotFoundError extends UniformError {
-
   /**
-   * AppError default constructor
+   * NotFoundError default constructor
    * @param {number} [status]
    * @param {string} [message]
    */

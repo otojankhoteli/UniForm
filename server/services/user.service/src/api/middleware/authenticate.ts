@@ -1,6 +1,6 @@
 import decodeToken from '../helper/decodeToken';
 
-const getTokenFromHeader = req => {
+const getTokenFromHeader = (req) => {
   if (
     (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Token') ||
     (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer')
@@ -10,9 +10,9 @@ const getTokenFromHeader = req => {
   return null;
 };
 
-//TODO identify where to put logged in user info
+// TODO identify where to put logged in user info
 export default (req, res, next) => {
   const token = getTokenFromHeader(req);
   req.currentUser = decodeToken(token);
   res.json(decodeToken(token));
-}
+};
