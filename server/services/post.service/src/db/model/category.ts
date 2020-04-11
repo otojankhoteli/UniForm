@@ -1,14 +1,38 @@
 import mongoose from 'mongoose';
-import {ICategory} from '../../interface/Category';
+import {ICategoryDTO} from '../../interface/Category';
 
-const category = new mongoose.Schema<ICategory>({
-  author: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-  name: String,
-  memberCount: Number,
+const category = new mongoose.Schema<ICategoryDTO>({
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
+
+  name: {
+    type: String,
+    required: true,
+  },
+
+  memberCount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+
+  postCount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+
   image: String,
-  isMain: Boolean,
+
+  isMain: {
+    type: Boolean,
+    default: false,
+  },
 },
 {timestamps: true});
 
 
-export default mongoose.model<ICategory & mongoose.Document>('Category', category);
+export default mongoose.model<ICategoryDTO & mongoose.Document>('Category', category);

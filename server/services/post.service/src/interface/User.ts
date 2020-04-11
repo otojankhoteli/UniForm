@@ -3,5 +3,5 @@ export interface IUser {
   name: string,
   email: string,
   role: string,
-  isAdmin: boolean,
+  imgUrl: string,
 }

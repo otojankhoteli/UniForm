@@ -9,6 +9,6 @@ export const config = {
     db: process.env.POST_DB ?? 'post-service',
   },
   logs: {
-    level: process.env.LOG_LEVEL || 'info',
+    level: process.env.LOG_LEVEL ?? 'silly',
   },
 };

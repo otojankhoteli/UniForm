@@ -1,6 +1,6 @@
 import {Service, Inject, Container} from 'typedi';
 import {Document, Model} from 'mongoose';
-import {ICategory, ICategorySearchModel} from '../interface/Category';
+import {ICategoryDTO, ICategorySearchModel} from '../interface/Category';
 import {UserService} from './user';
 import NotFoundError from '../util/error/NotFoundError';
 
@@ -8,15 +8,15 @@ import NotFoundError from '../util/error/NotFoundError';
 export class CategoryService {
   constructor(
       @Inject('CategoryModel')
-      private CategoryModel: Model<ICategory & Document>,
+      private CategoryModel: Model<ICategoryDTO & Document>,
       private UserService: UserService = Container.get('UserService'),
   ) {
   }
 
-  public async save(category: ICategory) {
+  public async save(category: ICategoryDTO) {
     try {
-      const user = await this.UserService.getUser(category.author);
-      category.isMain = user.isAdmin;
+      // const user = await this.UserService.getUser(category.author);
+      // category.isMain = user.isAdmin;
       return this.CategoryModel.create(category);
     } catch (e) {
       if (e instanceof NotFoundError) {

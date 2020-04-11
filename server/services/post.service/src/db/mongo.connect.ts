@@ -7,13 +7,14 @@ const mongoURI = `mongodb://${user}:${password}@${host}:${port}/${db}?authSource
 
 const options = {
   useNewUrlParser: true,
+  useCreateIndex: true,
   useUnifiedTopology: true,
   poolSize: 5,
   bufferMaxEntries: 0,
 };
 
 export const connectDb = async () => {
-  await mongoose.connect(mongoURI, options)
+  return mongoose.connect(mongoURI, options)
       .then(() => {
         logger.info('connected to mongo');
       })

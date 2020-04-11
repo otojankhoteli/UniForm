@@ -16,3 +16,4 @@ rules:
   new-cap: off
   require-jsdoc: off
   max-len: off
+  no-unused-vars: off

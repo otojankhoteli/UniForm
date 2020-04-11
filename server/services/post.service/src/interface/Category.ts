@@ -1,12 +1,14 @@
-import {Page} from './Common';
+import {Page, SortBy} from './Common';
 
-export interface ICategory {
+export interface ICategoryDTO {
   author: string,
   name: string,
   memberCount: number,
+  postCount: number,
   isMain: boolean,
 }
 
 export interface ICategorySearchModel extends Page {
   name: string,
+  sortBy?: SortBy,
 }
