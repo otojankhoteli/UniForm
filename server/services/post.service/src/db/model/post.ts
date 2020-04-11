@@ -1,17 +1,17 @@
-import {mongoose} from '../../db/config';
+import mongoose from 'mongoose';
 
 const post = new mongoose.Schema({
-  author: String,
+  user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
   type: String,
   body: String,
   tags: [String],
-  category: String,
-  upvoteCount: Number,
+  category: {type: mongoose.Schema.Types.ObjectId, ref: 'Category'},
+  voteCount: Number,
+},
+{timestamps: true});
 
-});
 
-
-const PostModel = mongoose.model('post', post);
+const PostModel = mongoose.model('Post', post);
 
 
 export {PostModel};

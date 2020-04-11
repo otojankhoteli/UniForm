@@ -1,14 +1,13 @@
-// import {mongoose} from '../../db/config';
-//
-// // const tag = new mongoose.Schema({
-// //   value: String,
-// //   body: String,
-// //   tags: [String],
-// //   category:
-// // });
-//
-//
-// const TagModel = mongoose.model('post', tag);
-//
-//
-// export {tag, TagModel};
+import mongoose from 'mongoose';
+
+const tag = new mongoose.Schema({
+  value: String,
+  body: String,
+  tags: [String],
+});
+
+
+const TagModel = mongoose.model('Tag', tag);
+
+
+export {tag, TagModel};

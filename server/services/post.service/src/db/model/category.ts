@@ -1,17 +1,14 @@
-import {mongoose} from '../../db/config';
+import mongoose from 'mongoose';
+import {ICategory} from '../../interface/Category';
 
-const category = new mongoose.Schema({
-  author: String,
-  type: String,
-  body: String,
-  tags: [String],
-  category: String,
-  upvoteCount: Number,
-
-});
-
-
-const CategoryModel = mongoose.model('category', category);
+const category = new mongoose.Schema<ICategory>({
+  author: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  name: String,
+  memberCount: Number,
+  image: String,
+  isMain: Boolean,
+},
+{timestamps: true});
 
 
-export {CategoryModel};
+export default mongoose.model<ICategory & mongoose.Document>('Category', category);
