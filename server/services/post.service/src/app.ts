@@ -1,10 +1,17 @@
+import 'reflect-metadata'; // We need this in order to use @DecoratorsGET
 import express from 'express';
 import logger from './util/logger';
-import errorHandler from './util/ErrorHandler';
+import errorHandler from './util/error/ErrorHandler';
 import {categoryRouter} from './api/route/category';
+import {connectDb} from './db/mongo.connect';
+import {config} from '../config/index';
+import initDiContainer from './util/dependencyInjector';
+import {userRouter} from './api/route/user';
+import {postRouter} from './api/route/post';
+import {hashTagRouter} from './api/route/hashtag';
 
+initDiContainer();
 const app = express();
-const port = process.env.PORT ?? 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -13,8 +20,13 @@ app.get('/ping', (req, res, next) => {
 });
 
 app.use('/category', categoryRouter);
+app.use('/post', postRouter);
+app.use('/user', userRouter);
+app.use('/hashtag', hashTagRouter);
 app.use(errorHandler);
 
-app.listen(port, () => {
-  logger.info(`post.service listening on port ${port}`);
+app.listen(config.port, () => {
+  logger.info(`post.service listening on port ${config.port}`);
 });
+
+connectDb();

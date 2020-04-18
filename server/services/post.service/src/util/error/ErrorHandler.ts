@@ -1,4 +1,4 @@
-import logger from './logger';
+import logger from '../logger';
 
 export default (err, req, res, next) => {
   const status = err.status || 500;

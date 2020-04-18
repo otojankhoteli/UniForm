@@ -10,7 +10,7 @@ import extractGoogleToken from '../helper/extractGoogleToken';
 
 
 const router = Router();
-//TODO
+// TODO
 router.post('/signup', asyncMw(async (req, res, _) => {
   const authService = Container.get(AuthService);
   const googleUser = await extractGoogleToken(req.body.accessToken);
@@ -24,15 +24,14 @@ router.post('/refresh', asyncMw(async (req, res, _) => {
   const authService = Container.get(AuthService);
   const { expiredToken, refreshToken } = req.body;
   const user = decodeToken(expiredToken);
-
   await authService.validateTokenRefresh(refreshToken, user);
   const token = generateToken(user);
   console.log(token);
-  res.json({ user, token, refreshToken })
+  res.json(token);
 }));
 
 router.get('/test', authenticate, (req, res, next) => {
   console.log(res.json);
-})
+});
 
 export { router as authRouter };

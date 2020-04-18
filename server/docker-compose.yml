@@ -15,11 +15,11 @@ services:
     container_name: mongo-user
     image: mongo
     environment:
-      - MONGO_INITDB_DATABASE=user-mongodb
+      - MONGO_INITDB_DATABASE=user.mongodb
 #      - MONGO_INITDB_ROOT_USERNAME=test
 #      - MONGO_INITDB_ROOT_PASSWORD=test
     volumes:
-      - /data/user.service/data:/data/db
+      - /data/uniform/user-service/data:/data/db
     ports:
       - 27017:27017
 
@@ -42,6 +42,6 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=test
       - MONGO_INITDB_ROOT_PASSWORD=test
     volumes:
-      - /data/post.service/data:/data/db
+      - /data/uniform/post-service/data:/data/db
     ports:
       - 27018:27017

@@ -1,4 +1,4 @@
-import { IUser } from '../../interface/user'
+import { IUser } from '../../interface/user';
 import jwt from 'jsonwebtoken';
 import { config } from '../../config/index';
 
@@ -16,5 +16,5 @@ export default (user: IUser): string => {
     },
     config.authentication.secret,
   );
-}
-//TODO put date values in config
+};
+// TODO put date values in config

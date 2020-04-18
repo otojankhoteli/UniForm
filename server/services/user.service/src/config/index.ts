@@ -20,4 +20,4 @@ export const config = {
   }
 };
 
-//TODO change config from buildable file to cfg file 
+// TODO change config from buildable file to cfg file

@@ -1,8 +1,8 @@
 import winston = require('winston');
-
+import {config} from '../config/index';
 
 export default winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
+  level: config.logs.level,
   levels: winston.config.npm.levels,
   format: winston.format.combine(winston.format.colorize(),
       winston.format.timestamp({
