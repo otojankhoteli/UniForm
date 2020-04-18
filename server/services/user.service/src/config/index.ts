@@ -15,7 +15,8 @@ export const config = {
     secret: 'secret',
     refreshSecret: 'refreshSecret',
     refreshTokenLength: 20,
-    refreshTokenValid: 30
+    refreshTokenValid: 30, //days
+    tokenValid: 2 //minutes
   }
 };
 

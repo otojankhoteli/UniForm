@@ -5,6 +5,9 @@ import { Document, Model } from 'mongoose';
 import { IAuthenticatedUser } from '../interface/authenticatedUser';
 import ApplicationError from '../util/error/ApplicationError';
 import { config } from '../config/index';
+import { userInfo } from 'os';
+import { unwatchFile } from 'fs';
+import { ExceptionHandler } from 'winston';
 
 @Service()
 export class AuthService {
@@ -13,20 +16,30 @@ export class AuthService {
     @Inject('AuthenticatedUserModel') private AuthenticatedUserModel: Model<IAuthenticatedUser & Document>,
   ) { }
 
-  public async logIn(userInputDTO: ISignUpUserInputDTO) {
+  public async logIn(userInputDTO: ISignUpUserInputDTO): Promise<IUser> {
 
-    let user = await this.UserModel.findOne({ email: userInputDTO.email });
-    if (!user) {
-      const role = getRole(userInputDTO.email);
-      user = await this.UserModel.create({ ...userInputDTO, role: role });
-    }
+    // let user = await this.UserModel.findOne({ email: userInputDTO.email });
+    const role = getRole(userInputDTO.email);
+    // if (user)
+    //   user.update({ ...userInputDTO, role: role })
+    // else
+    //   user = await this.UserModel.create({ ...userInputDTO, role: role });
+    const user = this.UserModel.findOneAndUpdate({ email: userInputDTO.email },
+      { ...userInputDTO, role: role },
+      { upsert: true });
     let today = new Date();
-    const authenticatedUser = await this.AuthenticatedUserModel.create({
-      email: user.email,
-      expirationDate: today.setDate(today.getDate() + config.authentication.refreshTokenValid),
-      refreshToken: userInputDTO.refreshToken
-    });
-    return { user, authenticatedUser };
+    // let authenticatedUser = await this.AuthenticatedUserModel.findOne({ email: userInputDTO.email });
+
+    this.AuthenticatedUserModel.findOneAndUpdate({ email: userInputDTO.email },
+      {
+        email: userInputDTO.email,
+        expirationDate: today.setDate(today.getDate() + config.authentication.refreshTokenValid),
+        refreshToken: userInputDTO.refreshToken
+      },
+      { upsert: true }
+    );
+
+    return user;
   }
 
   public async validateTokenRefresh(refreshToken: String, user: IUser) {

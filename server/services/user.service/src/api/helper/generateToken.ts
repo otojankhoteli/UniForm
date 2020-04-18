@@ -4,9 +4,8 @@ import { config } from '../../config/index';
 
 export default (user: IUser): string => {
   const today = new Date();
-  const exp = new Date(today);
-  exp.setDate(today.getDate() + 60);
-//TODO implement refresh token logic also
+  const exp = new Date(today.getTime() + config.authentication.tokenValid * 60000);//60 0000 becaue of milliseconds
+  //TODO implement refresh token logic also
   return jwt.sign(
     {
       _id: user._id,

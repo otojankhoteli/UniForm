@@ -10,6 +10,7 @@ console.log(mongoURI);
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,//to be able to use FindOneAndUpdate   https://mongoosejs.com/docs/api.html#mongoose_Mongoose-connect
   poolSize: 5, // Maintain up to 10 socket connections
   bufferMaxEntries: 0,
   // user: 'test',
