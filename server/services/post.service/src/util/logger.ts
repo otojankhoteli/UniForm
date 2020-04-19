@@ -1,5 +1,5 @@
 import winston = require('winston');
-import {config} from '../../config/index';
+import {config} from '../config/index';
 
 
 export default winston.createLogger({

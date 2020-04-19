@@ -33,7 +33,11 @@ export class CategoryService {
   }
 
   public async findByPrefix(options: ICategorySearchModel) {
-    return this.CategoryModel.find({name: {$regex: new RegExp(`^${options.name}`)}})
+    // return this.CategoryModel.find({name: {$regex: new RegExp(`^${options.name}`)}})
+    return this.CategoryModel
+        .find()
+        .where('name')
+        .regex(new RegExp(`^${options.name}`))
         .skip(options.skip)
         .limit(options.limit);
   }

@@ -5,7 +5,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "yarn build && ts-node index.ts",
+    "start": "ts-node index.ts",
     "start:debug": "node --inspect=0.0.0.0:9230 -r ts-node/register index.ts",
     "start:nodemon": "nodemon",
     "build": "rm -r build; tsc",
@@ -15,6 +15,7 @@
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "mongoose": "^5.9.7",
+    "rabbot": "^2.1.0",
     "reflect-metadata": "^0.1.13",
     "typedi": "^0.8.0",
     "winston": "^3.2.1"

@@ -4,29 +4,40 @@ import logger from './util/logger';
 import errorHandler from './util/error/ErrorHandler';
 import {categoryRouter} from './api/route/category';
 import {connectDb} from './db/mongo.connect';
-import {config} from '../config/index';
+import {config} from './config/index';
 import initDiContainer from './util/dependencyInjector';
 import {userRouter} from './api/route/user';
 import {postRouter} from './api/route/post';
 import {hashTagRouter} from './api/route/hashtag';
+import {connectRabbit} from './message.queue';
 
-initDiContainer();
-const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({extended: true}));
-app.get('/ping', (req, res, next) => {
-  res.send('pong');
-});
+const startApp = async () => {
+  try {
+    initDiContainer();
+    await connectDb();
+    await connectRabbit();
+    const app = express();
 
-app.use('/category', categoryRouter);
-app.use('/post', postRouter);
-app.use('/user', userRouter);
-app.use('/hashtag', hashTagRouter);
-app.use(errorHandler);
+    app.use(express.json());
+    app.use(express.urlencoded({extended: true}));
+    app.get('/ping', (req, res, next) => {
+      res.send('pong');
+    });
 
-app.listen(config.port, () => {
-  logger.info(`post.service listening on port ${config.port}`);
-});
+    app.use('/category', categoryRouter);
+    app.use('/post', postRouter);
+    app.use('/user', userRouter);
+    app.use('/hashtag', hashTagRouter);
+    app.use(errorHandler);
 
-connectDb();
+    app.listen(config.port, () => {
+      logger.info(`post.service listening on port ${config.port}`);
+    });
+  } catch (e) {
+    logger.error('Could not start application %o', e);
+    process.exit(1);
+  }
+};
+
+startApp();

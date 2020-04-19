@@ -9,6 +9,7 @@ const router = Router();
 
 // api for test purposes, should not be directly used
 router.post('/', asyncMw(async (req, res, _) => {
+  logger.silly('saving hashtags');
   const hashTagService = Container.get(HashTagService);
   const hashTag: string[] = req.body.hashTags;
   res.send(await hashTagService.save(hashTag));

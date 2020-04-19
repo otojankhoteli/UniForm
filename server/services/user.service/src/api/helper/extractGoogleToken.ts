@@ -1,15 +1,15 @@
-import { IUser } from "../../interface/user";
-import { google } from 'googleapis';
+import {IUser} from '../../interface/user';
+import {google} from 'googleapis';
 
 export default async (accessToken: string) => {
-  var OAuth2 = google.auth.OAuth2;
-  var oauth2Client = new OAuth2();
-  oauth2Client.setCredentials({ access_token: accessToken });
-  var oauth2 = google.oauth2({
+  const OAuth2 = google.auth.OAuth2;
+  const oauth2Client = new OAuth2();
+  oauth2Client.setCredentials({access_token: accessToken});
+  const oauth2 = google.oauth2({
     auth: oauth2Client,
-    version: 'v2'
+    version: 'v2',
   });
-  let userInfo = await oauth2.userinfo.get();
+  const userInfo = await oauth2.userinfo.get();
 
   const user = {
     name: userInfo.data.given_name,
@@ -18,4 +18,4 @@ export default async (accessToken: string) => {
     photoURL: userInfo.data.picture,
   } as IUser;
   return user;
-}
+};

@@ -45,3 +45,12 @@ services:
       - /data/uniform/post-service/data:/data/db
     ports:
       - 27018:27017
+
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+    - 15672:15672
+    - 5672:5672
+

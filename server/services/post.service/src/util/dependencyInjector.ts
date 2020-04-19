@@ -5,6 +5,8 @@ import {UserService} from '../service/user';
 import {UserModel} from '../db/model/user';
 import {PostModel} from '../db/model/post';
 import {HashTagModel} from '../db/model/hashtag';
+import {EventEmitter} from 'events';
+import {rabbit} from '../message.queue/index';
 
 export default () => {
   try {
@@ -12,6 +14,8 @@ export default () => {
     Container.set('UserModel', UserModel);
     Container.set('PostModel', PostModel);
     Container.set('HashTagModel', HashTagModel);
+    Container.set('Rabbit', rabbit);
+    Container.set('EventEmitter', new EventEmitter());
     Container.set('UserService', new UserService(Container.get('UserModel')));
     Container.set('logger', logger);
     logger.info('Agenda injected into container');
