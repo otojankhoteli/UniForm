@@ -5,3 +5,8 @@ export interface IUser {
   role: string,
   imgUrl: string,
 }
+
+export interface IUserSearchModel {
+  _id: string,
+  email: string,
+}

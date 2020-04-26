@@ -5,16 +5,15 @@ import errorHandler from './util/error/ErrorHandler';
 import {categoryRouter} from './api/route/category';
 import {connectDb} from './db/mongo.connect';
 import {config} from './config/index';
-import initDiContainer from './util/dependencyInjector';
+import initDIContainer from './util/dependencyInjector';
 import {userRouter} from './api/route/user';
 import {postRouter} from './api/route/post';
-import {hashTagRouter} from './api/route/hashtag';
 import {connectRabbit} from './message.queue';
 
 
 const startApp = async () => {
   try {
-    initDiContainer();
+    initDIContainer();
     await connectDb();
     await connectRabbit();
     const app = express();
@@ -28,7 +27,6 @@ const startApp = async () => {
     app.use('/category', categoryRouter);
     app.use('/post', postRouter);
     app.use('/user', userRouter);
-    app.use('/hashtag', hashTagRouter);
     app.use(errorHandler);
 
     app.listen(config.port, () => {

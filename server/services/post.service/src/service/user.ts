@@ -24,12 +24,8 @@ export class UserService {
     return this.UserModel.findById(id);
   }
 
-  public async getUser(id) {
-    const user = await this.findById(id);
-    if (!user) {
-      throw new NotFoundError(`User with the id ${id} does not exist`);
-    }
-    return user;
+  public isAdmin(user) {
+    return user.isAdmin;
   }
 
   public test() {

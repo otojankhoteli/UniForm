@@ -10,6 +10,7 @@ const category = new mongoose.Schema<ICategoryDTO>({
 
   name: {
     type: String,
+    unique: true,
     required: true,
   },
 
