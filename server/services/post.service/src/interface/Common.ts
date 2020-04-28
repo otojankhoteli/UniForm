@@ -2,6 +2,12 @@
 export interface Page {
   skip: number,
   limit: number,
+  sort: Sort,
 }
 
-export type SortBy = 'date' | 'rating';
+interface Sort {
+  by: 'date' | 'rating',
+  dir: 'asc' | 'desc'
+}
+
+// export type SortBy = 'date' | 'rating';

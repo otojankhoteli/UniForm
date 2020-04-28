@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import {IPost} from '../../interface/Post';
 
 const post = new mongoose.Schema({
-  user: {
+  author: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User',
@@ -21,6 +21,10 @@ const post = new mongoose.Schema({
   hashTags: [{
     type: String,
     index: true,
+  }],
+
+  userTags: [{
+    type: String,
   }],
 
   category: {

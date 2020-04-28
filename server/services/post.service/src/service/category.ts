@@ -3,43 +3,63 @@ import {Document, Model} from 'mongoose';
 import {ICategoryDTO, ICategorySearchModel} from '../interface/Category';
 import {UserService} from './user';
 import NotFoundError from '../util/error/NotFoundError';
+import {Logger} from 'winston';
+import {IUser} from '../interface/User';
+
 
 @Service()
 export class CategoryService {
+  private readonly skip = 0;
+  private readonly limit = 10;
+
   constructor(
       @Inject('CategoryModel')
       private CategoryModel: Model<ICategoryDTO & Document>,
-      private UserService: UserService = Container.get('UserService'),
+      @Inject('UserModel')
+      private UserModel: Model<IUser & Document>,
+      @Inject('logger')
+      private logger: Logger,
   ) {
   }
 
   public async save(category: ICategoryDTO) {
-    try {
-      // const user = await this.UserService.getUser(category.author);
-      // category.isMain = user.isAdmin;
-      return this.CategoryModel.create(category);
-    } catch (e) {
-      if (e instanceof NotFoundError) {
-        throw new NotFoundError(`Can not create category: ${e.message}`);
-      }
+    const user = await this.UserModel.findById(category.author);
+    if (!user) {
+      throw new NotFoundError(`Can not create category, the user with the id: ${category.author} does not exist`);
     }
+    category.isMain = user.role === 'admin';
+    return this.CategoryModel.create(category);
   }
 
-  public async findTop(options: ICategorySearchModel) {
+  public async search(options: ICategorySearchModel) {
+    const queryBuilder = this.CategoryModel.find();
+    return 0;
+  }
+
+  public async findById(id: string) {
+    return this.CategoryModel.findById(id);
+  }
+
+  public async findTop(query: ICategorySearchModel) {
+    if (!query.skip) query.skip = this.skip;
+    if (!query.limit) query.limit = this.limit;
+
     return this.CategoryModel.find()
         .sort({name: 'desc'})
-        .skip(options.skip)
-        .limit(options.limit);
+        .skip(query.skip)
+        .limit(query.limit);
   }
 
-  public async findByPrefix(options: ICategorySearchModel) {
-    // return this.CategoryModel.find({name: {$regex: new RegExp(`^${options.name}`)}})
+  public async findByPrefix(query: ICategorySearchModel) {
+    if (!query.skip) query.skip = this.skip;
+    if (!query.limit) query.limit = this.limit;
+
     return this.CategoryModel
         .find()
         .where('name')
-        .regex(new RegExp(`^${options.name}`))
-        .skip(options.skip)
-        .limit(options.limit);
+        .regex(new RegExp(`^${query.name}`))
+        .skip(query.skip)
+        .limit(query.limit);
   }
 
   public test() {

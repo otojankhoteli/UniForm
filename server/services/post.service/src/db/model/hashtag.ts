@@ -8,7 +8,6 @@ const hashtag = new mongoose.Schema({
     required: true,
     index: true,
   },
-  posts: {type: mongoose.Schema.Types.ObjectId, ref: 'Post'},
 });
 
 

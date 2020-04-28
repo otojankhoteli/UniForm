@@ -4,9 +4,11 @@ import {Container} from 'typedi';
 import {CategoryService} from '../../service/category';
 import {ICategoryDTO, ICategorySearchModel} from '../../interface/Category';
 import {PostService} from '../../service/post';
+import {pageParser} from '../middleware/util';
 
 const router = Router();
 
+router.use('/', pageParser);
 
 router.post('/', asyncMw(async (req, res, _) => {
   const categoryService = Container.get(CategoryService);
@@ -25,8 +27,8 @@ router.get('/', asyncMw(async (req, res, _) => {
 }));
 
 router.get('/posts', asyncMw(async (req, res, _) => {
-  // todo get category posts
   const postService = Container.get(PostService);
+  res.send(await postService.getCategoryPosts({...req.query}));
 }));
 
 

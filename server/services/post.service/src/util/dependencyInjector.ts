@@ -16,7 +16,6 @@ export default () => {
     Container.set('HashTagModel', HashTagModel);
     Container.set('Rabbit', rabbit);
     Container.set('EventEmitter', new EventEmitter());
-    Container.set('UserService', new UserService(Container.get('UserModel')));
     Container.set('logger', logger);
     logger.info('Agenda injected into container');
   } catch (e) {

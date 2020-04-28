@@ -5,15 +5,15 @@ import {Document, Model} from 'mongoose';
 import {IAuthenticatedUser} from '../interface/authenticatedUser';
 import ApplicationError from '../util/error/ApplicationError';
 import {config} from '../config/index';
-import {Emitter} from 'event-emitter';
 import {Events} from '../subscriber/event';
+import {EventEmitter} from 'events';
 
 @Service()
 export class AuthService {
   constructor(
       @Inject('UserModel') private UserModel: Model<IUser & Document>,
       @Inject('AuthenticatedUserModel') private AuthenticatedUserModel: Model<IAuthenticatedUser & Document>,
-      @Inject('EventEmitter') private eventEmitter: Emitter,
+      @Inject('EventEmitter') private eventEmitter: EventEmitter,
   ) {
   }
 

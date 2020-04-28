@@ -1,4 +1,4 @@
-import {Page, SortBy} from './Common';
+import {Page} from './Common';
 
 export interface ICategoryDTO {
   author: string,
@@ -10,5 +10,4 @@ export interface ICategoryDTO {
 
 export interface ICategorySearchModel extends Page {
   name: string,
-  sortBy?: SortBy,
 }
