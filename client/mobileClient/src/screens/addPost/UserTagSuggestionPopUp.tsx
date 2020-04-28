@@ -14,7 +14,6 @@ interface Props {
   onSelect: (selectedTag: string) => void;
 }
 export default function UserTagSuggestionPopUp({ userTags, isVisible, onSelect }: Props) {
-
   return isVisible && userTags.length > 0 ?
     <View style={styles.container}>
       {userTags.map(hashTag => <TouchableOpacity key={hashTag.username}
@@ -31,7 +30,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(250, 256, 256, 1)',
     borderRadius: 10,
     elevation: 10,
-    justifyContent: "center",
     marginLeft: 10,
     marginTop: 10,
     padding: 5,

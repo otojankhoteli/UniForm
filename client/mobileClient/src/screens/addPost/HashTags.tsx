@@ -1,7 +1,9 @@
 import React from 'react';
 import { Text, Badge } from "react-native-elements";
 import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { PostHashTag } from './HashTagSuggestionPopUp';
+import { MainColor } from '../../shared/Const';
 
 interface Props {
   hashTags: PostHashTag[]
@@ -14,13 +16,13 @@ export default function HashTags({ hashTags }: Props) {
 
   return <View style={styles.container}>
     <Text style={styles.title}>#tags:</Text>
-    <View style={styles.hashTagsContainer}>
+    <ScrollView horizontal style={styles.hashTagsContainer}>
       {hashTags.map(hashTag => <Badge status="primary"
         key={hashTag.tag}
         badgeStyle={[styles.badgeStyle, getBadgeAdditionalStyles(hashTag.isVerified)]}
         textStyle={styles.badgeText}
         value={hashTag.tag} />)}
-    </View>
+    </ScrollView>
   </View>;
 }
 const styles = StyleSheet.create({
@@ -29,16 +31,18 @@ const styles = StyleSheet.create({
   },
   badgeText: { marginBottom: 6, marginLeft: 10, marginRight: 10, marginTop: 3 },
   container: {
-
+    height: 90
   },
   hashTagsContainer: {
     display: "flex",
     flexDirection: "row",
-    margin: 10
+    margin: 10,
+    minHeight: 30
   },
   title: {
+    color: MainColor,
     fontSize: 25,
-    marginLeft: 20,
-    marginTop: 20,
+    marginLeft: 10,
+    marginTop: 20
   }
 });

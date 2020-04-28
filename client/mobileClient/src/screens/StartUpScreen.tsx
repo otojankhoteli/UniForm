@@ -7,7 +7,17 @@ import { useGlobalState } from "../shared/globalState/AppContext";
 import { useAccount } from "../shared/persist/PersistHooks";
 import AddPostScreen from "./addPost/AddPostScreen";
 import HomeScreen from "./home/HomeScreen";
+import ChooseCategoryScreen from "./postCategories/ChooseCategoryScreen";
+import { CategoryViewModel } from "../api/categories/CategoriesApiModel";
+import { useTokenRefreshHandler } from "../shared/auth/AuthHook";
 
+export type RootStackParamList = {
+  Login: undefined;
+  Home: undefined;
+  AddPost: { category: CategoryViewModel };
+  ChooseCategory: undefined;
+  Feed: { sort: 'latest' | 'top' } | undefined;
+};
 const Stack = createStackNavigator();
 
 export default function StartUpScreen() {
@@ -30,6 +40,11 @@ export default function StartUpScreen() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        {/* <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        /> */}
         {!account ? (
           <Stack.Screen
             name="Login"
@@ -47,6 +62,11 @@ export default function StartUpScreen() {
           name="AddPost"
           component={AddPostScreen}
           options={{ headerTitle: "Add Post" }}
+        />
+        <Stack.Screen
+          name="ChooseCategory"
+          component={ChooseCategoryScreen}
+          options={{ headerTitle: "Choose Category" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

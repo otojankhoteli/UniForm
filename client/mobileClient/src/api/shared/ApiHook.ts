@@ -65,6 +65,7 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
   includeAuthroize = true,
   authorizeToken: string = undefined
 ): PostApiHookResult<TRequest, TResponse> {
+  console.log("usePostApi")
   const [requestBody, setRequestBody] = useState<TRequest | undefined>(undefined);
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
     isError: false

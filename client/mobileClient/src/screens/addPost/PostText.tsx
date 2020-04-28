@@ -1,6 +1,6 @@
 import React, { useState, useEffect, memo, useCallback, useMemo } from "react";
-import { View, StyleProp, ViewStyle, NativeSyntheticEvent, TextInputSelectionChangeEventData } from "react-native";
-import { Input, Text } from "react-native-elements";
+import { View, StyleProp, ViewStyle, NativeSyntheticEvent, TextInputSelectionChangeEventData, Text, StyleSheet, TextInput } from "react-native";
+import { Input } from "react-native-elements";
 import { PostHashTag, HashTagSuggestionPopUp } from "./HashTagSuggestionPopUp";
 import UserTagSuggestionPopUp, { UserTag } from "./UserTagSuggestionPopUp";
 import { findFirst } from "../../shared/Utils";
@@ -13,10 +13,11 @@ interface Props {
   style?: StyleProp<ViewStyle>;
   placeHolder?: string;
   hashTags: PostHashTag[];
+  symbolLimit?: number;
   userTags: UserTag[];
   onHashTagChange: (searchText: string) => void;
   onUserTagChange: (searchText: string) => void;
-  updateHashTags: (tags: string[]) => void;
+  updateHashTags?: (tags: string[]) => void;
   onTextChange?: (text: string) => void;
 }
 
@@ -38,14 +39,16 @@ const initialState: State = {
   selection: { end: 0, start: 0 }
 };
 
+const SymbolLimit = 400;
 // eslint-disable-next-line no-useless-escape
 const regexForHashTag = /((?:#[^#\r\n\ \@]*){1})$/;
 // eslint-disable-next-line no-useless-escape
 const regexUserTag = /((?:@[^@\r\n\ \#]*){1})$/;
 const delimiters = [typeof hashTagSymbol, typeof userTagSymbol, ' '];
-export const PostText = memo(({ style, userTags, hashTags, placeHolder, onUserTagChange, onHashTagChange, updateHashTags, onTextChange }: Props) => {
+export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLimit, onUserTagChange, onHashTagChange, updateHashTags, onTextChange }: Props) => {
   const [state, setState] = useState(initialState);
-  const hashTagsInText = useMemo(() => state.textNodes.filter(n => n.type === "#").map(n => n.value), [state.textNodes]);
+  const hashTagsInText = useMemo(() => state.textNodes.filter(n => n.type === "#" && n.value.length > 1).map(n => n.value), [state.textNodes]);
+
 
   useEffect(() => {
     if (state.activeNode) {
@@ -66,7 +69,9 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, onUserTa
           break;
       }
     }
-    updateHashTags(hashTagsInText);
+    if (updateHashTags) {
+      updateHashTags(hashTagsInText);
+    }
     onTextChange(state.text);
   }, [state]);
 
@@ -97,7 +102,7 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, onUserTa
       const activeNode: UserTagNode = { value: match, startIndex: endIndex - match.length, endIndex, type: "@" };
       setState(prevState => ({ ...prevState, activeNode, text, isTextUpdated: false, textNodes, selection }));
     } else {
-      setState(prevState => ({ ...prevState, text, isTextUpdated: false, textNodes, activeNode: undefined, selection }));
+      setState(prevState => ({ ...prevState, activeNode: undefined, text, isTextUpdated: false, textNodes, selection }));
     }
   }, [state]);
 
@@ -109,6 +114,9 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, onUserTa
     const end = state.text.substring(active.endIndex, state.text.length);
     const text = `${start}${middle}${end}`;
     const textNodes = extractNodesFromInputText(text);
+    if (state.text.length + middle.length > (SymbolLimit || symbolLimit)) {
+      return;
+    }
     setState({
       ...state, text, textNodes,
       activeNode: { value: middle, startIndex: active.startIndex, endIndex: active.startIndex + middle.length, type: textNodeType },
@@ -126,22 +134,45 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, onUserTa
     tagSelect(state, selectedTag, "@")
   }, [state]);
 
-  const getIsSuggestionVisible = (type: TextNodeType) => state.activeNode
+  const getIsSuggestionVisible = useCallback((type: TextNodeType) => state.activeNode
     && state.activeNode.type === type
     && state.selection.end <= state.activeNode.endIndex
-    && state.selection.end >= state.activeNode.startIndex;
-
+    && state.selection.end >= state.activeNode.startIndex
+    && !(type === "#" ?
+      hashTags.length === 1 && state.activeNode.value === (hashTagSymbol + hashTags[0].tag) :
+      userTags.length === 1 && state.activeNode.value === (userTagSymbol + userTags[0].username)), [state, hashTags]);
 
   return (
     <View style={style}>
-      <Input selection={state.selection} onSelectionChange={onSelectionChange} multiline onChangeText={onChangeText} placeholder={placeHolder}>
+      <TextInput style={styles.inputStyle} underlineColorAndroid="transparent" selection={state.selection} onSelectionChange={onSelectionChange} multiline onChangeText={onChangeText} placeholder={placeHolder} maxLength={symbolLimit || SymbolLimit}>
         <TextWithTags nodes={state.textNodes} />
-      </Input>
-      <HashTagSuggestionPopUp isVisible={getIsSuggestionVisible("#")} hashTags={hashTags} onSelect={onHashTagSelect} />
-      <UserTagSuggestionPopUp isVisible={getIsSuggestionVisible("@")} userTags={userTags} onSelect={onUserTagSelect} />
+      </TextInput>
+      <View style={styles.textBottomPanel}>
+        <View style={styles.textBottomActionContainer}>
+          <HashTagSuggestionPopUp isVisible={getIsSuggestionVisible("#")} hashTags={hashTags} onSelect={onHashTagSelect} />
+          <UserTagSuggestionPopUp isVisible={getIsSuggestionVisible("@")} userTags={userTags} onSelect={onUserTagSelect} />
+          <Text style={styles.textSymbolCount}>{state.text.length}/{symbolLimit || SymbolLimit}</Text>
+        </View>
+      </View>
     </View>
   );
 });
-
+const styles = StyleSheet.create({
+  inputStyle: {
+    fontSize: 15,
+    marginLeft: 10
+  },
+  textBottomActionContainer: {
+    flexDirection: "row",
+  },
+  textBottomPanel: {
+    height: 150
+  },
+  textSymbolCount: {
+    marginLeft: "auto",
+    marginRight: 5,
+    marginTop: 5
+  }
+});
 
 

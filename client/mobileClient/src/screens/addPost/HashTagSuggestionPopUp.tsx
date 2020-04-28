@@ -35,16 +35,17 @@ export const HashTagSuggestionPopUp = ({ hashTags, isVisible, onSelect }: Props)
 };
 
 const styles = StyleSheet.create({
-
   container: {
     backgroundColor: 'rgba(250, 256, 256, 1)',
     borderRadius: 10,
+    display: "flex",
     elevation: 10,
-    justifyContent: "center",
+    flexDirection: "column",
     marginLeft: 10,
     marginTop: 10,
     padding: 5,
-    width: 100
+    width: 100,
+    zIndex: 10000
   },
   countContainer: {
     alignItems: "center",

@@ -1,0 +1,48 @@
+import React, { useState } from 'react'
+import { View } from 'react-native'
+import { StackNavigationProp } from '@react-navigation/stack'
+import { useNavigation } from '@react-navigation/native'
+import { CategoryViewModel } from '../../api/categories/CategoriesApiModel'
+import CategoryList from './CategoryList'
+import SearchBarCustom from '../../shared/components/SearchBar'
+import { RootStackParamList } from '../StartUpScreen'
+import { useTokenRefreshHandler } from '../../shared/auth/AuthHook'
+
+type ChooseCategoryScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'ChooseCategory'
+>;
+const categoriesInitial: CategoryViewModel[] = [{ id: "1", isVerified: true, name: "Global" },
+{ id: "2", isVerified: true, name: "Macs" },
+{ id: "3", isVerified: true, name: "Esm1" },
+{ id: "4", isVerified: true, name: "Esm2" },
+{ id: "5", isVerified: true, name: "Esm3" },
+{ id: "6", isVerified: true, name: "Esm4" },
+{ id: "7", isVerified: true, name: "Esm5" },
+{ id: "8", isVerified: true, name: "Esm6" },
+{ id: "9", isVerified: true, name: "Esm7" },
+{ id: "10", isVerified: true, name: "Esm8" },
+{ id: "11", isVerified: true, name: "Esm9" },
+{ id: "12", isVerified: true, name: "Esm10" },
+{ id: "13", isVerified: true, name: "Esm11" },
+{ id: "14", isVerified: true, name: "Test" }]
+export default function ChooseCategoryScreen() {
+  const [categories, setCategories] = useState<CategoryViewModel[]>(categoriesInitial);
+  const navigation = useNavigation<ChooseCategoryScreenNavigationProp>();
+  useTokenRefreshHandler();
+
+  const onCategorySelect = (category: CategoryViewModel) => {
+    navigation.navigate("AddPost", {
+      category
+    });
+  }
+
+  const onSearchChange = (text: string) => {
+    setCategories(categoriesInitial.filter(category => category.name.toLowerCase().indexOf(text.toLowerCase()) !== -1));
+  }
+
+  return <View>
+    <SearchBarCustom onChangeText={onSearchChange} />
+    <CategoryList onSelect={onCategorySelect} categories={categories} />
+  </View>
+}
