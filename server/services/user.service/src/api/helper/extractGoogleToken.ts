@@ -1,10 +1,10 @@
-import {IUser} from '../../interface/user';
-import {google} from 'googleapis';
+import { IUser } from '../../interface/user';
+import { google } from 'googleapis';
 
-export default async (accessToken: string) => {
+export default async (accessToken: string): Promise<IUser> => {
   const OAuth2 = google.auth.OAuth2;
   const oauth2Client = new OAuth2();
-  oauth2Client.setCredentials({access_token: accessToken});
+  oauth2Client.setCredentials({ access_token: accessToken });
   const oauth2 = google.oauth2({
     auth: oauth2Client,
     version: 'v2',

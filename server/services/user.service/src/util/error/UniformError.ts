@@ -2,14 +2,14 @@
  * AppError
  */
 export default class UniformError extends Error {
-  protected status: any;
+  protected status: number;
 
   /**
    * AppError default constructor
    * @param {string} [message]
    * @param {number} [status]
    */
-  constructor(message, status?) {
+  constructor(message: string, status?: number) {
     super();
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;

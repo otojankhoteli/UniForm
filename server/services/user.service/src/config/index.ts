@@ -16,7 +16,7 @@ export const config = {
     refreshSecret: 'refreshSecret',
     refreshTokenLength: 20,
     refreshTokenValid: 30, // days
-    tokenValid: 2, // minutes
+    tokenValid: 2 * 60000, // minutes. 60 0000 becaue of milliseconds
   },
   rabbitmq: {
     url: process.env.RABBITMQ_URL ?? 'localhost',
@@ -25,5 +25,3 @@ export const config = {
     pass: process.env.RABBITMQ_PASS ?? 'guest',
   },
 };
-
-// TODO change config from buildable file to cfg file

@@ -1,6 +1,8 @@
-import decodeToken from '../helper/decodeToken';
+import { decodeToken } from '../helper/token';
+import ApplicationError from '../../util/error/ApplicationError';
+import { Request } from 'express-serve-static-core';
 
-const getTokenFromHeader = (req) => {
+const getTokenFromHeader = (req: Request): string => {
   if (
     (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Token') ||
     (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer')
@@ -10,9 +12,10 @@ const getTokenFromHeader = (req) => {
   return null;
 };
 
-// TODO identify where to put logged in user info
-export default (req, res, next) => {
+export default (req, _, next): void => {
   const token = getTokenFromHeader(req);
+  if (token === null)
+    throw new ApplicationError("no token provided");//TODO change to relevant error type
   req.currentUser = decodeToken(token);
-  res.json(decodeToken(token));
+  next();
 };
