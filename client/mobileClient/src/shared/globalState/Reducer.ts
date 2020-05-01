@@ -13,6 +13,11 @@ export function reducer(state: State, action: AppAction): State {
         ...state,
         exception: action.exception
       };
+    case "updateRefreshToken":
+      return {
+        ...state,
+        account: { ...state.account, token: action.accessToken }
+      };
     default:
       return state;
   }

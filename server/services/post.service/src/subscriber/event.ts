@@ -1,4 +1,4 @@
-export default {
+export const Events = {
   post: {
     new: 'newPost',
   },

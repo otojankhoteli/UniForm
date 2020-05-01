@@ -8,18 +8,14 @@ import { authRouter } from './api/route/auth';
 import openMongoConnection from './db/mongo.connection';
 import { connectRabbit } from './message.queue';
 import { registerHandlers } from './subscriber/handler';
-
 const startApp = async () => {
   try {
-    const app = express();
-
     fillContainer();
-
-
-    await openMongoConnection();
     registerHandlers();
     await connectRabbit();
+    await openMongoConnection();
 
+    const app = express();
 
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));

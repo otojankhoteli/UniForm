@@ -12,6 +12,19 @@ interface SetLoggedInUserAction {
   account: PersistAccount;
 }
 
+interface UpdateRefreshTokenAction {
+  type: "updateRefreshToken";
+  accessToken: string;
+}
+
+interface RefreshAccessTokenAction {
+  type: "refreshAccessToken";
+  expiredAccessToken: string;
+  refreshToken: string;
+}
+
 export type AppAction =
   | SetLoggedInUserAction
+  | UpdateRefreshTokenAction
   | SetErrorAction
+  | RefreshAccessTokenAction

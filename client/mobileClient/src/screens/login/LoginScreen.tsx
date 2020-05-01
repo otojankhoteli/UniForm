@@ -5,12 +5,14 @@ import {
   View,
   StatusBar,
   ImageBackground,
+  TextInput,
 } from "react-native";
 import { Button, SocialIcon } from "react-native-elements";
 import * as GoogleSignIn from "expo-google-sign-in";
 import { MainColor } from "../../shared/Const";
 import { useGlobalState } from "../../shared/globalState/AppContext";
 import { useSignUp } from "../../api/auth/AuthApiHook";
+import { useTokenRefreshHandler } from "../../shared/auth/AuthHook";
 // const BackgroundImage = require('../../../assets/backgroundImage.jpg');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const BackgroundImage2 = require("../../../assets/backgroundImage2.jpg");
@@ -19,9 +21,14 @@ export default function LoginScreen() {
   const [, dispatch] = useGlobalState();
   const [user, setUser] = useState<GoogleSignIn.GoogleUser | null>();
   const { post } = useSignUp();
+  useTokenRefreshHandler();
 
   useEffect(() => {
-    GoogleSignIn.initAsync({})
+    alert(`useEffect${GoogleSignIn.SCOPES.PROFILE}${GoogleSignIn.SCOPES.EMAIL}${GoogleSignIn.SCOPES.OPEN_ID}`)
+    // {
+    //   scopes: [GoogleSignIn.SCOPES.PROFILE, GoogleSignIn.SCOPES.EMAIL, GoogleSignIn.SCOPES.OPEN_ID]
+    // }
+    GoogleSignIn.initAsync()
       .then(async () => {
         await fetchUser();
       })
@@ -37,12 +44,12 @@ export default function LoginScreen() {
   }, []);
 
   useEffect(() => {
-    if (user) {
-      post({
-        googleAccessToken: user.auth.accessToken,
-        googleClientId: user.auth.clientId
-      });
-    }
+    // if (user) {
+    //   post({
+    //     googleAccessToken: user.auth.accessToken,
+    //     googleClientId: user.auth.clientId
+    //   });
+    // }
   }, [user])
 
   const fetchUser = async () => {
@@ -60,11 +67,13 @@ export default function LoginScreen() {
   const signInAsync = async () => {
     try {
       await GoogleSignIn.askForPlayServicesAsync();
-      const { type } = await GoogleSignIn.signInAsync();
+      const { type, user } = await GoogleSignIn.signInAsync();
       if (type === "success") {
-        await fetchUser();
+        // await fetchUser();
+        setUser(user);
       }
     } catch (exception) {
+      alert(`error in signInAsync${JSON.stringify(exception)}`);
       dispatch({
         type: "setError",
         exception: {
@@ -85,11 +94,12 @@ export default function LoginScreen() {
 
   return (
     <ImageBackground
+      resizeMode="cover"
       source={BackgroundImage2}
       style={styles.backgroundImage}
       blurRadius={2}
     >
-      <Text style={styles.welcomeText}>Welcome</Text>
+      <Text style={styles.welcomeText}>Welcome8</Text>
       <View style={styles.signInButtons}>
         <Button
           type="solid"
@@ -106,10 +116,9 @@ export default function LoginScreen() {
           onPress={onPress}
         />
       </View>
-      <Text>{user && user.auth && user.auth.accessToken}</Text>
-      <Text>{user && user.photoURL}</Text>
-      <Text>{user && user.firstName}</Text>
-      <Text>{user && user.lastName}</Text>
+      <TextInput style={{ borderRadius: 1, borderColor: "red" }} multiline>{user && JSON.stringify(user)}</TextInput>
+      {/* <TextInput style={{ borderRadius: 1, borderColor: "red" }} multiline>{user && user.auth && user.auth.accessToken}</TextInput> */}
+      {/* <TextInput style={{ borderRadius: 1, borderColor: "red" }} multiline>{user && user.serverAuthCode}</TextInput> */}
     </ImageBackground>
   );
 }

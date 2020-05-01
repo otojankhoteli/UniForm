@@ -3,12 +3,14 @@ import { IUser } from '../interface/user';
 import getRole from './util/helper/getRole';
 import { Document, Model } from 'mongoose';
 import { Emitter } from 'event-emitter';
+import {Events} from '../subscriber/event';
+import {EventEmitter} from 'events';
 
 @Service()
 export class AuthService {
   constructor(
-    @Inject('UserModel') private UserModel: Model<IUser & Document>,
-    @Inject('EventEmitter') private eventEmitter: Emitter,
+      @Inject('EventEmitter') private eventEmitter: Emitter,
+      @Inject('UserModel') private UserModel: Model<IUser & Document>,
   ) {
   }
 
@@ -18,6 +20,8 @@ export class AuthService {
     const user = await this.UserModel.findOneAndUpdate({ email: userInputDTO.email },
       { ...userInputDTO, role: role },
       { upsert: true });
+    this.eventEmitter.emit(Events.user.signUp, user);//TODO add 
+
     let today = new Date();
 
     // const authenticatedUser = this.AuthenticatedUserModel.findOneAndUpdate({ email: userInputDTO.email },

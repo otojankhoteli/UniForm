@@ -8,6 +8,7 @@ const mongoURI = `mongodb://${user}:${password}@${host}:${port}/${db}?authSource
 const options = {
   useNewUrlParser: true,
   useCreateIndex: true,
+  useFindAndModify: false,
   useUnifiedTopology: true,
   poolSize: 5,
   bufferMaxEntries: 0,

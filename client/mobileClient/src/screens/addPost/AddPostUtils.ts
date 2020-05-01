@@ -7,6 +7,7 @@ export interface TextNodeBase {
 }
 export interface HashTagNode extends TextNodeBase {
   type: typeof hashTagSymbol;
+  // isVerified: boolean;
 }
 export interface UserTagNode extends TextNodeBase {
   type: typeof userTagSymbol;
@@ -17,7 +18,6 @@ export interface PlainTextNode extends TextNodeBase {
 export const hashTagSymbol = "#";
 export const userTagSymbol = "@";
 export const plainText = "PlainText"
-
 
 export function extractNodesFromInputText(text: string): TextNode[] {
   const nodes: TextNode[] = [];

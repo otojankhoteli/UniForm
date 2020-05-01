@@ -2,8 +2,8 @@ import {IUser} from '../interface/user';
 import {Container} from 'typedi';
 import {UserPublisher} from '../message.queue/UserPublisher';
 import logger from '../util/logger';
-import {Emitter} from 'event-emitter';
 import {Events} from './event';
+import {EventEmitter} from 'events';
 
 
 const onUserSignUp = (user: IUser) => {
@@ -14,7 +14,7 @@ const onUserSignUp = (user: IUser) => {
 
 
 const registerHandlers = () => {
-  const emitter: Emitter = Container.get('EventEmitter');
+  const emitter: EventEmitter = Container.get('EventEmitter');
 
   emitter.on(Events.user.signUp, onUserSignUp);
 };
