@@ -5,7 +5,7 @@ import UniformError from './UniformError';
  * @param {string} [message]
  */
 export default class ApplicationError extends UniformError {
-  constructor(message, status?) {
+  constructor(message: string, status?: number) {
     super(message, status);
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;

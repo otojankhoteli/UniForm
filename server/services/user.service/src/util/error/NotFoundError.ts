@@ -6,7 +6,7 @@ export default class NotFoundError extends UniformError {
    * @param {number} [status]
    * @param {string} [message]
    */
-  constructor(message, status?) {
+  constructor(message: string, status?: number) {
     super(message, status);
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;

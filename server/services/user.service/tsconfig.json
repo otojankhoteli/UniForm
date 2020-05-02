@@ -6,8 +6,9 @@
       "esnext.asynciterable"
     ],
     "typeRoots": [
+      "./types",
       "./node_modules/@types",
-      "./src/types"
+      "./src/types",
     ],
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
@@ -22,6 +23,9 @@
     "noEmit": false,
     "esModuleInterop": true
   },
+  "files": [
+    "./types/express/index.d.ts"
+  ],
   //  "include": [
   //    "./src/**/*"
   //  ],
