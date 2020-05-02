@@ -5,6 +5,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
+    "docker:debug": "nodemon --config nodemon.docker.json",
+    "watch": "tsc -w -p .",
     "start:debug": "node --inspect=0.0.0.0 -r ts-node/register index.ts",
     "start:nodemon": "nodemon",
     "build": "rm -r build; tsc",

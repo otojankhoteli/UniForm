@@ -1,0 +1,74 @@
+version: "3"
+
+services:
+  user.service:
+    container_name: user.service
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - MONGO_HOST=mongo-user
+      - MONGO_PORT=27017
+    build:
+      context: ./services/user.service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/user.service:/app
+      - ./services/user.service/build:/app/build
+    ports:
+      - 3000:3000
+      - 9222:9222
+    command: yarn docker:debug
+    depends_on:
+      - mongo-user
+      - rabbitmq
+
+  mongo-user:
+    container_name: mongo-user
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=user.mongodb
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/uniform/user-service/data:/data/db
+    ports:
+      - 27017:27017
+
+  post.service:
+    container_name: post.service
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - MONGO_HOST=mongo-post
+      - MONGO_PORT=27017
+    build:
+      context: ./services/post.service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/post.service:/app
+      - ./services/post.service/build:/app/build
+    # volumes:
+    #   - ./services/post.service:/code
+    ports:
+      - 3001:3001
+      - 9223:9223
+    command: yarn docker:debug
+    depends_on:
+      - mongo-post
+      - rabbitmq
+
+  mongo-post:
+    container_name: mongo-post
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/uniform/post-service/data:/data/db
+    ports:
+      - 27018:27017
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
+      - 5672:5672

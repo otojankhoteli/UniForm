@@ -79,3 +79,5 @@ docker-compose.env
 # Serverless directories
 .serverless
 
+server/.vscode/launch.json
+server/.vscode/tasks.json

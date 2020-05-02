@@ -1,0 +1,7 @@
+{
+  "watch": ["build"],
+  "ext": "js",
+  "legacyWatch": true,
+  "nolazy": true,
+  "exec": "node --inspect-brk=0.0.0.0:9222 ./build/index.js"
+}
