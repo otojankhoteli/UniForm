@@ -24,10 +24,6 @@ export default function LoginScreen() {
   useTokenRefreshHandler();
 
   useEffect(() => {
-    alert(`useEffect${GoogleSignIn.SCOPES.PROFILE}${GoogleSignIn.SCOPES.EMAIL}${GoogleSignIn.SCOPES.OPEN_ID}`)
-    // {
-    //   scopes: [GoogleSignIn.SCOPES.PROFILE, GoogleSignIn.SCOPES.EMAIL, GoogleSignIn.SCOPES.OPEN_ID]
-    // }
     GoogleSignIn.initAsync()
       .then(async () => {
         await fetchUser();

@@ -10,13 +10,15 @@ interface Props {
   category: CategoryViewModel
 }
 export default function CategoryListItem({ category, onCategoryClick }: Props) {
-  return <TouchableOpacity style={styles.container} onPress={() => onCategoryClick(category)}>
-    <View style={styles.innerContainer}>
-      <Text style={styles.categoryTitle}>u/{category.name}</Text>
-      {category.isVerified ? <Icon size={15} containerStyle={styles.verifiedIcon} color="#33A6EB" name="certificate" type="font-awesome" /> : null}
-    </View>
+  return <View style={styles.container}>
+    <TouchableOpacity onPress={() => onCategoryClick(category)}>
+      <View style={styles.innerContainer}>
+        <Text style={styles.categoryTitle}>u/{category.name}</Text>
+        {category.isVerified ? <Icon size={15} containerStyle={styles.verifiedIcon} color="#33A6EB" name="certificate" type="font-awesome" /> : null}
+      </View>
+    </TouchableOpacity>
     <HorizontalLine mode="fill" />
-  </TouchableOpacity>;
+  </View>
 }
 const styles = StyleSheet.create({
   categoryTitle: {
@@ -25,7 +27,7 @@ const styles = StyleSheet.create({
     marginRight: 5
   },
   container: {
-    height: 50,
+    height: 40,
     justifyContent: "center",
     padding: 10
   },
