@@ -2,18 +2,17 @@ import { Inject, Service } from 'typedi';
 import { IUser } from '../interface/user';
 import getRole from './util/helper/getRole';
 import { Document, Model } from 'mongoose';
-import { Emitter } from 'event-emitter';
-import {Events} from '../subscriber/event';
-import {EventEmitter} from 'events';
+import { Events } from '../subscriber/event';
+import { EventEmitter } from 'events';
 
 @Service()
 export class AuthService {
   constructor(
-      @Inject('EventEmitter') private eventEmitter: Emitter,
-      @Inject('UserModel') private UserModel: Model<IUser & Document>,
+    @Inject('EventEmitter') private eventEmitter: EventEmitter,
+    @Inject('UserModel') private UserModel: Model<IUser & Document>,
   ) {
   }
-
+  
   public async logIn(userInputDTO: IUser): Promise<IUser> {
     const role = getRole(userInputDTO.email);
 

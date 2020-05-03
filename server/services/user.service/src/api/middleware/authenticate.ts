@@ -1,8 +1,7 @@
 import { decodeToken } from '../helper/token';
 import ApplicationError from '../../util/error/ApplicationError';
-import { Request } from 'express-serve-static-core';
 
-const getTokenFromHeader = (req: Request): string => {
+const getTokenFromHeader = (req): string => {
   if (
     (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Token') ||
     (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer')

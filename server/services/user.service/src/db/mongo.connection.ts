@@ -4,7 +4,8 @@ import logger from '../util/logger';
 
 const { host, port, db, user, password } = config.mongo;
 
-const mongoURI = `mongodb://${host}:${port}/${db}`;
+// const mongoURI = `mongodb://${host}:${port}/${db}`;
+const mongoURI = `mongodb://${user}:${password}@${host}:${port}/${db}?authSource=admin`;
 
 console.log(mongoURI);
 const options = {

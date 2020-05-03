@@ -1,4 +1,4 @@
-import {Page} from './Common';
+import { Page } from './Common';
 
 export interface IHashTag {
   name: string,

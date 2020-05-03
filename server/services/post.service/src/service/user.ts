@@ -1,6 +1,6 @@
-import {Service, Inject} from 'typedi';
-import {Document, Model} from 'mongoose';
-import {IUser} from '../interface/User';
+import { Service, Inject } from 'typedi';
+import { Document, Model } from 'mongoose';
+import { IUser } from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
 
 
@@ -8,12 +8,17 @@ import NotFoundError from '../util/error/NotFoundError';
 @Service()
 export class UserService {
   constructor(
-      @Inject('UserModel') private UserModel: Model<IUser & Document>,
+    @Inject('UserModel') private UserModel: Model<IUser & Document>,
   ) {
   }
 
   public async save(user: IUser) {
-    return this.UserModel.create(user);
+    let existingUser = await this.UserModel.findOne({ email: user.email });
+    if (!existingUser) {
+      existingUser = await this.UserModel.create(user)
+    }
+
+    return existingUser;
   }
 
   public async find(options) {
