@@ -1,6 +1,6 @@
 import React from 'react'
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
-import { Icon, Button } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
 import { CategoryViewModel } from '../../api/categories/CategoriesApiModel';
 import HorizontalLine from '../../shared/components/HorizontalLine';
 import { MainColor } from '../../shared/Const';

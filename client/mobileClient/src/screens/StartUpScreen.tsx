@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "./login/LoginScreen";
 import SplashScreen from "../shared/components/SplashScreen";
 import { useGlobalState } from "../shared/globalState/AppContext";
-import { useAccount } from "../shared/persist/PersistHooks";
+import { useAccount, useAccountPersist } from "../shared/persist/PersistHooks";
 import AddPostScreen from "./addPost/AddPostScreen";
 import HomeScreen from "./home/HomeScreen";
 import ChooseCategoryScreen from "./postCategories/ChooseCategoryScreen";
 import { CategoryViewModel } from "../api/categories/CategoriesApiModel";
+import DevelopmentLoginScreen from "./login/DevelopmentLoginScreen";
 import { useTokenRefreshHandler } from "../shared/auth/AuthHook";
+import { isMountedRef, navigationRef } from "../shared/navigation/RootNavigation";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -23,6 +24,9 @@ const Stack = createStackNavigator();
 export default function StartUpScreen() {
   const [, dispatch] = useGlobalState();
   const { isLoading, account } = useAccount();
+
+  useAccountPersist();
+  useTokenRefreshHandler();
 
   useEffect(() => {
     if (account) {
@@ -38,7 +42,7 @@ export default function StartUpScreen() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator>
         {/* <Stack.Screen
           name="Login"
@@ -48,15 +52,22 @@ export default function StartUpScreen() {
         {!account ? (
           <Stack.Screen
             name="Login"
-            component={LoginScreen}
+            component={DevelopmentLoginScreen}
             options={{ headerShown: false }}
           />
         ) : (
-            <Stack.Screen
-              name="Home"
-              component={HomeScreen}
-              options={{ headerShown: false }}
-            />
+            <>
+              <Stack.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{ headerShown: false }}
+              />
+              <Stack.Screen
+                name="Login"
+                component={DevelopmentLoginScreen}
+                options={{ headerShown: false }}
+              />
+            </>
           )}
         <Stack.Screen
           name="AddPost"
@@ -68,6 +79,7 @@ export default function StartUpScreen() {
           component={ChooseCategoryScreen}
           options={{ headerTitle: "Choose Category" }}
         />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

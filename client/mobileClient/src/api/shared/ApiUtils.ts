@@ -70,7 +70,7 @@ export function getUri<TResponseViewModel>(
   if (queries) {
     queries += "&";
   }
-  let paged = `${uri}?${queries}offSet=${request.offSet}&limit=${request.limit}`;
+  let paged = `${uri}?${queries}offSet=${request.skip}&limit=${request.limit}`;
   if (request.orderBy) {
     paged = `${paged}&orderBy=${request.orderBy.name} ${request.orderBy.ascending}`;
   }

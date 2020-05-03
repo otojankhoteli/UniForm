@@ -1,8 +1,7 @@
 export type ApiMethodType = "post" | "put" | "delete" | "get"
 
 export interface SignUpRequest {
-  googleClientId: string;
-  googleAccessToken: string;
+  accessToken: string;
   deviceId: string;
 }
 export interface SignUpResponse {

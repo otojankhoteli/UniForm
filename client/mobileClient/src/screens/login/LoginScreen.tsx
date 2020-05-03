@@ -21,7 +21,6 @@ export default function LoginScreen() {
   const [, dispatch] = useGlobalState();
   const [user, setUser] = useState<GoogleSignIn.GoogleUser | null>();
   const { post } = useSignUp();
-  useTokenRefreshHandler();
 
   useEffect(() => {
     GoogleSignIn.initAsync()

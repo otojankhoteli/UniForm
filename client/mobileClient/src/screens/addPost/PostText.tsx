@@ -6,13 +6,14 @@ import UserTagSuggestionPopUp, { UserTag } from "./UserTagSuggestionPopUp";
 import { findFirst } from "../../shared/Utils";
 import { hashTagSymbol, userTagSymbol, HashTagNode, UserTagNode, TextNode, extractNodesFromInputText, TextNodeType } from "./AddPostUtils";
 import { TextWithTags } from "./TextWithTags";
+import { HashtagViewModel } from "../../api/hashtags/HashtagsApiModel";
 
 
 
 interface Props {
   style?: StyleProp<ViewStyle>;
   placeHolder?: string;
-  hashTags: PostHashTag[];
+  hashTags: HashtagViewModel[];
   symbolLimit?: number;
   userTags: UserTag[];
   onHashTagChange: (searchText: string) => void;
@@ -139,7 +140,7 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLi
     && state.selection.end <= state.activeNode.endIndex
     && state.selection.end >= state.activeNode.startIndex
     && !(type === "#" ?
-      hashTags.length === 1 && state.activeNode.value === (hashTagSymbol + hashTags[0].tag) :
+      hashTags.length === 1 && state.activeNode.value === (hashTagSymbol + hashTags[0].name) :
       userTags.length === 1 && state.activeNode.value === (userTagSymbol + userTags[0].username)), [state, hashTags]);
 
   return (

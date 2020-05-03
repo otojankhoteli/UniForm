@@ -4,8 +4,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text } from 'react-native-elements'
 
 export interface PostHashTag {
-  tag: string;
-  isVerified: boolean;
+  name: string;
 }
 interface Props {
   isVisible: boolean;
@@ -25,10 +24,10 @@ export const HashTagSuggestionPopUp = ({ hashTags, isVisible, onSelect }: Props)
 
   return isVisibleInternal && hashTags.length > 0 ?
     <View style={styles.container}>
-      {hashTags.map(hashTag => <TouchableOpacity key={hashTag.tag}
-        onPress={() => onSelectInternal(hashTag.tag)}
+      {hashTags.map(hashTag => <TouchableOpacity key={hashTag.name}
+        onPress={() => onSelectInternal(hashTag.name)}
       >
-        <Text>{hashTag.tag}</Text>
+        <Text>{hashTag.name}</Text>
       </TouchableOpacity>)}
     </View>
     : null;

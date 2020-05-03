@@ -13,6 +13,8 @@ import ChooseCategoryPanel from "./ChooseCategoryPanel";
 import { RootStackParamList } from "../StartUpScreen";
 import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
 import { usePostCreate } from "../../api/posts/PostsApiHook";
+import { useHashtagByName } from "../../api/hashtags/HashtagsApiHook";
+import { HashtagViewModel } from "../../api/hashtags/HashtagsApiModel";
 
 type AddPostScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -25,11 +27,12 @@ interface SubmitState {
   category: CategoryViewModel;
 }
 const initialUserTags: UserTag[] = [{ userId: "test1", username: "ako" }, { userId: "test2", username: "bubuta" }, { userId: "test3", username: "janxeqsa" }];
-const initialPostTags: PostHashTag[] = [{ tag: "uni", isVerified: true }, { tag: "macs", isVerified: true }, { tag: "sagamocdo", isVerified: false }];
+const initialPostTags: HashtagViewModel[] = [{ name: "uni", }, { name: "macs", }, { name: "sagamocdo", }];
 export default function AddPostScreen() {
   const { post } = usePostCreate();
   const [userTags, setUserTags] = useState<UserTag[]>(initialUserTags);
-  const [postTags, setPostTags] = useState<PostHashTag[]>(initialPostTags);
+  const [postTags, setPostTags] = useState<HashtagViewModel[]>(initialPostTags);
+  const { result: hashTags, setRequestInfo } = useHashtagByName();
   const [submitState, setSubmitState] = useState<SubmitState>({
     category: undefined,
     isValid: false,
@@ -58,8 +61,16 @@ export default function AddPostScreen() {
   }, [route])
 
   const onHashTagChange = (searchText: string) => {
-    const filtered = initialPostTags.filter(tag => tag.tag.indexOf(searchText) !== -1);
-    setPostTags(filtered);
+    // const filtered = initialPostTags.filter(tag => tag.name.indexOf(searchText) !== -1);
+    // setPostTags(filtered);
+    console.log("searchText", searchText)
+    setRequestInfo(prev => ({
+      wait: false,
+      info: {
+        ...prev.info,
+        queryParams: [{ key: "name", value: searchText }]
+      }
+    }));
   }
 
   const onUserTagChange = (searchText: string) => {
@@ -85,7 +96,7 @@ export default function AddPostScreen() {
             onHashTagChange={onHashTagChange} onUserTagChange={onUserTagChange}
             onTextChange={setText}
             placeHolder="Your post text"
-            hashTags={postTags} userTags={userTags} />
+            hashTags={hashTags || []} userTags={userTags} />
         </ScrollView>
       </View>
 

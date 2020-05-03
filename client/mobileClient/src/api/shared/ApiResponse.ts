@@ -40,5 +40,5 @@ export interface GetRequestInfo<TViewModel> extends PagingOption  {
 }
 export interface PagingOption {
   limit: number;
-  offSet: number;
+  skip: number;
 }

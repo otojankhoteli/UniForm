@@ -6,7 +6,6 @@ import { CategoryViewModel } from '../../api/categories/CategoriesApiModel'
 import CategoryList from './CategoryList'
 import SearchBarCustom from '../../shared/components/SearchBar'
 import { RootStackParamList } from '../StartUpScreen'
-import { useTokenRefreshHandler } from '../../shared/auth/AuthHook'
 
 type ChooseCategoryScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -29,7 +28,6 @@ const categoriesInitial: CategoryViewModel[] = [{ id: "1", isVerified: true, nam
 export default function ChooseCategoryScreen() {
   const [categories, setCategories] = useState<CategoryViewModel[]>(categoriesInitial);
   const navigation = useNavigation<ChooseCategoryScreenNavigationProp>();
-  useTokenRefreshHandler();
 
   const onCategorySelect = (category: CategoryViewModel) => {
     navigation.navigate("AddPost", {

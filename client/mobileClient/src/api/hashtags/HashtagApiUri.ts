@@ -1,3 +1,3 @@
-import { CurrentHost } from "../shared/ApiUri";
+import { CurrentHost, PostHost } from "../shared/ApiUri";
 
-export const HashtagByNameUri = `${CurrentHost}hashtags`;
+export const HashtagByNameUri = `${PostHost}post/hashtag`;

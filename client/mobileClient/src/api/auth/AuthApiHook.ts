@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { usePostApi } from "../shared/ApiHook";
 import { SignUpRequest, SignUpResponse, RefreshTokenRequest, RefreshTokenResponse } from "./AuthApiModel";
 import { SignUpUri, RefreshTokenUri } from "./AuthApiUri";

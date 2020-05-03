@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, Badge } from "react-native-elements";
 import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -9,19 +9,25 @@ interface Props {
   hashTags: PostHashTag[]
 }
 export default function HashTags({ hashTags }: Props) {
+  const [state, setState] = useState(5);
+
+  useEffect(() => {
+    setState(state => state + 1);
+    setState(state => state + 1);
+  }, []);
 
   const getBadgeAdditionalStyles = (isVerified: boolean): StyleProp<ViewStyle> => {
     return isVerified ? { backgroundColor: "green" } : { backgroundColor: "#dacc37" };
   }
 
   return <View style={styles.container}>
-    <Text style={styles.title}>#tags:</Text>
+    <Text onPress={() => { setState(6); }} style={styles.title}>#tags:{state}</Text>
     <ScrollView horizontal style={styles.hashTagsContainer}>
       {hashTags.map(hashTag => <Badge status="primary"
-        key={hashTag.tag}
+        key={hashTag.name}
         badgeStyle={[styles.badgeStyle, getBadgeAdditionalStyles(hashTag.isVerified)]}
         textStyle={styles.badgeText}
-        value={hashTag.tag} />)}
+        value={hashTag.name} />)}
     </ScrollView>
   </View>;
 }
