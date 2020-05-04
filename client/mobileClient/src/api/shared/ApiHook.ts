@@ -3,7 +3,7 @@ import {
   ApiErrorResponse,
   GetRequestInfo
 } from "./ApiResponse";
-import { PagingLimit, PagingOffset as PagingSkip } from "./ApiConst";
+import { PagingLimit, PagingSkip } from "./ApiConst";
 import {
   getWithAuthorizeHeader,
   getUri,

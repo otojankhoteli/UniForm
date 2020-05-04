@@ -13,8 +13,10 @@ export default function CategoryListItem({ category, onCategoryClick }: Props) {
   return <View style={styles.container}>
     <TouchableOpacity onPress={() => onCategoryClick(category)}>
       <View style={styles.innerContainer}>
-        <Text style={styles.categoryTitle}>u/{category.name}</Text>
-        {category.isVerified ? <Icon size={15} containerStyle={styles.verifiedIcon} color="#33A6EB" name="certificate" type="font-awesome" /> : null}
+        <View style={{ marginRight: "auto" }}>
+          <Text style={styles.categoryTitle}>u/{category.name}</Text>
+          {category.isVerified ? <Icon size={15} containerStyle={styles.verifiedIcon} color="#33A6EB" name="certificate" type="font-awesome" /> : null}
+        </View>
       </View>
     </TouchableOpacity>
     <HorizontalLine mode="fill" />
@@ -37,7 +39,6 @@ const styles = StyleSheet.create({
   },
 
   verifiedIcon: {
-    marginRight: "auto",
     marginTop: 8,
   }
 });

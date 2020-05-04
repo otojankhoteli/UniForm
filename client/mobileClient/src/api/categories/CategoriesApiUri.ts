@@ -1,3 +1,3 @@
-import { CurrentHost } from "../shared/ApiUri";
+import { CurrentHost, PostHost } from "../shared/ApiUri";
 
-export const CategoriesByNameUri = `${CurrentHost}categories`;
+export const CategoriesByNameUri = `${PostHost}category`;
