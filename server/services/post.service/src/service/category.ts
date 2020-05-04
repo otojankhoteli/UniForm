@@ -13,12 +13,12 @@ export class CategoryService {
   private readonly limit = 10;
 
   constructor(
-      @Inject('CategoryModel')
-      private CategoryModel: Model<ICategoryDTO & Document>,
-      @Inject('UserModel')
-      private UserModel: Model<IUser & Document>,
-      @Inject('logger')
-      private logger: Logger,
+    @Inject('CategoryModel')
+    private CategoryModel: Model<ICategoryDTO & Document>,
+    @Inject('UserModel')
+    private UserModel: Model<IUser & Document>,
+    @Inject('logger')
+    private logger: Logger,
   ) {
   }
 
@@ -27,7 +27,7 @@ export class CategoryService {
     if (!user) {
       throw new NotFoundError(`Can not create category, the user with the id: ${category.author} does not exist`);
     }
-    category.isMain = user.role === 'admin';
+    category.isVerified = user.role === 'admin';
     return this.CategoryModel.create(category);
   }
 
@@ -44,22 +44,26 @@ export class CategoryService {
     if (!query.skip) query.skip = this.skip;
     if (!query.limit) query.limit = this.limit;
 
-    return this.CategoryModel.find()
+    const result = await this.CategoryModel.find()
         .sort({name: 'desc'})
         .skip(query.skip)
         .limit(query.limit);
+
+    return result.map<ICategoryDTO>((category) => ({...category, id: category.id}));
   }
 
   public async findByPrefix(query: ICategorySearchModel) {
     if (!query.skip) query.skip = this.skip;
     if (!query.limit) query.limit = this.limit;
 
-    return this.CategoryModel
+    const result = await this.CategoryModel
         .find()
         .where('name')
         .regex(new RegExp(`^${query.name}`))
         .skip(query.skip)
         .limit(query.limit);
+
+    return result.map<ICategoryDTO>((category) => ({...category, id: category.id}));
   }
 
   public test() {

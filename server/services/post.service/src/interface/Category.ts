@@ -1,11 +1,12 @@
-import {Page} from './Common';
+import { Page } from './Common';
 
 export interface ICategoryDTO {
+  id: string;
   author: string,
   name: string,
   memberCount: number,
   postCount: number,
-  isMain: boolean,
+  isVerified: boolean,
 }
 
 export interface ICategorySearchModel extends Page {
