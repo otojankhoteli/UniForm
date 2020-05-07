@@ -15,6 +15,7 @@ import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
 import { usePostCreate } from "../../api/posts/PostsApiHook";
 import { useHashtagByName } from "../../api/hashtags/HashtagsApiHook";
 import { HashtagViewModel } from "../../api/hashtags/HashtagsApiModel";
+import { useUsersByEmail } from "../../api/users/UsersApiHook";
 
 type AddPostScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -30,9 +31,11 @@ const initialUserTags: UserTag[] = [{ userId: "test1", username: "ako" }, { user
 const initialPostTags: HashtagViewModel[] = [{ name: "uni", }, { name: "macs", }, { name: "sagamocdo", }];
 export default function AddPostScreen() {
   const { post } = usePostCreate();
-  const [userTags, setUserTags] = useState<UserTag[]>(initialUserTags);
+  // const [userTags, setUserTags] = useState<UserTag[]>(initialUserTags);
   const [postTags, setPostTags] = useState<HashtagViewModel[]>(initialPostTags);
-  const { result: hashTags, setRequestInfo } = useHashtagByName();
+  const { result: hashTags, setRequestInfo: fetchTags } = useHashtagByName();
+  const { result: userTags, setRequestInfo: fetchUserTags } = useUsersByEmail();
+
   const [submitState, setSubmitState] = useState<SubmitState>({
     category: undefined,
     isValid: false,
@@ -64,7 +67,7 @@ export default function AddPostScreen() {
     // const filtered = initialPostTags.filter(tag => tag.name.indexOf(searchText) !== -1);
     // setPostTags(filtered);
     console.log("searchText", searchText)
-    setRequestInfo(prev => ({
+    fetchTags(prev => ({
       wait: false,
       info: {
         ...prev.info,
@@ -74,8 +77,16 @@ export default function AddPostScreen() {
   }
 
   const onUserTagChange = (searchText: string) => {
-    const filtered = initialUserTags.filter(tag => tag.username.indexOf(searchText) !== -1);
-    setUserTags(filtered);
+    // const filtered = initialUserTags.filter(tag => tag.username.indexOf(searchText) !== -1);
+    // setUserTags(filtered);
+    console.log("searchText", searchText)
+    fetchUserTags(prev => ({
+      wait: false,
+      info: {
+        ...prev.info,
+        queryParams: [{ key: "name", value: searchText }]
+      }
+    }));
   }
 
   const navigateToChooseCategory = () => {

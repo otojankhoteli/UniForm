@@ -21,17 +21,30 @@ it('text contains hashtag in the middle', () => {
   expect(elem3.value).toBe(" d");
 });
 
-it('(1 hashtag + 2 usertag)(without space) + plain text ', () => {
-  const array= extractNodesFromInputText("#macs@ako@bubuta text");
+it('(1 hashtag + 1 usertag) + plain text ', () => {
+  const array= extractNodesFromInputText("#macs @ako@bubuta text");
   const elem1=array[0];
   const elem2=array[1];
   const elem3=array[2];
   const elem4=array[3];
   expect(array.length).toBe(4);
   expect(elem1.value).toBe("#macs");
-  expect(elem2.value).toBe("@ako");
-  expect(elem3.value).toBe("@bubuta");
+  expect(elem2.value).toBe(" ");
+  expect(elem3.value).toBe("@ako@bubuta");
   expect(elem4.value).toBe(" text");
+});
+
+it('(1 hashtag + 1 usertag) + plain text ', () => {
+  const array= extractNodesFromInputText("#macs @ako@ bubuta text");
+  const elem1=array[0];
+  const elem2=array[1];
+  const elem3=array[2];
+  const elem4=array[3];
+  expect(array.length).toBe(4);
+  expect(elem1.value).toBe("#macs");
+  expect(elem2.value).toBe(" ");
+  expect(elem3.value).toBe("@ako@");
+  expect(elem4.value).toBe(" bubuta text");
 });
 
 it('2 hash tag with space', () => {

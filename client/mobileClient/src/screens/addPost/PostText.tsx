@@ -1,21 +1,19 @@
 import React, { useState, useEffect, memo, useCallback, useMemo } from "react";
 import { View, StyleProp, ViewStyle, NativeSyntheticEvent, TextInputSelectionChangeEventData, Text, StyleSheet, TextInput } from "react-native";
-import { Input } from "react-native-elements";
 import { PostHashTag, HashTagSuggestionPopUp } from "./HashTagSuggestionPopUp";
 import UserTagSuggestionPopUp, { UserTag } from "./UserTagSuggestionPopUp";
 import { findFirst } from "../../shared/Utils";
-import { hashTagSymbol, userTagSymbol, HashTagNode, UserTagNode, TextNode, extractNodesFromInputText, TextNodeType } from "./AddPostUtils";
+import { hashTagSymbol, userTagSymbol, HashTagNode, UserTagNode, TextNode, extractNodesFromInputText, TextNodeType, matchFirstUserTagReverse } from "./AddPostUtils";
 import { TextWithTags } from "./TextWithTags";
 import { HashtagViewModel } from "../../api/hashtags/HashtagsApiModel";
-
-
+import { UserViewModel } from "../../api/users/UsersApiModel";
 
 interface Props {
   style?: StyleProp<ViewStyle>;
   placeHolder?: string;
   hashTags: HashtagViewModel[];
   symbolLimit?: number;
-  userTags: UserTag[];
+  userTags: UserViewModel[];
   onHashTagChange: (searchText: string) => void;
   onUserTagChange: (searchText: string) => void;
   updateHashTags?: (tags: string[]) => void;
@@ -91,7 +89,8 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLi
     const textSubstring = text.substring(0, endIndex);
 
     const hashTagMatch = textSubstring.match(regexForHashTag);
-    const userTagMatch = textSubstring.match(regexUserTag);
+    const userTagMatch = matchFirstUserTagReverse(textSubstring);
+    // const userTagMatch = textSubstring.match(regexUserTag);
     const textNodes = extractNodesFromInputText(text);
 
     if (hashTagMatch && hashTagMatch.length > 0) {
@@ -99,7 +98,8 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLi
       const activeNode: HashTagNode = { value: match, startIndex: endIndex - match.length, endIndex, type: "#" };
       setState(prevState => ({ ...prevState, activeNode, text, isTextUpdated: false, textNodes, selection }));
     } else if (userTagMatch && userTagMatch.length > 0) {
-      const match = userTagMatch[0];
+      // const match = userTagMatch[0];
+      const match = userTagMatch;
       const activeNode: UserTagNode = { value: match, startIndex: endIndex - match.length, endIndex, type: "@" };
       setState(prevState => ({ ...prevState, activeNode, text, isTextUpdated: false, textNodes, selection }));
     } else {
@@ -141,7 +141,7 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLi
     && state.selection.end >= state.activeNode.startIndex
     && !(type === "#" ?
       hashTags.length === 1 && state.activeNode.value === (hashTagSymbol + hashTags[0].name) :
-      userTags.length === 1 && state.activeNode.value === (userTagSymbol + userTags[0].username)), [state, hashTags]);
+      userTags.length === 1 && state.activeNode.value === (userTagSymbol + userTags[0].email)), [state, hashTags]);
 
   return (
     <View style={style}>

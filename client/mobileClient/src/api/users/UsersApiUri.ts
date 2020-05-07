@@ -1,3 +1,3 @@
-import { CurrentHost } from "../shared/ApiUri";
+import { IdentityHost } from "../shared/ApiUri";
 
-export const UsersByEmailUri = `${CurrentHost}users`;
+export const UsersByEmailUri = `${IdentityHost}users`;

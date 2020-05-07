@@ -2,6 +2,7 @@
 import React from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text } from 'react-native-elements'
+import { UserViewModel } from '../../api/users/UsersApiModel';
 
 
 export interface UserTag {
@@ -10,16 +11,16 @@ export interface UserTag {
 }
 interface Props {
   isVisible: boolean;
-  userTags: UserTag[];
+  userTags: UserViewModel[];
   onSelect: (selectedTag: string) => void;
 }
 export default function UserTagSuggestionPopUp({ userTags, isVisible, onSelect }: Props) {
   return isVisible && userTags.length > 0 ?
     <View style={styles.container}>
-      {userTags.map(hashTag => <TouchableOpacity key={hashTag.username}
-        onPress={() => onSelect(hashTag.username)}
+      {userTags.map(hashTag => <TouchableOpacity key={hashTag.email}
+        onPress={() => onSelect(hashTag.email)}
       >
-        <Text>{hashTag.username}</Text>
+        <Text>{hashTag.email}</Text>
       </TouchableOpacity>)}
     </View>
     : null;
