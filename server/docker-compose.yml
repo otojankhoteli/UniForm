@@ -46,6 +46,17 @@ services:
     ports:
       - 27018:27017
 
+  mongo-blob:
+    container_name: mongo-blob
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=post-mongodb
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/uniform/blob-service/data:/data/db
+    ports:
+      - 27019:27017
 
   rabbitmq:
     container_name: rabbitmq
