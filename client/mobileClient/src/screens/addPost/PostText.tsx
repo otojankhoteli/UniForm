@@ -17,9 +17,12 @@ interface Props {
   onHashTagChange: (searchText: string) => void;
   onUserTagChange: (searchText: string) => void;
   updateHashTags?: (tags: string[]) => void;
-  onTextChange?: (text: string) => void;
+  onTextChange?: (textStateChange: TextStateChange) => void;
 }
-
+export interface TextStateChange {
+  text: string;
+  textNodes: TextNode[];
+}
 interface State {
   text: string;
   activeNode?: TextNode;
@@ -71,7 +74,7 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLi
     if (updateHashTags) {
       updateHashTags(hashTagsInText);
     }
-    onTextChange(state.text);
+    onTextChange({ ...state });
   }, [state]);
 
   const onChangeText = useCallback((text: string) => {

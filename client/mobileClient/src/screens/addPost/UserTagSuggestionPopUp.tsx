@@ -17,13 +17,17 @@ interface Props {
 export default function UserTagSuggestionPopUp({ userTags, isVisible, onSelect }: Props) {
   return isVisible && userTags.length > 0 ?
     <View style={styles.container}>
-      {userTags.map(hashTag => <TouchableOpacity key={hashTag.email}
-        onPress={() => onSelect(hashTag.email)}
+      {userTags.map(user => <TouchableOpacity key={user.email}
+        onPress={() => onSelect(getPrefix(user.email))}
       >
-        <Text>{hashTag.email}</Text>
+        <Text>{getPrefix(user.email)}</Text>
       </TouchableOpacity>)}
     </View>
     : null;
+}
+
+const getPrefix = (email: string) => {
+  return email && email.split('@')[0];
 }
 
 const styles = StyleSheet.create({

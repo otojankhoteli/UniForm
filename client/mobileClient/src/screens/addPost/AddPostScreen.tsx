@@ -4,7 +4,7 @@ import { Button, Icon, } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { PostText } from "./PostText";
+import { PostText, TextStateChange } from "./PostText";
 import HashTags from "./HashTags";
 import { UserTag } from "./UserTagSuggestionPopUp";
 import { PostHashTag } from "./HashTagSuggestionPopUp";
@@ -25,6 +25,8 @@ type AddPostScreenRouteProp = RouteProp<RootStackParamList, 'AddPost'>;
 interface SubmitState {
   isValid: boolean;
   text: string;
+  hashTags: string[];
+  userTags: string[];
   category: CategoryViewModel;
 }
 const initialUserTags: UserTag[] = [{ userId: "test1", username: "ako" }, { userId: "test2", username: "bubuta" }, { userId: "test3", username: "janxeqsa" }];
@@ -32,13 +34,15 @@ const initialPostTags: HashtagViewModel[] = [{ name: "uni", }, { name: "macs", }
 export default function AddPostScreen() {
   const { post } = usePostCreate();
   // const [userTags, setUserTags] = useState<UserTag[]>(initialUserTags);
-  const [postTags, setPostTags] = useState<HashtagViewModel[]>(initialPostTags);
+  // const [postTags, setPostTags] = useState<HashtagViewModel[]>(initialPostTags);
   const { result: hashTags, setRequestInfo: fetchTags } = useHashtagByName();
   const { result: userTags, setRequestInfo: fetchUserTags } = useUsersByEmail();
 
   const [submitState, setSubmitState] = useState<SubmitState>({
     category: undefined,
     isValid: false,
+    hashTags: [],
+    userTags: [],
     text: ""
   })
   const navigation = useNavigation<AddPostScreenNavigationProp>();
@@ -48,7 +52,9 @@ export default function AddPostScreen() {
     if (submitState.isValid) {
       post({
         categoryId: submitState.category.id,
-        postText: submitState.text
+        text: submitState.text,
+        hashTags: submitState.hashTags,
+        userTags: submitState.userTags
       })
     }
   }, [submitState]);
@@ -93,8 +99,14 @@ export default function AddPostScreen() {
     navigation.navigate("ChooseCategory");
   }
 
-  const setText = (text: string) => {
-    setSubmitState(prev => ({ ...prev, text, isValid: isValidState(text, prev.category) }))
+  const onTextChange = (textStateChange: TextStateChange) => {
+    const hashTags = textStateChange.textNodes.filter(node => node.type === "#").map(node => node.value.split("#")[1]);
+    const userTags = textStateChange.textNodes.filter(node => node.type === "@").map(node => node.value.split("@")[1]);
+    setSubmitState(prev => ({
+      ...prev, text: textStateChange.text,
+      hashTags, userTags,
+      isValid: isValidState(textStateChange.text, prev.category)
+    }))
   }
 
   return (
@@ -105,9 +117,9 @@ export default function AddPostScreen() {
           <HorizontalLine mode="fill" />
           <PostText
             onHashTagChange={onHashTagChange} onUserTagChange={onUserTagChange}
-            onTextChange={setText}
+            onTextChange={onTextChange}
             placeHolder="Your post text"
-            hashTags={hashTags || []} userTags={userTags} />
+            hashTags={hashTags || []} userTags={userTags || []} />
         </ScrollView>
       </View>
 

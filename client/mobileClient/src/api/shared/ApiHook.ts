@@ -328,7 +328,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
         wait: internalRequestInfo.wait,
         uri: getUri(internalUri, internalRequestInfo.info)
       });
-    } else if (internalUri) {
+    } else if (internalUri && internalRequestInfo) {
       setFinalUri({ uri: internalUri, wait: internalRequestInfo.wait });
     }
   }, [internalUri, internalRequestInfo]);

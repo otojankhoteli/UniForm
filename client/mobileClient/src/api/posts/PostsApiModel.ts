@@ -1,4 +1,7 @@
 export interface CreatePostRequest {
-  postText: string;
   categoryId: string;
+  hashTags: string[];
+  userTags: string[];
+  text: string;
 }
+  
