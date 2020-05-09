@@ -8,6 +8,7 @@ import { authRouter } from './api/route/auth';
 import openMongoConnection from './db/mongo.connection';
 import { connectRabbit } from './message.queue';
 import { registerHandlers } from './subscriber/handler';
+import { userRouter } from './api/route/user';
 const startApp = async () => {
   try {
     fillContainer();
@@ -24,6 +25,9 @@ const startApp = async () => {
       res.send('pong');
     });
     app.use('/auth', authRouter);
+
+    app.use('/user', userRouter);
+
 
     app.use(errorHandler);
 

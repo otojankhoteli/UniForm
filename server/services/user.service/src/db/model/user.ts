@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-import { IUser } from '../../interface/user';
-
+import { IUser } from '../../interface/user ';
 
 const user = new mongoose.Schema<IUser>({
   name: {
@@ -12,18 +11,19 @@ const user = new mongoose.Schema<IUser>({
     type: String,
   },
   photoURL: {
-    type: String
+    type: String,
   },
   email: {
     type: String,
     unique: true,
     index: true,
   },
-
   role: {
     type: String,
     default: 'user',
   },
 });
+
+user.index({email: 'text'});
 
 export default mongoose.model<IUser & mongoose.Document>('User', user);

@@ -8,3 +8,11 @@ export interface IPost {
   category: string,
   voteCount: number,
 }
+export interface UpsertPostRequest {
+  id?:string;
+  authorId: string;
+  categoryId: string;
+  hashTags: string[],
+  userTags: string[],
+  text: string;
+}

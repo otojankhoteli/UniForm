@@ -1,10 +1,10 @@
-import {Service, Inject, Container} from 'typedi';
-import {Document, Model} from 'mongoose';
-import {ICategoryDTO, ICategorySearchModel} from '../interface/Category';
-import {UserService} from './user';
+import { Service, Inject, Container } from 'typedi';
+import { Document, Model } from 'mongoose';
+import { ICategoryDTO, ICategorySearchModel } from '../interface/Category';
+import { UserService } from './user';
 import NotFoundError from '../util/error/NotFoundError';
-import {Logger} from 'winston';
-import {IUser} from '../interface/User';
+import { Logger } from 'winston';
+import { IUser } from '../interface/User';
 
 
 @Service()
@@ -45,11 +45,18 @@ export class CategoryService {
     if (!query.limit) query.limit = this.limit;
 
     const result = await this.CategoryModel.find()
-        .sort({name: 'desc'})
-        .skip(query.skip)
-        .limit(query.limit);
+      .sort({ name: 'desc' })
+      .skip(query.skip)
+      .limit(query.limit);
 
-    return result.map<ICategoryDTO>((category) => ({...category, id: category.id}));
+    return result.map<ICategoryDTO>((category) => ({
+      id: category.id,
+      author: category.author,
+      isVerified: category.isVerified,
+      memberCount:category.memberCount,
+      name:category.name,
+      postCount:category.postCount
+    }));
   }
 
   public async findByPrefix(query: ICategorySearchModel) {
@@ -57,13 +64,20 @@ export class CategoryService {
     if (!query.limit) query.limit = this.limit;
 
     const result = await this.CategoryModel
-        .find()
-        .where('name')
-        .regex(new RegExp(`^${query.name}`))
-        .skip(query.skip)
-        .limit(query.limit);
+      .find()
+      .where('name')
+      .regex(new RegExp(`^${query.name}`))
+      .skip(query.skip)
+      .limit(query.limit);
 
-    return result.map<ICategoryDTO>((category) => ({...category, id: category.id}));
+    return result.map<ICategoryDTO>((category) => ({
+      id: category.id,
+      author: category.author,
+      isVerified: category.isVerified,
+      memberCount:category.memberCount,
+      name:category.name,
+      postCount:category.postCount
+    }));
   }
 
   public test() {

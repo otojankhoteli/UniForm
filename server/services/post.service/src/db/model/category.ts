@@ -28,7 +28,7 @@ const category = new mongoose.Schema<ICategoryDTO>({
 
   image: String,
 
-  isMain: {
+  isVerified: {
     type: Boolean,
     default: false,
   },

@@ -1,5 +1,5 @@
 import { Inject, Service } from 'typedi';
-import { IUser } from '../interface/user';
+import { IUser } from '../interface/user ';
 import getRole from './util/helper/getRole';
 import { Document, Model } from 'mongoose';
 import { Events } from '../subscriber/event';
@@ -12,13 +12,18 @@ export class AuthService {
     @Inject('UserModel') private UserModel: Model<IUser & Document>,
   ) {
   }
-  
+
   public async logIn(userInputDTO: IUser): Promise<IUser> {
     const role = getRole(userInputDTO.email);
 
-    const user = await this.UserModel.findOneAndUpdate({ email: userInputDTO.email },
+    let user = await this.UserModel.findOneAndUpdate({ email: userInputDTO.email },
       { ...userInputDTO, role: role },
       { upsert: true });
+
+    if (user == null) {
+      user = await this.UserModel.findOne({ email: userInputDTO.email });
+    }
+
     this.eventEmitter.emit(Events.user.signUp, user);//TODO add 
 
     let today = new Date();

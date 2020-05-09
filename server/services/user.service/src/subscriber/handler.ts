@@ -1,4 +1,4 @@
-import {IUser} from '../interface/user';
+import {IUser} from '../interface/user ';
 import {Container} from 'typedi';
 import {UserPublisher} from '../message.queue/UserPublisher';
 import logger from '../util/logger';

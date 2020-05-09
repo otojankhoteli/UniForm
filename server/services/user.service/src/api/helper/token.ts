@@ -1,4 +1,4 @@
-import { IUser } from '../../interface/user';
+import { IUser } from '../../interface/user ';
 import jwt from 'jsonwebtoken';
 import { config } from '../../config/index';
 

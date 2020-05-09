@@ -1,4 +1,4 @@
-import { IUser } from '../../interface/user';
+import { IUser } from '../../interface/user ';
 import { google } from 'googleapis';
 
 export default async (accessToken: string): Promise<IUser> => {
