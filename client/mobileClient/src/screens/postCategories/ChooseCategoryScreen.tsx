@@ -29,7 +29,7 @@ type ChooseCategoryScreenNavigationProp = StackNavigationProp<
 // { id: "14", isVerified: true, name: "Test" }]
 export default function ChooseCategoryScreen() {
   // const [categories, setCategories] = useState<CategoryViewModel[]>(categoriesInitial);
-  const { result, isLoading, setRequestInfo } = useCategoriesByName();
+  const { result, isLoading, setRequestInfo, refetch, fetchNextPage, fetchPrevPage, fetchFirstPage } = useCategoriesByName();
   const navigation = useNavigation<ChooseCategoryScreenNavigationProp>();
 
   const onCategorySelect = (category: CategoryViewModel) => {
@@ -43,8 +43,8 @@ export default function ChooseCategoryScreen() {
     setRequestInfo(prev => ({
       wait: false,
       info: {
-        limit: PagingLimit,
-        skip: PagingSkip,
+        limit: prev.info && prev.info.limit,
+        skip: prev.info && prev.info.skip,
         queryParams: [{ key: "name", value: text }],
       }
     }))
@@ -53,6 +53,7 @@ export default function ChooseCategoryScreen() {
 
   return <View>
     <SearchBarCustom onChangeText={onSearchChange} />
-    <CategoryList isLoading={isLoading} onSelect={onCategorySelect} categories={result || []} />
+    <CategoryList isLoading={isLoading} onSelect={onCategorySelect} categories={result || []}
+      onRefresh={fetchFirstPage} fetchNextPage={fetchNextPage} fetchPrevPage={fetchPrevPage} />
   </View>
 }

@@ -3,14 +3,14 @@ import { Avatar } from 'react-native-elements'
 
 
 interface Props {
-
+  photoUrl: string
 }
-export default function AvatarCustom(_: Props) {
+export default function AvatarCustom({ photoUrl }: Props) {
   return <Avatar
     rounded
     source={{
       uri:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+        photoUrl,
     }}
   />
 }

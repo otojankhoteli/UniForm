@@ -109,6 +109,19 @@ export default function AddPostScreen() {
     }))
   }
 
+  React.useLayoutEffect(() => {
+    if (!navigation)
+      return;
+    navigation.setOptions({
+      headerRight: () => (
+        <Icon containerStyle={{ marginRight: 5 }}
+          disabledStyle={{ backgroundColor: "white" }}
+          disabled={!submitState.isValid} onPress={onSubmit}
+          type="font-awesome" name="check" color={submitState.isValid ? "green" : "gray"} />
+      ),
+    });
+  }, [navigation, submitState]);
+
   return (
     <View style={styles.container}>
       <View style={{ flex: 1, }}>
@@ -123,27 +136,39 @@ export default function AddPostScreen() {
         </ScrollView>
       </View>
 
-      <View style={styles.submitButtonContainer}>
-        <Button
-          disabled={!submitState.isValid}
-          buttonStyle={[styles.submitButton, submitState.isValid && styles.elevation]}
-          disabledStyle={styles.submitButtonDisabled}
-          onPress={onSubmit}
-          icon={
-            <Icon
-              name="check"
-              type="font-awesome"
-              color="white"
-              size={25}
-              style={styles.submitButtonIcon}
-            />
-          }
+      <View style={styles.cameraButtonsContainer}>
+        <Icon
+          name="camera"
+          type="font-awesome"
+          color="gray"
+          size={50}
+          onPress={() => { console.log("on camera click") }}
+          containerStyle={styles.cameraButtonIcon}
+        />
+        <Icon
+          name="image"
+          type="font-awesome"
+          color="gray"
+          size={50}
+          onPress={() => { console.log("on video click") }}
         />
       </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
+  cameraButtonIcon: { marginRight: 10 },
+  cameraButtonsContainer: {
+    alignItems: "center",
+    bottom: 0,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 5, position: "absolute", width: "100%"
+  },
   chooseCategoryPanel: {
     marginBottom: 10
   },
@@ -153,27 +178,5 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingRight: 5
   },
-  elevation: {
-    elevation: 10,
-  },
-  submitButton: {
-    backgroundColor: "rgba(24, 160, 42, 1)",
-    borderRadius: 25,
-    height: 50,
-    marginRight: "auto",
-    width: 50
-  },
-  submitButtonContainer: {
-    alignItems: "center",
-    bottom: 0,
-    display: "flex",
-    justifyContent: "center",
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 5, position: "absolute", width: "100%"
-  },
-  submitButtonDisabled: { backgroundColor: "rgba(24, 160, 42, 0.3)" },
-  submitButtonIcon: {},
   // submitButtonSubContainer: { alignItems: "center", backgroundColor: 'rgba(250, 256, 256, 1)', borderRadius: 50, elevation: 10, height: 60, justifyContent: "center", width: 100 }
 });

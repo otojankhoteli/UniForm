@@ -11,7 +11,7 @@ interface Props {
 }
 export default function CategoryListItem({ category, onCategoryClick }: Props) {
   return <View style={styles.container}>
-    <TouchableOpacity onPress={() => onCategoryClick(category)}>
+    <TouchableOpacity style={{ marginBottom: 5 }} onPress={() => onCategoryClick(category)}>
       <View style={styles.innerContainer}>
         <View style={{ marginRight: "auto" }}>
           <Text style={styles.categoryTitle}>u/{category.name}</Text>

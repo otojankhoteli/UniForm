@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, StackHeaderProps } from "@react-navigation/stack";
+import { Button } from "react-native-elements";
+import { View } from "react-native";
 import SplashScreen from "../shared/components/SplashScreen";
 import { useGlobalState } from "../shared/globalState/AppContext";
 import { useAccount, useAccountPersist } from "../shared/persist/PersistHooks";
@@ -10,7 +12,7 @@ import ChooseCategoryScreen from "./postCategories/ChooseCategoryScreen";
 import { CategoryViewModel } from "../api/categories/CategoriesApiModel";
 import DevelopmentLoginScreen from "./login/DevelopmentLoginScreen";
 import { useTokenRefreshHandler } from "../shared/auth/AuthHook";
-import { isMountedRef, navigationRef } from "../shared/navigation/RootNavigation";
+import { navigationRef } from "../shared/navigation/RootNavigation";
 
 export type RootStackParamList = {
   Login: undefined;
@@ -21,6 +23,13 @@ export type RootStackParamList = {
 };
 const Stack = createStackNavigator();
 
+
+
+function Header(props: { tintColor?: string; }): React.ReactNode {
+  return <View style={{ borderColor: "red", borderWidth: 1, height: 40 }}>
+    <Button containerStyle={{ height: 20 }} onPress={() => { console.log("test") }} title="Next" />
+  </View>
+}
 export default function StartUpScreen() {
   const [, dispatch] = useGlobalState();
   const { isLoading, account } = useAccount();
@@ -30,6 +39,7 @@ export default function StartUpScreen() {
 
   useEffect(() => {
     if (account) {
+      console.log("setLoggedInUser")
       dispatch({
         type: "setLoggedInUser",
         account,
@@ -44,11 +54,6 @@ export default function StartUpScreen() {
   return (
     <NavigationContainer ref={navigationRef}>
       <Stack.Navigator>
-        {/* <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        /> */}
         {!account ? (
           <Stack.Screen
             name="Login"

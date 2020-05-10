@@ -29,11 +29,9 @@ export default function DevelopmentLoginScreen() {
     RootStackParamList
   >>();
 
-
-  console.log("Error", error);
-
   useEffect(() => {
     if (result && !isError) {
+      console.log("result", result, isError)
       dispatch({
         type: "setLoggedInUser",
         account: result

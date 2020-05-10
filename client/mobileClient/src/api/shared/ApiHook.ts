@@ -45,6 +45,7 @@ export interface GetApiHookResult<TResponse, TResponseViewModel = {}> {
   refetch: () => void;
   fetchPrevPage: () => void;
   fetchNextPage: () => void;
+  fetchFirstPage: () => void;
 }
 
 
@@ -85,16 +86,23 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
         body
       })
         .then(async value => {
-          let body;
+          let body = {} as any;
           try {
             body = await value.json();
-            setResponseState({ isError: false, result: body })
           } catch (error) {
+            body = {};
+          }
+          if (!value.ok) {
             setResponseState({
               isError: true,
               error: { type: "ApiError", errorObject: body, statusCode: value.status as ApiStatusCode, method: "post", uri }
             });
+            setIsLoading(false);
+          } else {
+            setResponseState({ isError: false, result: body })
           }
+
+          setIsLoading(false);
         })
         .catch((error) => {
           console.log("On error", error);
@@ -293,7 +301,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
         wait: prev.wait,
         info: {
           limit,
-          skip: skip + 1,
+          skip: skip + limit,
           orderBy: prev && prev.info && prev.info.orderBy,
           queryParams: (prev && prev.info && prev.info.queryParams) || []
         }
@@ -313,8 +321,26 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
           limit,
           skip:
             skip > 0
-              ? skip - 1
+              ? skip - limit
               : skip,
+          orderBy: prev && prev.info && prev.info.orderBy,
+          queryParams: (prev && prev.info && prev.info.queryParams) || []
+        }
+      };
+    });
+  };
+
+  const fetchFirstPage = () => {
+    if (responseState.isError) return;
+    setInternalRequestInfo(prev => {
+      const limit = (prev && prev.info && prev.info.limit) || PagingLimit;
+      const skip = 0;
+
+      return {
+        wait: prev.wait,
+        info: {
+          limit,
+          skip,
           orderBy: prev && prev.info && prev.info.orderBy,
           queryParams: (prev && prev.info && prev.info.queryParams) || []
         }
@@ -344,23 +370,22 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
         headers: getWithAuthorizeHeader(loggedUser && loggedUser.token, headers, includeAuthorize)
       })
         .then(async value => {
+          let body: any = {};
+          try {
+            body = await value.json();
+          } catch (error) {
+            body = {};
+          }
           if (!value.ok) {
-            let errorObject;
-            try {
-              errorObject = await value.json();
-            } catch (error) {
-              setResponseState({
-                isError: true,
-                error: { type: "ApiError", errorObject, statusCode: value.status as ApiStatusCode, method: "post", uri }
-              });
-              setIsLoading(false);
-            }
+            setResponseState({
+              isError: true,
+              error: { type: "ApiError", errorObject: body, statusCode: value.status as ApiStatusCode, method: "get", uri }
+            });
+            setIsLoading(false);
+          } else {
+            setResponseState({ isError: false, result: body })
           }
 
-          return value.json();
-        })
-        .then(result => {
-          setResponseState({ isError: false, result });
           setIsLoading(false);
         })
         .catch((error) => {
@@ -382,6 +407,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
     isError: responseState.isError,
     fetchNextPage,
     fetchPrevPage,
+    fetchFirstPage,
     refetch: () => {
       setInternalRequestInfo(prev => ({ ...prev }));
     }
