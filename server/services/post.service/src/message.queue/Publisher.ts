@@ -21,7 +21,7 @@ export abstract class Publisher {
         {
           routingKey: this.routingKey,
           type: this.type,
-          body: msg,
+          text: msg,
         },
     );
   }

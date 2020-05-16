@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import {IPost} from '../../interface/Post';
+import {votable} from './votable';
+
 
 const post = new mongoose.Schema({
   author: {
@@ -13,10 +15,13 @@ const post = new mongoose.Schema({
     required: true,
   },
 
-  body: {
+  text: {
     type: String,
     required: true,
   },
+  files: [{
+    type: String,
+  }],
 
   hashTags: [{
     type: String,
@@ -32,6 +37,16 @@ const post = new mongoose.Schema({
     required: true,
     ref: 'Category',
   },
+
+  upVoters: [{
+    type: mongoose.Schema.Types.ObjectId,
+    index: true,
+  }],
+
+  downVoters: [{
+    type: mongoose.Schema.Types.ObjectId,
+    index: true,
+  }],
 
   voteCount: {
     type: Number,

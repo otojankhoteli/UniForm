@@ -2,10 +2,13 @@ export interface IPost {
   _id: string,
   author: string,
   type: string,
-  body: string,
+  text: string,
+  files: string[],
   hashTags: string[],
   userTags: string[],
   category: string,
+  upVoters: string[],
+  downVoters: string[],
   voteCount: number,
 }
 export interface UpsertPostRequest {
@@ -14,5 +17,6 @@ export interface UpsertPostRequest {
   categoryId: string;
   hashTags: string[],
   userTags: string[],
-  text: string;
+  text: string,
+  files: string[],
 }
