@@ -11,30 +11,34 @@ const filePersistenceServiceInstance = Container.get(FilePersistenceService);
 const router = Router();
 
 const multerOptions = {limits: {fileSize: 5 * 1024 * 1024}};
-const upload = multer();
+const MAX_ALLOWED = 5;
+const upload = multer(multerOptions);
 
 
 router.post('/',
-    upload.fields([{name: 'file', maxCount: 1}]),
+    upload.fields([{name: 'files', maxCount: MAX_ALLOWED}]),
     asyncMw(async (req, res, _) => {
-      if (!req?.files?.file || req?.files?.file.length === 0) {
+      if (!req?.files?.files || req?.files?.files.length === 0) {
         throw new AppError(400, 'File not specified');
       }
 
       const bucketName = 'files';
+      const files = req.files['files'];
+      const uploadedFiles = [];
+      for (const file of files) {
+        const src = new Readable();
+        src.push(file.buffer);
+        src.push(null);
 
-      const file = req.files['file'][0];
+        const uploadStream = await filePersistenceServiceInstance.createWriteStream(bucketName, file.originalname, {
+          contentType: file.mimetype,
+        });
 
-      const src = new Readable();
-      src.push(file.buffer);
-      src.push(null);
+        src.pipe(uploadStream);
+        uploadedFiles.push({fileId: uploadStream.id, name: file.originalname});
+      }
 
-      const uploadStream = await filePersistenceServiceInstance.createWriteStream(bucketName, file.originalname, {
-        contentType: '',
-      });
-
-      src.pipe(uploadStream);
-      res.send({fileId: uploadStream.id, name: file.originalname});
+      res.send(uploadedFiles);
     }));
 
 
