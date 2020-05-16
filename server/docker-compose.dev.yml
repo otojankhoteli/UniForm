@@ -55,6 +55,28 @@ services:
       - mongo-post
       - rabbitmq
 
+  blob.service:
+    container_name: blob.service
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - MONGO_HOST=mongo-blob
+      - MONGO_PORT=27017
+    build:
+      context: ./services/blob.service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./services/blob.service:/app
+      - ./services/blob.service/build:/app/build
+    # volumes:
+    #   - ./services/post.service:/code
+    ports:
+      - 3002:3002
+      - 9224:9224
+    command: yarn docker:debug
+    depends_on:
+      - mongo-blob
+      - rabbitmq
+
   mongo-post:
     container_name: mongo-post
     image: mongo
@@ -65,6 +87,17 @@ services:
       - /data/uniform/post-service/data:/data/db
     ports:
       - 27018:27017
+
+  mongo-blob:
+    container_name: mongo-blob
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/uniform/blob-service/data:/data/db
+    ports:
+      - 27019:27017
 
   rabbitmq:
     container_name: rabbitmq

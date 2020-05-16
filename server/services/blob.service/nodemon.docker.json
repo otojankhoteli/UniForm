@@ -3,5 +3,5 @@
   "ext": "js",
   "legacyWatch": true,
   "nolazy": true,
-  "exec": "node --inspect-brk=0.0.0.0:9223 ./build/index.js"
+  "exec": "node --inspect-brk=0.0.0.0:9224 ./build/index.js"
 }
