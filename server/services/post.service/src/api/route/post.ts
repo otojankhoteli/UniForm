@@ -22,5 +22,19 @@ router.get('/hashtag', asyncMw(async (req, res, _) => {
   res.send(await postService.getHashTags({ ...req.query }));
 }));
 
+router.post('/:postId/_upvote', asyncMw(async (req, res, _) => {
+  const postService = Container.get(PostService);
+  res.json(await postService.upVote(req.params.postId, req.body.userId));
+}));
+
+router.post('/:postId/_downvote', asyncMw(async (req, res, _) => {
+  const postService = Container.get(PostService);
+  res.json(await postService.downVote(req.params.postId, req.body.userId));
+}));
+
+router.post('/test/:userId', asyncMw(async (req, res, _) => {
+  const postService = Container.get(PostService);
+  res.json(await postService.filterUpVoted(req.body.posts, req.params.userId));
+}));
 
 export { router as postRouter };
