@@ -37,8 +37,14 @@ export function getBodyAndHeaderFromType<TRequest>(
       break;
     case "multipart": {
       const data = new FormData();
-      data.append("file", request as any);
+      const anyRequest = request as any;
+      // expo blob upload using fetch not working, temporary solution ->
+      data.append("files", anyRequest.content);
+      if (anyRequest.type) {
+        data.append("type", anyRequest.type);
+      }
       body = data;
+      headers = { 'Content-Type': 'multipart/form-data' }
       break;
     }
     default:

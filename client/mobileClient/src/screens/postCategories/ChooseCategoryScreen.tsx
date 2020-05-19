@@ -7,7 +7,6 @@ import CategoryList from './CategoryList'
 import SearchBarCustom from '../../shared/components/SearchBar'
 import { RootStackParamList } from '../StartUpScreen'
 import { useCategoriesByName } from '../../api/categories/CategoriesApiHook'
-import { PagingLimit, PagingSkip } from '../../api/shared/ApiConst'
 
 type ChooseCategoryScreenNavigationProp = StackNavigationProp<
   RootStackParamList,

@@ -78,7 +78,6 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
     if (requestBody) {
       let [headers, body] = getBodyAndHeaderFromType(bodyType, requestBody);
       setIsLoading(true);
-      console.log("Url", uri)
       // Todo remove logged user
       fetch(uri, {
         method: "post",
@@ -89,6 +88,7 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
           let body = {} as any;
           try {
             body = await value.json();
+            console.log("Body",body)
           } catch (error) {
             body = {};
           }

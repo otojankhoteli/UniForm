@@ -5,9 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { PostText, TextStateChange } from "./PostText";
-import HashTags from "./HashTags";
 import { UserTag } from "./UserTagSuggestionPopUp";
-import { PostHashTag } from "./HashTagSuggestionPopUp";
 import HorizontalLine from "../../shared/components/HorizontalLine";
 import ChooseCategoryPanel from "./ChooseCategoryPanel";
 import { RootStackParamList } from "../StartUpScreen";
@@ -16,6 +14,7 @@ import { usePostCreate } from "../../api/posts/PostsApiHook";
 import { useHashtagByName } from "../../api/hashtags/HashtagsApiHook";
 import { HashtagViewModel } from "../../api/hashtags/HashtagsApiModel";
 import { useUsersByEmail } from "../../api/users/UsersApiHook";
+import CameraSection, { UploadedImage } from "./CameraSection";
 
 type AddPostScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -27,6 +26,7 @@ interface SubmitState {
   text: string;
   hashTags: string[];
   userTags: string[];
+  uploadedContentsId: string[];
   category: CategoryViewModel;
 }
 const initialUserTags: UserTag[] = [{ userId: "test1", username: "ako" }, { userId: "test2", username: "bubuta" }, { userId: "test3", username: "janxeqsa" }];
@@ -43,6 +43,7 @@ export default function AddPostScreen() {
     isValid: false,
     hashTags: [],
     userTags: [],
+    uploadedContentsId: [],
     text: ""
   })
   const navigation = useNavigation<AddPostScreenNavigationProp>();
@@ -70,9 +71,6 @@ export default function AddPostScreen() {
   }, [route])
 
   const onHashTagChange = (searchText: string) => {
-    // const filtered = initialPostTags.filter(tag => tag.name.indexOf(searchText) !== -1);
-    // setPostTags(filtered);
-    console.log("searchText", searchText)
     fetchTags(prev => ({
       wait: false,
       info: {
@@ -83,9 +81,6 @@ export default function AddPostScreen() {
   }
 
   const onUserTagChange = (searchText: string) => {
-    // const filtered = initialUserTags.filter(tag => tag.username.indexOf(searchText) !== -1);
-    // setUserTags(filtered);
-    console.log("searchText", searchText)
     fetchUserTags(prev => ({
       wait: false,
       info: {
@@ -106,6 +101,13 @@ export default function AddPostScreen() {
       ...prev, text: textStateChange.text,
       hashTags, userTags,
       isValid: isValidState(textStateChange.text, prev.category)
+    }))
+  }
+
+  const onUploadedContentsChange = (photos: UploadedImage[]) => {
+    setSubmitState(prev => ({
+      ...prev,
+      uploadedContentsId: photos.map(p => p.fileId)
     }))
   }
 
@@ -134,41 +136,12 @@ export default function AddPostScreen() {
             placeHolder="Your post text"
             hashTags={hashTags || []} userTags={userTags || []} />
         </ScrollView>
-      </View>
-
-      <View style={styles.cameraButtonsContainer}>
-        <Icon
-          name="camera"
-          type="font-awesome"
-          color="gray"
-          size={50}
-          onPress={() => { console.log("on camera click") }}
-          containerStyle={styles.cameraButtonIcon}
-        />
-        <Icon
-          name="image"
-          type="font-awesome"
-          color="gray"
-          size={50}
-          onPress={() => { console.log("on video click") }}
-        />
+        <CameraSection onUploadedContentsChange={onUploadedContentsChange} />
       </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
-  cameraButtonIcon: { marginRight: 10 },
-  cameraButtonsContainer: {
-    alignItems: "center",
-    bottom: 0,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 5, position: "absolute", width: "100%"
-  },
   chooseCategoryPanel: {
     marginBottom: 10
   },
@@ -178,5 +151,4 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingRight: 5
   },
-  // submitButtonSubContainer: { alignItems: "center", backgroundColor: 'rgba(250, 256, 256, 1)', borderRadius: 50, elevation: 10, height: 60, justifyContent: "center", width: 100 }
 });
