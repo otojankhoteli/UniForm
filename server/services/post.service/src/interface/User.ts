@@ -4,6 +4,7 @@ export interface IUser {
   email: string,
   role: string,
   imgUrl: string,
+  subscribedCategories: string[]
 }
 
 export interface IUserSearchModel {

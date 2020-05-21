@@ -20,3 +20,6 @@ export interface UpsertPostRequest {
   text: string,
   files: string[],
 }
+interface FeedPostResponse extends IPost {
+  react: string,
+}

@@ -22,6 +22,19 @@ const user = new mongoose.Schema({
     type: String,
     default: 'user',
   },
+
+  subscribedCategories: [{
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    index: true,
+    ref: 'Category',
+  }],
+
+  upVotedPosts: [{
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Post',
+  }],
 });
 
 

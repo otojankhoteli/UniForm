@@ -5,6 +5,7 @@ import {CategoryService} from '../../service/category';
 import {ICategoryDTO, ICategorySearchModel} from '../../interface/Category';
 import {PostService} from '../../service/post';
 import {pageParser} from '../middleware/util';
+import {UserService} from '../../service/user';
 
 const router = Router();
 
@@ -29,6 +30,20 @@ router.get('/', asyncMw(async (req, res, _) => {
 router.get('/posts', asyncMw(async (req, res, _) => {
   const postService = Container.get(PostService);
   res.send(await postService.getCategoryPosts({...req.query}));
+}));
+
+router.post('/:id/_subscribe', asyncMw(async (req, res, _) => {
+  const userService = Container.get(UserService);
+  // todo get userId from token
+  const userId = req.body.userId;
+  res.send(await userService.subscribe(userId, req.params.id));
+}));
+
+router.post('/:id/_unsubscribe', asyncMw(async (req, res, _) => {
+  const userService = Container.get(UserService);
+  // todo get userId from token
+  const userId = req.body.userId;
+  res.send(await userService.unsubscribe(userId, req.params.id));
 }));
 
 

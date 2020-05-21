@@ -1,6 +1,6 @@
-import { Service, Inject } from 'typedi';
-import { Document, Model } from 'mongoose';
-import { IUser } from '../interface/User';
+import {Service, Inject} from 'typedi';
+import {Document, Model} from 'mongoose';
+import {IUser} from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
 
 
@@ -8,14 +8,14 @@ import NotFoundError from '../util/error/NotFoundError';
 @Service()
 export class UserService {
   constructor(
-    @Inject('UserModel') private UserModel: Model<IUser & Document>,
+      @Inject('UserModel') private UserModel: Model<IUser & Document>,
   ) {
   }
 
   public async save(user: IUser) {
-    let existingUser = await this.UserModel.findOne({ email: user.email });
+    let existingUser = await this.UserModel.findOne({email: user.email});
     if (!existingUser) {
-      existingUser = await this.UserModel.create(user)
+      existingUser = await this.UserModel.create(user);
     }
 
     return existingUser;
@@ -35,5 +35,18 @@ export class UserService {
 
   public test() {
     return 'user';
+  }
+
+  // todo better be transactional
+  async subscribe(userId: string, categoryId: string) {
+    // this.
+    return this.UserModel
+        .findByIdAndUpdate(userId, {$addToSet: {subscribedCategories: categoryId}}, {new: true});
+  }
+
+  // todo better be transactional
+  async unsubscribe(userId: string, categoryId: string) {
+    return this.UserModel
+        .findByIdAndUpdate(userId, {$pullAll: {subscribedCategories: [categoryId]}}, {new: true});
   }
 }

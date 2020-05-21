@@ -161,8 +161,8 @@ export class PostService {
     const hasDownVoted = await this.PostModel.findOne({_id: postId, downVoters: userId}).lean();
 
     if (hasUpvoted) {
-      post.upVoters = post.upVoters.filter((upVoter) => upVoter.toString() !== userId);
-      post.voteCount--;
+      // post.upVoters = post.upVoters.filter((upVoter) => upVoter.toString() !== userId);
+      // post.voteCount--;
     } else if (hasDownVoted) {
       post.downVoters = post.downVoters.filter((downVoter) => downVoter.toString() !== userId);
       post.upVoters.push(userId);
@@ -182,8 +182,8 @@ export class PostService {
     const hasDownVoted = await this.PostModel.findOne({_id: postId, downVoters: userId});
 
     if (hasDownVoted) {
-      post.downVoters = post.downVoters.filter((downVoter) => downVoter.toString() !== userId);
-      post.voteCount++;
+      // post.downVoters = post.downVoters.filter((downVoter) => downVoter.toString() !== userId);
+      // post.voteCount++;
     } else if (hasUpvoted) {
       post.upVoters = post.upVoters.filter((upVoter) => upVoter.toString() !== userId);
       post.downVoters.push(userId);
@@ -195,14 +195,62 @@ export class PostService {
     return this.PostModel.findByIdAndUpdate(postId, post, {new: true});
   }
 
-  public async filterUpVoted(postIds: string[], userId: string) {
-    const transIds = postIds.filter((e) => mongoose.Types.ObjectId(e));
+  public async filterReactedPosts(postIds: string[], userId: string, reaction: 'upvote' | 'downvote') {
+    let modelReaction;
+    if (reaction === 'upvote') {
+      modelReaction = 'upVoters';
+    } else if (reaction === 'downvote') {
+      modelReaction = 'downVoters';
+    }
     return this.PostModel
         .find()
         .where('_id')
-        .in(transIds)
-        .where('upVoters')
+        .in(postIds)
+        .where(modelReaction)
         .equals(userId)
-        .select('_id');
+        .select('_id')
+        .lean();
+  }
+
+
+  public async getFeed(userId: string, skip, limit) {
+    const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
+
+    const posts = await this.PostModel
+        .find()
+        .where('category')
+        .in(subscribedCategories)
+        .sort({updatedAt: 'desc'})
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    const postsRaw = posts.map((post) => {
+      return {
+        ...post,
+        _id: post._id.toString(),
+      };
+    });
+
+    const postIds = postsRaw.map((post) => post._id);
+
+    const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
+        .map((post) => post._id.toString());
+    const downVotedPosts = (await this.filterReactedPosts(postIds, userId, 'downvote'))
+        .map((post) => post._id.toString());
+
+    const postsWithReacts = posts.map((post) => {
+      let reaction = null;
+      const postId = post._id.toString();
+      if (upVotedPosts.includes(postId)) {
+        reaction = 'upvote';
+      } else if (downVotedPosts.includes(postId)) {
+        reaction = 'downvote';
+      }
+
+      return {...post, react: reaction};
+    });
+
+    return postsWithReacts;
   }
 }
