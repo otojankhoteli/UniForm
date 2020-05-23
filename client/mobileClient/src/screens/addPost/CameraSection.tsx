@@ -6,6 +6,7 @@ import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 import { ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import { ScrollView } from "react-native-gesture-handler";
+import { Camera } from 'expo-camera';
 import { MainColor } from "../../shared/Const";
 import HorizontalLine from "../../shared/components/HorizontalLine";
 import { useFileUpload } from "../../api/blobs/BlobApiHook";
@@ -21,6 +22,7 @@ interface Props {
 }
 export default function CameraSection({ onUploadedContentsChange }: Props) {
   const [medias, setMedias] = useState<UploadedImage[]>([]);
+  const [type, setType] = useState(Camera.Constants.Type.back);
   const { post: upload, result, isError, isLoading } = useFileUpload();
 
   useEffect(() => {
@@ -51,26 +53,6 @@ export default function CameraSection({ onUploadedContentsChange }: Props) {
           content: base64,
           type
         });
-
-        // let data = new FormData();
-        // data.append('files', base64);
-
-
-        // let xhr = new XMLHttpRequest();
-        // xhr.open('POST', FileUploadUri, true);
-        // xhr.onprogress = function () {
-        //   console.log('LOADING', xhr.status);
-        // };
-
-        // xhr.onerror = (e) => {
-        //   console.log("error")
-        // };
-
-        // xhr.onload = function () {
-        //   console.log('DONE', xhr.status);
-        // };
-        // xhr.send(data);
-
       }
 
     } catch (e) {
@@ -98,6 +80,7 @@ export default function CameraSection({ onUploadedContentsChange }: Props) {
 
   return <View style={styles.container}>
     <View style={styles.cameraButtonsContainer}>
+      {/* <Camera style={{ flex: 1 }} type={type}> */}
       <Icon
         name="camera"
         type="font-awesome"
@@ -106,6 +89,7 @@ export default function CameraSection({ onUploadedContentsChange }: Props) {
         onPress={() => { console.log("on camera click") }}
         containerStyle={styles.cameraButtonIcon}
       />
+      {/* </Camera> */}
       <Icon
         name="image"
         type="font-awesome"

@@ -16,6 +16,7 @@ import { useGlobalState } from "../../shared/globalState/AppContext";
 import { useSignUp } from "../../api/auth/AuthApiHook";
 import { useTokenRefreshHandler } from "../../shared/auth/AuthHook";
 import { RootStackParamList } from "../StartUpScreen";
+import { navigate } from "../../shared/navigation/RootNavigation";
 // const BackgroundImage = require('../../../assets/backgroundImage.jpg');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const BackgroundImage2 = require("../../../assets/backgroundImage2.jpg");
@@ -25,10 +26,6 @@ export default function DevelopmentLoginScreen() {
   const { post, result, isError, isLoading, error } = useSignUp();
   const [accessToken, setAccessToken] = useState("");
 
-  const navigation = useNavigation<StackNavigationProp<
-    RootStackParamList
-  >>();
-
   useEffect(() => {
     if (result && !isError) {
       console.log("result", result, isError)
@@ -36,7 +33,7 @@ export default function DevelopmentLoginScreen() {
         type: "setLoggedInUser",
         account: result
       });
-      navigation.navigate("Home")
+      navigate("Home")
     }
   }, [result, isError]);
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { View } from 'react-native'
+import { View, StyleSheet } from 'react-native'
+import { Text } from 'react-native-elements'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
 import { CategoryViewModel } from '../../api/categories/CategoriesApiModel'
@@ -7,6 +8,7 @@ import CategoryList from './CategoryList'
 import SearchBarCustom from '../../shared/components/SearchBar'
 import { RootStackParamList } from '../StartUpScreen'
 import { useCategoriesByName } from '../../api/categories/CategoriesApiHook'
+import { MainColor } from '../../shared/Const'
 
 type ChooseCategoryScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -50,9 +52,32 @@ export default function ChooseCategoryScreen() {
     // setCategories(categoriesInitial.filter(category => category.name.toLowerCase().indexOf(text.toLowerCase()) !== -1));
   }
 
+  const isData = result != null && result !== undefined && result.length > 0;
+
   return <View>
     <SearchBarCustom onChangeText={onSearchChange} />
-    <CategoryList isLoading={isLoading} onSelect={onCategorySelect} categories={result || []}
-      onRefresh={fetchFirstPage} fetchNextPage={fetchNextPage} fetchPrevPage={fetchPrevPage} />
+    {isData ?
+      <CategoryList isLoading={isLoading} onSelect={onCategorySelect} categories={result || []}
+        onRefresh={fetchFirstPage} fetchNextPage={fetchNextPage} fetchPrevPage={fetchPrevPage} />
+      :
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>No Records</Text>
+      </View>
+    }
   </View>
 }
+
+const styles = StyleSheet.create({
+  text: {
+    color: MainColor,
+    fontSize: 21,
+    fontWeight: "bold",
+    marginRight: 5
+  },
+  textContainer: {
+    alignItems: "center",
+    height: 100,
+    justifyContent: "center",
+    width: "100%"
+  },
+});
