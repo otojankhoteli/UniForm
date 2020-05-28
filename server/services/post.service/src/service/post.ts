@@ -1,4 +1,4 @@
-import { Service, Inject, Container } from 'typedi';
+import { Service, Inject } from 'typedi';
 import { Document, Model } from 'mongoose';
 import { IUser } from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
@@ -8,9 +8,7 @@ import { Logger } from 'winston';
 import { Events } from '../subscriber/event';
 import { ICategoryDTO } from '../interface/Category';
 import { IHashTag, IHashTagSearchModel } from '../interface/HashTag';
-import mongoose from 'mongoose';
 import _ from 'lodash';
-import PermissionDeniedError from '../util/error/PermissionDeniedError';
 import { VoteService } from './vote';
 
 @Service()
@@ -158,45 +156,12 @@ export class PostService {
 
   public async upVote(postId: string, userId: string) {
     const post = await this._validateVoteAndGetPost(postId, userId);
-    return this.VoteService.upVote(postId, userId, post);
-
-    // const hasUpvoted = await this.PostModel.findOne({_id: postId, upVoters: userId}).lean();
-
-    // const hasDownVoted = await this.PostModel.findOne({_id: postId, downVoters: userId}).lean();
-
-    // if (hasUpvoted) {
-    //   // post.upVoters = post.upVoters.filter((upVoter) => upVoter.toString() !== userId);
-    //   // post.voteCount--;
-    // } else if (hasDownVoted) {
-    //   post.downVoters = post.downVoters.filter((downVoter) => downVoter.toString() !== userId);
-    //   post.upVoters.push(userId);
-    //   post.voteCount += 2;
-    // } else {
-    //   post.upVoters.push(userId);
-    //   post.voteCount++;
-    // }
-    // return this.PostModel.findByIdAndUpdate(postId, post, {new: true});
+    return this.VoteService.upVote(userId, post);
   }
 
   public async downVote(postId: string, userId: string) {
     const post = await this._validateVoteAndGetPost(postId, userId);
-
-    const hasUpvoted = await this.PostModel.findOne({ _id: postId, upVoters: userId });
-
-    const hasDownVoted = await this.PostModel.findOne({ _id: postId, downVoters: userId });
-
-    if (hasDownVoted) {
-      // post.downVoters = post.downVoters.filter((downVoter) => downVoter.toString() !== userId);
-      // post.voteCount++;
-    } else if (hasUpvoted) {
-      post.upVoters = post.upVoters.filter((upVoter) => upVoter.toString() !== userId);
-      post.downVoters.push(userId);
-      post.voteCount -= 2;
-    } else {
-      post.downVoters.push(userId);
-      post.voteCount--;
-    }
-    return this.PostModel.findByIdAndUpdate(postId, post, { new: true });
+    return this.VoteService.downVote(userId, post);
   }
 
   public async filterReactedPosts(postIds: string[], userId: string, reaction: 'upvote' | 'downvote') {

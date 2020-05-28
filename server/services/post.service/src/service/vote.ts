@@ -1,4 +1,3 @@
-import { Inject } from 'typedi';
 import { Logger } from 'winston';
 import _ from 'lodash';
 
@@ -10,12 +9,10 @@ export class VoteService {
   ) {
   }
 
-  public async upVote(objectId: string, userId: string, votable: any) {
-    // const votable = await this._validateVoteAndGetVotable(objectId, userId);
+  public async upVote(userId: string, votable: any) {
+    const hasUpvoted = await this.VotableModel.findOne({ _id: votable._id, upVoters: userId }).lean();
 
-    const hasUpvoted = await this.VotableModel.findOne({ _id: objectId, upVoters: userId }).lean();
-
-    const hasDownVoted = await this.VotableModel.findOne({ _id: objectId, downVoters: userId }).lean();
+    const hasDownVoted = await this.VotableModel.findOne({ _id: votable._id, downVoters: userId }).lean();
 
     if (hasUpvoted) {
       // post.upVoters = post.upVoters.filter((upVoter) => upVoter.toString() !== userId);
@@ -28,15 +25,13 @@ export class VoteService {
       votable.upVoters.push(userId);
       votable.voteCount++;
     }
-    return this.VotableModel.findByIdAndUpdate(objectId, votable, { new: true });
+    return this.VotableModel.findByIdAndUpdate(votable._id, votable, { new: true });
   }
 
-  public async downVote(objectId: string, userId: string, votable: any) {
-    // const post = await this._validateVoteAndGetPost(postId, userId);
+  public async downVote(userId: string, votable: any) {
+    const hasUpvoted = await this.VotableModel.findOne({ _id: votable._id, upVoters: userId });
 
-    const hasUpvoted = await this.VotableModel.findOne({ _id: objectId, upVoters: userId });
-
-    const hasDownVoted = await this.VotableModel.findOne({ _id: objectId, downVoters: userId });
+    const hasDownVoted = await this.VotableModel.findOne({ _id: votable._id, downVoters: userId });
 
     if (hasDownVoted) {
       // post.downVoters = post.downVoters.filter((downVoter) => downVoter.toString() !== userId);
@@ -49,6 +44,6 @@ export class VoteService {
       votable.downVoters.push(userId);
       votable.voteCount--;
     }
-    return this.VotableModel.findByIdAndUpdate(objectId, votable, { new: true });
+    return this.VotableModel.findByIdAndUpdate(votable._id, votable, { new: true });
   }
 }
