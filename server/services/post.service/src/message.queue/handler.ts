@@ -7,14 +7,13 @@ import {UserService} from '../service/user';
 const registerUser = async (msg) => {
   try {
     logger.silly('registering user: %o', msg.body);
+    msg.ack();
 
     const userService = Container.get(UserService);
     await userService.save(msg.body);
     logger.silly('user registered successfully');
-    msg.ack();
   } catch (e) {
     logger.error('error registering user');
-    msg.nack();
   }
 };
 

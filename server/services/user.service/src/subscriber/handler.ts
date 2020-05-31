@@ -9,7 +9,7 @@ import {EventEmitter} from 'events';
 const onUserSignUp = (user: IUser) => {
   logger.silly('Event Handler user sign up %o', onUserSignUp.name);
   const userPublisher: UserPublisher = Container.get('UserPublisher');
-  userPublisher.publish(user);
+  userPublisher.publish(user).catch(console.error);
 };
 
 
