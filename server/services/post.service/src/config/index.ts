@@ -11,6 +11,9 @@ export const config = {
   logs: {
     level: process.env.LOG_LEVEL ?? 'silly',
   },
+  authentication: {
+    secret: 'secret',
+  },
   rabbitmq: {
     url: process.env.RABBITMQ_URL ?? 'localhost',
     port: process.env.RABBITMQ_PORT ?? 5672,
