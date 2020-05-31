@@ -1,15 +1,15 @@
-import { Service, Inject } from 'typedi';
-import { Document, Model } from 'mongoose';
-import { IUser } from '../interface/User';
+import {Service, Inject} from 'typedi';
+import {Document, Model} from 'mongoose';
+import {IUser} from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
-import { IPost, UpsertPostRequest } from '../interface/Post';
-import { EventEmitter } from 'events';
-import { Logger } from 'winston';
-import { Events } from '../subscriber/event';
-import { ICategoryDTO } from '../interface/Category';
-import { IHashTag, IHashTagSearchModel } from '../interface/HashTag';
+import {FeedPostResponse, IPost, UpsertPostRequest} from '../interface/Post';
+import {EventEmitter} from 'events';
+import {Logger} from 'winston';
+import {Events} from '../subscriber/event';
+import {ICategoryDTO} from '../interface/Category';
+import {IHashTag, IHashTagSearchModel} from '../interface/HashTag';
 import _ from 'lodash';
-import { VoteService } from './vote';
+import {VoteService} from './vote';
 
 @Service()
 export class PostService {
@@ -68,17 +68,17 @@ export class PostService {
     hashTags = [].concat(hashTags);
 
     const existingHashTags = await this.HashTagModel
-      .find()
-      .where('name')
-      .in(hashTags);
+        .find()
+        .where('name')
+        .in(hashTags);
 
     const existingHashTagNames = [].concat(existingHashTags).map((tag) => tag.name);
     console.log(existingHashTagNames);
     const newHashTags = hashTags
-      .filter((name) => !existingHashTagNames.includes(name))
-      .map((name) => {
-        return { name };
-      });
+        .filter((name) => !existingHashTagNames.includes(name))
+        .map((name) => {
+          return {name};
+        });
 
     return this.HashTagModel.insertMany(newHashTags);
   }
@@ -101,7 +101,7 @@ export class PostService {
       voteCount: 0,
     };
     if (newPost._id) {
-      newPost = await this.PostModel.findByIdAndUpdate(newPost._id, newPost, { new: true });
+      newPost = await this.PostModel.findByIdAndUpdate(newPost._id, newPost, {new: true});
     } else {
       newPost = await this.PostModel.create(newPost);
     }
@@ -120,24 +120,24 @@ export class PostService {
     if (!query.limit) query.limit = this.limit;
 
     return this.HashTagModel
-      .find()
-      .where('name')
-      .regex(new RegExp(`^${query.name}`))
-      .skip(query.skip)
-      .limit(query.limit);
+        .find()
+        .where('name')
+        .regex(new RegExp(`^${query.name}`))
+        .skip(query.skip)
+        .limit(query.limit);
   }
 
-  public async getCategoryPosts({ categoryId, skip, limit }) {
+  public async getCategoryPosts({categoryId, skip, limit}) {
     this.logger.silly('getting posts from category: %o', categoryId);
     if (!skip) skip = this.skip;
     if (!limit) limit = this.limit;
 
     return this.PostModel
-      .find()
-      .where('category')
-      .equals(categoryId)
-      .skip(skip)
-      .limit(limit);
+        .find()
+        .where('category')
+        .equals(categoryId)
+        .skip(skip)
+        .limit(limit);
   }
 
   private async _validateVoteAndGetPost(postId, userId) {
@@ -172,27 +172,29 @@ export class PostService {
       modelReaction = 'downVoters';
     }
     return this.PostModel
-      .find()
-      .where('_id')
-      .in(postIds)
-      .where(modelReaction)
-      .equals(userId)
-      .select('_id')
-      .lean();
+        .find()
+        .where('_id')
+        .in(postIds)
+        .where(modelReaction)
+        .equals(userId)
+        .select('_id')
+        .lean();
   }
 
 
-  public async getFeed(userId: string, skip, limit) {
+  public async getFeed(userId: string, skip, limit): Promise<FeedPostResponse[]> {
     const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
 
     const posts = await this.PostModel
-      .find()
-      .where('category')
-      .in(subscribedCategories)
-      .sort({ updatedAt: 'desc' })
-      .skip(skip)
-      .limit(limit)
-      .lean();
+        .find()
+        .where('category')
+        .populate('author', ['name', 'imgUrl'])
+        .populate('category', 'name')
+        .in(subscribedCategories)
+        .sort({updatedAt: 'desc'})
+        .skip(skip)
+        .limit(limit)
+        .lean();
 
     const postsRaw = posts.map((post) => {
       return {
@@ -204,20 +206,30 @@ export class PostService {
     const postIds = postsRaw.map((post) => post._id);
 
     const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
-      .map((post) => post._id.toString());
+        .map((post) => post._id.toString());
     const downVotedPosts = (await this.filterReactedPosts(postIds, userId, 'downvote'))
-      .map((post) => post._id.toString());
+        .map((post) => post._id.toString());
 
     const postsWithReacts = posts.map((post) => {
-      let reaction = null;
-      const postId = post._id.toString();
-      if (upVotedPosts.includes(postId)) {
-        reaction = 'upvote';
-      } else if (downVotedPosts.includes(postId)) {
-        reaction = 'downvote';
-      }
+      const postId = post._id;
+      const isUpvoted = upVotedPosts.includes(postId);
+      const isDownvoted = downVotedPosts.includes(postId);
 
-      return { ...post, react: reaction };
+      const resp: FeedPostResponse = {
+        id: post._id.toString(),
+        text: post.text,
+        authorId: post.author._id.toString(),
+        authorUsername: post.author.name,
+        authorProfilePic: post.author.imgUrl,
+        voteCount: post.voteCount,
+        categoryId: post.category._id.toString(),
+        categoryName: post.category.name,
+        isUpvoted: isUpvoted,
+        isDownvoted: isDownvoted,
+        createdAt: post.createdAt,
+        files: post.files,
+      };
+      return resp;
     });
 
     return postsWithReacts;
