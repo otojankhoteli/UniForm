@@ -183,14 +183,14 @@ export class PostService {
 
 
   public async getFeed(userId: string, skip, limit): Promise<FeedPostResponse[]> {
-    const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
+    // const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
 
     const posts = await this.PostModel
         .find()
         .where('category')
         .populate('author', ['name', 'imgUrl'])
         .populate('category', 'name')
-        .in(subscribedCategories)
+        // .in(subscribedCategories)
         .sort({updatedAt: 'desc'})
         .skip(skip)
         .limit(limit)

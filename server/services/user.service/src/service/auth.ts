@@ -18,10 +18,10 @@ export class AuthService {
 
     let user = await this.UserModel.findOneAndUpdate({ email: userInputDTO.email },
       { ...userInputDTO, role: role },
-      { upsert: true });
+      { upsert: true }).lean();
 
     if (user == null) {
-      user = await this.UserModel.findOne({ email: userInputDTO.email });
+      user = await this.UserModel.findOne({ email: userInputDTO.email }).lean();
     }
 
     this.eventEmitter.emit(Events.user.signUp, user);//TODO add 

@@ -10,7 +10,7 @@ const filePersistenceServiceInstance = Container.get(FilePersistenceService);
 
 const router = Router();
 
-const multerOptions = {limits: {fileSize: 5 * 1024 * 1024}};
+const multerOptions = {limits: {fieldSize: 100 * 1024 * 1024}};
 const MAX_ALLOWED = 5;
 const upload = multer(multerOptions);
 

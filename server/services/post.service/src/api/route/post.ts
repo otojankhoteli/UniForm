@@ -14,7 +14,7 @@ router.use('/', pageParser);
 router.post('/', authenticate, asyncMw(async (req, res, _) => {
   const postService = Container.get(PostService);
   // add token decode implementation
-  const post: UpsertPostRequest = { ...req.body, author: req.currentUser._id };
+  const post: UpsertPostRequest = { ...req.body, authorId: req.currentUser._id };
   res.send(await postService.save(post));
 }));
 
