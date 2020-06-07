@@ -119,7 +119,7 @@ services:
       - 27019:27017
 
   mongo-notification:
-    container_name: mongo-blob
+    container_name: mongo-notification
     image: mongo
     environment:
       - MONGO_INITDB_ROOT_USERNAME=test
