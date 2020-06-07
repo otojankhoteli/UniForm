@@ -14,7 +14,7 @@ import { usePostCreate } from "../../api/posts/PostsApiHook";
 import { useHashtagByName } from "../../api/hashtags/HashtagsApiHook";
 import { HashtagViewModel } from "../../api/hashtags/HashtagsApiModel";
 import { useUsersByEmail } from "../../api/users/UsersApiHook";
-import CameraSection, { UploadedImage } from "./CameraSection";
+import MediaSection, { UploadedImage } from "./MediaSection";
 
 type AddPostScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -136,7 +136,7 @@ export default function AddPostScreen() {
             placeHolder="Your post text"
             hashTags={hashTags || []} userTags={userTags || []} />
         </ScrollView>
-        <CameraSection onUploadedContentsChange={onUploadedContentsChange} />
+        <MediaSection onUploadedContentsChange={onUploadedContentsChange} />
       </View>
     </View>
   );

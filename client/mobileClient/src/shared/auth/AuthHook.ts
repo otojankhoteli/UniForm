@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useRefreshToken } from "../../api/auth/AuthApiHook";
 import { useGlobalState } from "../globalState/AppContext";
 import { navigate } from "../navigation/RootNavigation";
+import { JWTExpiredExceptionMessage } from "../../api/shared/ApiConst";
 
 export function useTokenRefreshHandler() {
   const { post, result, isError } = useRefreshToken();
@@ -23,13 +24,18 @@ export function useTokenRefreshHandler() {
   }, [result, isError]);
 
   useEffect(() => {
-    if (state.exception) {
-      if (state.exception.type === "ApiError" && state.exception.statusCode === 401) {
-        console.log("refres token")
+    if (!state.exception)
+      return;
+    console.log("exception", state.exception)
+    if (state.exception.type === "ApiError"
+      && state.exception.statusCode === 401) {
+      if (state.exception.errorObject.message === JWTExpiredExceptionMessage) {
         post({
           expiredToken: state.account.token,
           refreshToken: state.account.refreshToken
         });
+      } else {
+        navigate("Login");
       }
     }
   }, [state.exception])

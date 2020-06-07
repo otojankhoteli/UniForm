@@ -14,7 +14,7 @@ export function getEncodedUri<TRequest>(requestBody: TRequest) {
 // Todo is logged in and token is from async storage
 export function getWithAuthorizeHeader(token: string | undefined, headers: HeadersInit, affect = true): HeadersInit {
   if (token && affect) {
-    return { ...headers, Authorization: `bearer ${token}` };
+    return { ...headers, Authorization: `Bearer ${token}` };
   }
   return headers;
 }

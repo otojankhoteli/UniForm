@@ -15,6 +15,7 @@
     "@react-native-community/masked-view": "0.1.6",
     "@react-navigation/native": "^5.1.4",
     "@react-navigation/stack": "^5.2.9",
+    "@types/react-native-vector-icons": "^6.4.5",
     "expo": "^37.0.0",
     "expo-camera": "~8.2.0",
     "expo-constants": "~9.0.0",
@@ -31,6 +32,7 @@
     "react-native-safe-area-context": "0.7.3",
     "react-native-screens": "~2.2.0",
     "react-native-tiny-toast": "^1.0.7",
+    "react-native-vector-icons": "^6.6.0",
     "react-native-web": "^0.11.7"
   },
   "devDependencies": {

@@ -12,12 +12,13 @@ export interface PostViewModel {
   text: string;
   authorId: string;
   authorUsername: string;
-  authorProfilePic: string;
+  authorProfilePic?: string;
   voteCount: number;
   categoryName: string;
   categoryId: string;
   isUpvoted: boolean;
   isDownvoted: boolean;
-  createdAt: string;
+  isJoined:boolean;
+  createdAt?: string;
   files: string[];
 }

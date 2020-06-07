@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, ScrollView } from 'react-native'
 import { Text } from 'react-native-elements'
 import { StackNavigationProp } from '@react-navigation/stack'
 import { useNavigation } from '@react-navigation/native'
@@ -54,16 +54,18 @@ export default function ChooseCategoryScreen() {
 
   const isData = result != null && result !== undefined && result.length > 0;
 
-  return <View>
-    <SearchBarCustom onChangeText={onSearchChange} />
-    {isData ?
-      <CategoryList isLoading={isLoading} onSelect={onCategorySelect} categories={result || []}
-        onRefresh={fetchFirstPage} fetchNextPage={fetchNextPage} fetchPrevPage={fetchPrevPage} />
-      :
-      <View style={styles.textContainer}>
-        <Text style={styles.text}>No Records</Text>
-      </View>
-    }
+  return <View style={{ flex: 1, }}>
+    <SearchBarCustom style={{ maxHeight: 60 }} onChangeText={onSearchChange} />
+    <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1, }}>
+      {isData ?
+        <CategoryList isLoading={isLoading} onSelect={onCategorySelect} categories={result || []}
+          onRefresh={fetchFirstPage} fetchNextPage={fetchNextPage} fetchPrevPage={fetchPrevPage} />
+        :
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>No Records</Text>
+        </View>
+      }
+    </ScrollView>
   </View>
 }
 

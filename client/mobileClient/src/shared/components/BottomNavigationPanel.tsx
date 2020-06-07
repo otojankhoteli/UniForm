@@ -35,11 +35,6 @@ const styles = StyleSheet.create({
   },
   addButtonIcon: {
   },
-  backgroundImageStyle: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
   container: {
     alignItems: "center",
     backgroundColor: 'rgba(250, 256, 256, 1)',

@@ -3,6 +3,11 @@ import Toast from "react-native-tiny-toast";
 import { useGlobalState } from "../globalState/AppContext";
 import { ExceptionState } from "../exceptionHandling/ExceptionHandlingModels";
 
+
+function canToast(exception:ExceptionState){
+  return !(exception.type==="ApiError" && exception.statusCode===401);
+}
+
 function getToastMessage(exception: ExceptionState) {
   let message = "";
   switch (exception.type) {
@@ -24,18 +29,18 @@ export default function useToast() {
   useEffect(() => {
     if (!state.exception)
       return;
+    if(canToast(state.exception)){
 
-    Toast.show(getToastMessage(state.exception), {
-      position: Toast.position.BOTTOM,
-      containerStyle: { width: 300, height: 60, backgroundColor: "white", borderRadius: 33 },
-      textStyle: { color: "red", fontWeight: "bold" },
-      shadow: true,
-      imgStyle: {},
-      mask: true,
-      maskStyle: {},
-    });
+      Toast.show(getToastMessage(state.exception), {
+        position: Toast.position.BOTTOM,
+        containerStyle: { width: 300, height: 60, backgroundColor: "white", borderRadius: 33 },
+        textStyle: { color: "red", fontWeight: "bold" },
+        shadow: true,
+        imgStyle: {},
+        mask: true,
+        maskStyle: {},
+      });
+    }
   }, [state.exception])
 
 }
-
-

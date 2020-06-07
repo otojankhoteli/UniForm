@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { SearchBar } from 'react-native-elements'
+import { TextStyle, StyleProp } from 'react-native';
 import { MainColor } from '../Const';
 
 interface Props {
   onChangeText: (text: string) => void;
+  style?: StyleProp<TextStyle>;
 }
-export default function SearchBarCustom({ onChangeText }: Props) {
+export default function SearchBarCustom({ onChangeText, style }: Props) {
   const [text, setText] = useState("");
 
   const onChangeTextInternal = (text: string) => {
@@ -17,8 +19,8 @@ export default function SearchBarCustom({ onChangeText }: Props) {
     lightTheme
     value={text}
     onChangeText={onChangeTextInternal}
-    inputStyle={{ flex: 1 }}
+    inputStyle={{ flex: 1, borderWidth: 0 }}
     inputContainerStyle={{ backgroundColor: "white" }}
-    containerStyle={{ backgroundColor: MainColor, borderWidth: 0 }}
-    style={{ flex: 1, borderWidth: 0 }} />
+    containerStyle={[{ flex: 1, backgroundColor: "white", borderWidth: 0 }, style]}
+    style={[style, { flex: 1, borderWidth: 0 }]} />
 }
