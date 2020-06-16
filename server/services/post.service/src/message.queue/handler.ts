@@ -1,4 +1,3 @@
-import {IUser} from '../interface/User';
 import logger from '../util/logger';
 import {Container} from 'typedi';
 import {UserService} from '../service/user';
@@ -14,7 +13,9 @@ const registerUser = async (msg) => {
     logger.silly('user registered successfully');
   } catch (e) {
     logger.error('error registering user');
+    // todo route message to error queue
   }
 };
+
 
 export {registerUser};

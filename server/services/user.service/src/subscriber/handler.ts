@@ -9,7 +9,8 @@ import {EventEmitter} from 'events';
 const onUserSignUp = (user: IUser) => {
   logger.silly('Event Handler user sign up %o', onUserSignUp.name);
   const userPublisher: UserPublisher = Container.get('UserPublisher');
-  userPublisher.publish(user).catch(console.error);
+  userPublisher.publish(user)
+      .catch((e) => logger.error(e));
 };
 
 
@@ -17,6 +18,7 @@ const registerHandlers = () => {
   const emitter: EventEmitter = Container.get('EventEmitter');
 
   emitter.on(Events.user.signUp, onUserSignUp);
+  logger.info('user signup handler registered');
 };
 
 export {registerHandlers};

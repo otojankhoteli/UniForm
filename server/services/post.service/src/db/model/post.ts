@@ -19,6 +19,7 @@ const post = new mongoose.Schema({
     type: String,
     required: true,
   },
+
   files: [{
     type: String,
   }],
@@ -29,7 +30,9 @@ const post = new mongoose.Schema({
   }],
 
   userTags: [{
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
   }],
 
   category: {
@@ -40,11 +43,13 @@ const post = new mongoose.Schema({
 
   upVoters: [{
     type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     index: true,
   }],
 
   downVoters: [{
     type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     index: true,
   }],
 

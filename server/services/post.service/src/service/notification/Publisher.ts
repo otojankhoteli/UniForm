@@ -1,6 +1,11 @@
-import {RoutingSettings} from './topology';
+import {RoutingSettings} from '../../message.queue/topology';
 
-export abstract class Publisher {
+export interface Publish {
+  publish(msg: any)
+}
+
+
+export class Publisher implements Publish {
   private readonly routingKey;
   private readonly type;
   private readonly exchange;

@@ -1,13 +1,14 @@
-import { Container, ContainerInstance } from 'typedi';
+import {Container, ContainerInstance} from 'typedi';
 import logger from './logger';
 import CategoryModel from '../db/model/category';
-import { UserService } from '../service/user';
-import { UserModel } from '../db/model/user';
-import { PostModel } from '../db/model/post';
-import { HashTagModel } from '../db/model/hashtag';
-import { EventEmitter } from 'events';
-import { rabbit } from '../message.queue/index';
-import { VoteService } from '../service/vote';
+import {UserService} from '../service/user';
+import {UserModel} from '../db/model/user';
+import {PostModel} from '../db/model/post';
+import {HashTagModel} from '../db/model/hashtag';
+import {EventEmitter} from 'events';
+import {rabbit} from '../message.queue/index';
+import {VoteService} from '../service/vote';
+import {NotificationPublisher} from '../service/notification/NotificationPublisher';
 
 export default () => {
   try {
@@ -16,6 +17,7 @@ export default () => {
     Container.set('PostModel', PostModel);
     Container.set('HashTagModel', HashTagModel);
     Container.set('Rabbit', rabbit);
+    Container.set('NotificationPublisher', new NotificationPublisher(Container.get('Rabbit')));
     Container.set('EventEmitter', new EventEmitter());
     Container.set('logger', logger);
     Container.set('PostVoteService', new VoteService(Container.get('logger'), Container.get('PostModel')));

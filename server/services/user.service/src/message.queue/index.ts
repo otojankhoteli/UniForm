@@ -1,7 +1,6 @@
-// import {Container} from 'typedi';
 import rabbit from 'rabbot';
 import logger from '../util/logger';
-import {settings, UserPublisherSettings} from './topology';
+import {settings} from './topology';
 
 
 const registerRabbitHandlers = () => {

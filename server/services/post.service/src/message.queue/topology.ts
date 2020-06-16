@@ -15,6 +15,12 @@ const UserPublisherSettings: RoutingSettings = {
   queue: 'user-q',
 };
 
+const NotificationPublisherSettings: RoutingSettings = {
+  exchange: 'notification',
+  routingKey: 'newNotification',
+  type: 'notification.add',
+  queue: 'notification-q',
+};
 
 const settings = {
   connection: {
@@ -25,15 +31,15 @@ const settings = {
   },
   exchanges: [
     {name: 'user', type: 'direct', durable: true},
+    {name: 'notification', type: 'direct', durable: true},
   ],
   queues: [
     {name: 'user-q', durable: true, subscribe: true},
+    {name: 'notification-q', durable: true, subscribe: true},
   ],
-  bindings: [{
-    exchange: 'user',
-    target: 'user-q',
-    keys: ['newUser'],
-  }],
+  bindings: [
+    {exchange: 'user', target: 'user-q', keys: ['newUser']},
+    {exchange: 'notification', target: 'notification-q', keys: ['newNotification']},
+  ],
 };
-
-export {settings, RoutingSettings, UserPublisherSettings};
+export {settings, RoutingSettings, UserPublisherSettings, NotificationPublisherSettings};

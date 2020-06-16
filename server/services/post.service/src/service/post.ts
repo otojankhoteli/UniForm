@@ -234,4 +234,12 @@ export class PostService {
 
     return postsWithReacts;
   }
+
+
+  public async getById(postId: string) {
+    return this.PostModel.findById(postId)
+        .populate('author', ['name', 'imgUrl'])
+        .populate('category', 'name')
+        .populate('userTags', ['name', 'imgUrl']);
+  }
 }

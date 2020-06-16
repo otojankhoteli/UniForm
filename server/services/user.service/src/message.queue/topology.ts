@@ -29,11 +29,9 @@ const settings = {
   queues: [
     {name: 'user-q', durable: true, subscribe: true},
   ],
-  bindings: [{
-    exchange: 'user',
-    target: 'user-q',
-    keys: ['newUser'],
-  }],
+  bindings: [
+    {exchange: 'user', target: 'user-q', keys: ['newUser']},
+  ],
 };
 
 export {settings, RoutingSettings, UserPublisherSettings};
