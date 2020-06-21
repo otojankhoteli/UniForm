@@ -2,7 +2,7 @@ import {Service, Inject} from 'typedi';
 import {Document, Model} from 'mongoose';
 import {IUser} from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
-import {FeedPostResponse, IPost, UpsertPostRequest} from '../interface/Post';
+import {FeedPostResponse, IPost, PostResponse, UpsertPostRequest} from '../interface/Post';
 import {EventEmitter} from 'events';
 import {Logger} from 'winston';
 import {Events} from '../subscriber/event';
@@ -136,7 +136,8 @@ export class PostService {
         .where('category')
         .equals(categoryId)
         .skip(skip)
-        .limit(limit);
+        .limit(limit)
+        .lean();
   }
 
   private async _validateVoteAndGetPost(postId, userId) {
@@ -187,22 +188,25 @@ export class PostService {
     const posts = await this.PostModel
         .find()
         .where('category')
+        .populate('userTags', ['name', 'imgUrl'])
         .populate('author', ['name', 'imgUrl'])
         .populate('category', 'name')
-        // .in(subscribedCategories)
+    // .in(subscribedCategories)
         .sort({updatedAt: 'desc'})
         .skip(skip)
         .limit(limit)
         .lean();
 
-    const postsRaw = posts.map((post) => {
-      return {
-        ...post,
-        _id: post._id.toString(),
-      };
-    });
+    // const postsRaw = posts.map((post) => {
+    //   return {
+    //     ...post,
+    //     _id: post._id.toString(),
+    //   };
+    // })
+    //
+    // console.log(postsRaw);
 
-    const postIds = postsRaw.map((post) => post._id);
+    const postIds = posts.map((post) => post._id.toString());
 
     const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
         .map((post) => post._id.toString());
@@ -222,6 +226,12 @@ export class PostService {
         authorProfilePic: post.author.imgUrl,
         voteCount: post.voteCount,
         categoryId: post.category._id.toString(),
+        userTags: post.userTags.map((userTag) => {
+          return {
+            id: userTag._id.toString(),
+            name: userTag.name,
+          };
+        }),
         categoryName: post.category.name,
         isUpvoted: isUpvoted,
         isDownvoted: isDownvoted,
@@ -235,10 +245,11 @@ export class PostService {
   }
 
 
-  public async getById(postId: string) {
+  public async getById(postId: string): Promise<PostResponse> {
     return this.PostModel.findById(postId)
         .populate('author', ['name', 'imgUrl'])
         .populate('category', 'name')
-        .populate('userTags', ['name', 'imgUrl']);
+        .populate('userTags', ['name', 'imgUrl'])
+        .lean();
   }
 }

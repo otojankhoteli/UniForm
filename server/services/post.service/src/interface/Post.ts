@@ -5,7 +5,7 @@ export interface IPost {
   text: string,
   files: string[],
   hashTags: string[],
-  userTags: string[],
+  userTags: any[],
   category: any,
   upVoters: string[],
   downVoters: string[],
@@ -31,8 +31,38 @@ export interface FeedPostResponse {
   voteCount: number;
   categoryName: string;
   categoryId: string;
+  userTags: {
+    id: string;
+    name: string;
+  }[];
+  // userTags: any,
   isUpvoted: boolean;
   isDownvoted: boolean;
   createdAt: string;
   files: string[];
+}
+
+interface PostUser {
+  _id: string
+  name: string;
+  imgUrl: string
+};
+
+export interface PostResponse {
+  _id: string,
+  author: PostUser,
+  type: string,
+  text: string,
+  files: string[],
+  hashTags: string[],
+  userTags: PostUser[],
+  category: {
+    _id: string;
+    name: string;
+  },
+  upVoters: string[],
+  downVoters: string[],
+  voteCount: number,
+  createdAt?: string,
+  updatedAt?: string,
 }

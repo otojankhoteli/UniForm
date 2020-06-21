@@ -19,12 +19,16 @@ router.post('/', asyncMw(async (req, res, _) => {
   res.send(await userService.save(user));
 }));
 
-router.get('/feed', authenticate, asyncMw(async (req, res, _) => {
+router.get('/feed',
+  authenticate,
+  asyncMw(async (req, res, _) => {
   const postService = Container.get(PostService);
 
   // todo get from token
   const userId = req.currentUser._id;
   res.send(await postService.getFeed(userId, req.query.skip, req.query.limit));
 }));
+
+
 
 export { router as userRouter };
