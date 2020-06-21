@@ -6,7 +6,7 @@ export const config = {
     port: process.env.MONGO_PORT ?? 27019,
     user: process.env.MONGO_USER ?? 'test',
     password: process.env.MONGO_PASSWORD ?? 'test',
-    db: process.env.POST_DB ?? 'blob',
+    db: process.env.BLOB_DB ?? 'blob',
   },
   logs: {
     level: process.env.LOG_LEVEL ?? 'silly',

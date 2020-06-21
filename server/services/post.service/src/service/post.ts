@@ -73,7 +73,6 @@ export class PostService {
         .in(hashTags);
 
     const existingHashTagNames = [].concat(existingHashTags).map((tag) => tag.name);
-    console.log(existingHashTagNames);
     const newHashTags = hashTags
         .filter((name) => !existingHashTagNames.includes(name))
         .map((name) => {

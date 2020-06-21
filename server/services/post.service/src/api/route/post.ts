@@ -11,14 +11,9 @@ const router = Router();
 
 router.use('/', pageParser);
 
-router.get('/:postId', asyncMw(async (req, res, _) => {
-  console.log(req.params.postId);
-  const postService = Container.get(PostService);
-  res.json(await postService.getById(req.params.postId));
-}));
 
 router.post('/',
-  // authenticate,
+  authenticate,
   asyncMw(async (req, res, _) => {
   const postService = Container.get(PostService);
   // add token decode implementation
@@ -32,9 +27,13 @@ router.get('/hashtag', asyncMw(async (req, res, _) => {
   res.send(await postService.getHashTags({ ...req.query }));
 }));
 
+router.get('/:postId', asyncMw(async (req, res, _) => {
+  const postService = Container.get(PostService);
+  res.json(await postService.getById(req.params.postId));
+}));
 
 router.post('/:postId/_upvote',
-  // authenticate,
+  authenticate,
   asyncMw(async (req, res, _) => {
   const postService = Container.get(PostService);
   res.json(await postService.upVote(req.params.postId, req.currentUser._id));
@@ -42,7 +41,7 @@ router.post('/:postId/_upvote',
 
 
 router.post('/:postId/_downvote',
-  // authenticate,
+  authenticate,
   asyncMw(async (req, res, _) => {
   const postService = Container.get(PostService);
   res.json(await postService.downVote(req.params.postId, req.currentUser._id));
