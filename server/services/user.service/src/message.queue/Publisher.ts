@@ -16,12 +16,12 @@ export abstract class Publisher {
   }
 
   publish(msg: any) {
-    this.rabbitInstance.publish(
+    return this.rabbitInstance.publish(
         this.exchange,
         {
           routingKey: this.routingKey,
           type: this.type,
-          text: msg,
+          body: msg,
         },
     );
   }

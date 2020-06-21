@@ -1,6 +1,6 @@
-FROM node:12.16-alpine as builder
+FROM node:12-alpine as builder
 
-WORKDIR /user.service
+WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
@@ -15,10 +15,10 @@ COPY index.ts .
 
 RUN npx tsc
 
-FROM node:12.16-alpine
-WORKDIR /user.service
+FROM node:12-alpine
+WORKDIR /app
 
-COPY --from=builder /user.service/build .
+COPY --from=builder /app/build .
 COPY yarn.lock .
 COPY package.json .
 RUN yarn install --production

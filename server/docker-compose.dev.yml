@@ -77,6 +77,25 @@ services:
       - mongo-blob
       - rabbitmq
 
+  notification.service:
+    container_name: notification.service
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - MONGO_HOST=mongo-notification
+      - MONGO_PORT=27017
+    build:
+      context: ./services/notification.service
+    volumes:
+      - ./services/notification.service:/app
+      - ./services/notification.service/build:/app/build
+    command: yarn docker:debug
+    ports:
+      - 3003:3003
+      - 9225:9225
+    depends_on:
+      - mongo-user
+      - rabbitmq
+
   mongo-post:
     container_name: mongo-post
     image: mongo
@@ -98,6 +117,17 @@ services:
       - /data/uniform/blob-service/data:/data/db
     ports:
       - 27019:27017
+
+  mongo-notification:
+    container_name: mongo-notification
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/uniform/notification-service/data:/data/db
+    ports:
+      - 27020:27017
 
   rabbitmq:
     container_name: rabbitmq

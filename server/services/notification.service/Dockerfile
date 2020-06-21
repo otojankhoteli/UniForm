@@ -21,4 +21,4 @@ COPY yarn.lock .
 COPY package.json .
 RUN yarn install --production
 
-CMD ["node", "--inspect=0.0.0.0:9230", "./index.js"]
+CMD ["node", "--inspect=0.0.0.0:9232", "./index.js"]

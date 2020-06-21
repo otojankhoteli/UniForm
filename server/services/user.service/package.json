@@ -13,10 +13,6 @@
     "rm:build": "rm -r build"
   },
   "dependencies": {
-    "@types/gapi": "^0.0.39",
-    "@types/jsonwebtoken": "^8.3.9",
-    "@types/mongoose": "^5.7.8",
-    "@types/randomstring": "^1.1.6",
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "google-auth-library": "^6.0.0",
@@ -36,6 +32,10 @@
     "@types/node": "^13.9.5",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",
+    "@types/gapi": "^0.0.39",
+    "@types/jsonwebtoken": "^8.3.9",
+    "@types/mongoose": "^5.7.8",
+    "@types/randomstring": "^1.1.6",
     "eslint": "^6.8.0",
     "eslint-config-google": "^0.14.0",
     "nodemon": "^2.0.2",
