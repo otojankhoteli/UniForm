@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -6,16 +6,30 @@ import { PostViewModel } from '../../../api/posts/PostsApiModel';
 import AvatarCustom from '../../../shared/components/Avatar';
 import { MainColor } from '../../../shared/Const';
 import HorizontalLine from '../../../shared/components/HorizontalLine';
+import { getTimeFormat } from '../../../shared/Utils';
+import { extractNodesFromInputText } from '../../addPost/AddPostUtils';
+import { TextWithTags } from '../../addPost/TextWithTags';
+import { useUpvote, useDownvote } from '../../../api/posts/PostsApiHook';
+
 
 
 interface Props {
-  post: PostViewModel
+  post: PostViewModel,
+  refresh: () => void
 }
-export function PostListItem({ post }: Props) {
-
+export function PostListItem({ post, refresh }: Props) {
+  const textNodes = useMemo(() => extractNodesFromInputText(post.text), [post.text]);
+  const { post: upvote, result: upvoteResult, isError: upvoteFailed } = useUpvote(post.id);
+  const { post: downvote, result: downvoteResult, isError: downvoteFailed } = useDownvote(post.id);
 
   const upVoteIconStyle = post.isUpvoted ? styles.votedIconColor : styles.notVotedIconColor;
   const downVoteIconStyle = post.isDownvoted ? styles.votedIconColor : styles.notVotedIconColor;
+
+  useEffect(() => {
+    if ((upvoteResult && !upvoteFailed) || (downvoteResult && !downvoteFailed)) {
+      refresh();
+    }
+  }, [upvoteResult, upvoteFailed, downvoteResult, downvoteFailed])
 
   const navigateToCategoryScreen = () => {
     //
@@ -45,18 +59,21 @@ export function PostListItem({ post }: Props) {
               {post.authorUsername}
             </Text>
           </TouchableOpacity>
-          <Text style={styles.timePassedText}> 10m ago</Text>
+          <Text style={styles.timePassedText}> {getTimeFormat(new Date(), new Date(post.createdAt))}</Text>
         </View>
       </View>
       <Icon color={post.isJoined ? "#AA061A" : "gray"} size={20} solid={post.isJoined} style={styles.joinCategoryIcon} onPress={joinCategory} name="heart" />
     </View>
-    <Text style={styles.postText}>{post.text}</Text>
+    {/* <Text style={styles.postText}>{post.text}</Text> */}
+    <View style={styles.postText}>
+      <TextWithTags nodes={textNodes} />
+    </View>
     <HorizontalLine mode="short" />
     <View style={styles.bottomSection}>
       <View style={styles.voteContainer}>
         <View style={styles.voteActionContainer}>
-          <Icon size={20} onPress={() => { console.log("up") }} style={upVoteIconStyle} name="arrow-up" />
-          <Icon size={20} onPress={() => { console.log("down") }} style={downVoteIconStyle} name="arrow-down" />
+          <Icon size={30} onPress={() => { upvote({}) }} style={upVoteIconStyle} name="arrow-up" />
+          <Icon size={30} onPress={() => { downvote({}) }} style={downVoteIconStyle} name="arrow-down" />
         </View>
         <Text>{post.voteCount}</Text>
       </View>
@@ -64,6 +81,7 @@ export function PostListItem({ post }: Props) {
     </View>
   </View>
 }
+
 
 
 const styles = StyleSheet.create({
@@ -104,7 +122,7 @@ const styles = StyleSheet.create({
     elevation: 10,
     margin: 5,
     padding: 3,
-    // width: "100%"
+    // width: "100%",
   },
   joinCategoryIcon: {
     marginLeft: "auto",
@@ -114,10 +132,12 @@ const styles = StyleSheet.create({
     color: "gray"
   },
   postText: {
+    borderColor: 'red',
+    borderWidth: 1,
     paddingBottom: 10,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 10
   },
   timePassedText: {
     fontSize: 10

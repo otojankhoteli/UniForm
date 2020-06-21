@@ -20,18 +20,8 @@ services:
     depends_on:
       - mongo-user
       - rabbitmq
-
-  mongo-user:
-    container_name: mongo-user
-    image: mongo
-    environment:
-      - MONGO_INITDB_DATABASE=user.mongodb
-      - MONGO_INITDB_ROOT_USERNAME=test
-      - MONGO_INITDB_ROOT_PASSWORD=test
-    volumes:
-      - /data/uniform/user-service/data:/data/db
-    ports:
-      - 27017:27017
+    networks:
+      - uniform-net
 
   post.service:
     container_name: post.service
@@ -54,6 +44,8 @@ services:
     depends_on:
       - mongo-post
       - rabbitmq
+    networks:
+      - uniform-net
 
   blob.service:
     container_name: blob.service
@@ -76,6 +68,8 @@ services:
     depends_on:
       - mongo-blob
       - rabbitmq
+    networks:
+      - uniform-net
 
   notification.service:
     container_name: notification.service
@@ -95,17 +89,36 @@ services:
     depends_on:
       - mongo-user
       - rabbitmq
+    networks:
+      - uniform-net
+
+  mongo-user:
+    container_name: mongo-user
+    image: mongo
+    environment:
+      - MONGO_INITDB_DATABASE=user.mongodb
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - uniformUserData:/data/db
+    ports:
+      - 27017:27017
+    networks:
+      - uniform-net
 
   mongo-post:
     container_name: mongo-post
     image: mongo
     environment:
+      - MONGO_INITDB_DATABASE=post.mongodb
       - MONGO_INITDB_ROOT_USERNAME=test
       - MONGO_INITDB_ROOT_PASSWORD=test
     volumes:
-      - /data/uniform/post-service/data:/data/db
+      - uniformPostData:/data/db
     ports:
       - 27018:27017
+    networks:
+      - uniform-net
 
   mongo-blob:
     container_name: mongo-blob
@@ -114,9 +127,11 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=test
       - MONGO_INITDB_ROOT_PASSWORD=test
     volumes:
-      - /data/uniform/blob-service/data:/data/db
+      - uniformBlobData:/data/db
     ports:
       - 27019:27017
+    networks:
+      - uniform-net
 
   mongo-notification:
     container_name: mongo-notification
@@ -125,13 +140,26 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=test
       - MONGO_INITDB_ROOT_PASSWORD=test
     volumes:
-      - /data/uniform/notification-service/data:/data/db
+      - uniformNotificationData:/data/db
     ports:
       - 27020:27017
-
+    networks:
+      - uniform-net
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3-management
     ports:
       - 15672:15672
       - 5672:5672
+    networks:
+      - uniform-net
+
+volumes:
+  uniformPostData:
+  uniformBlobData:
+  uniformNotificationData:
+  uniformUserData:
+
+networks:
+  uniform-net:
+    driver: bridge

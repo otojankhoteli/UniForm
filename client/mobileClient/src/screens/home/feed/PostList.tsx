@@ -49,7 +49,7 @@ export function PostList({ posts, isLoading, fetchNextPage, onRefresh }: Props) 
     style={{ flex: 1 }}
     contentContainerStyle={{ justifyContent: "flex-start", alignItems: "center", display: "flex", flexDirection: "column", flex: 1, borderWidth: 1, borderColor: "red" }}
     data={internalPosts}
-    renderItem={post => (<PostListItem key={post.item.id} post={post.item} />)}
+    renderItem={post => (<PostListItem refresh={onRefresh} key={post.item.id} post={post.item} />)}
     onMomentumScrollEnd={onScrollEnd}
     showsVerticalScrollIndicator
     refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefreshInternal} />} />

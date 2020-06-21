@@ -1,3 +1,5 @@
+import { EmptyRequest, EmptyResponse } from "../shared/ApiResponse";
+
 export interface CreatePostRequest {
   categoryId: string;
   hashTags: string[];
@@ -18,7 +20,7 @@ export interface PostViewModel {
   categoryId: string;
   isUpvoted: boolean;
   isDownvoted: boolean;
-  isJoined:boolean;
+  isJoined: boolean;
   createdAt?: string;
   files: string[];
 }

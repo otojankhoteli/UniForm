@@ -18,7 +18,7 @@ type HomeScreenNavigationProp = StackNavigationProp<
   'Home'
 >;
 export default function HomeScreen() {
-  const { isLoading, fetchFirstPage, fetchNextPage, fetchPrevPage, result } = useMockFeed();
+  const { isLoading, fetchFirstPage, fetchNextPage, fetchPrevPage, result } = useFeed();
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [{ account }, dispatch] = useGlobalState();
 
