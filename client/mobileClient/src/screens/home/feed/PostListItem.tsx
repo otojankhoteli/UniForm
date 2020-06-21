@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -9,17 +9,27 @@ import HorizontalLine from '../../../shared/components/HorizontalLine';
 import { getTimeFormat } from '../../../shared/Utils';
 import { extractNodesFromInputText } from '../../addPost/AddPostUtils';
 import { TextWithTags } from '../../addPost/TextWithTags';
+import { useUpvote, useDownvote } from '../../../api/posts/PostsApiHook';
 
 
 
 interface Props {
-  post: PostViewModel
+  post: PostViewModel,
+  refresh: () => void
 }
-export function PostListItem({ post }: Props) {
+export function PostListItem({ post, refresh }: Props) {
   const textNodes = useMemo(() => extractNodesFromInputText(post.text), [post.text]);
+  const { post: upvote, result: upvoteResult, isError: upvoteFailed } = useUpvote(post.id);
+  const { post: downvote, result: downvoteResult, isError: downvoteFailed } = useDownvote(post.id);
 
   const upVoteIconStyle = post.isUpvoted ? styles.votedIconColor : styles.notVotedIconColor;
   const downVoteIconStyle = post.isDownvoted ? styles.votedIconColor : styles.notVotedIconColor;
+
+  useEffect(() => {
+    if ((upvoteResult && !upvoteFailed) || (downvoteResult && !downvoteFailed)) {
+      refresh();
+    }
+  }, [upvoteResult, upvoteFailed, downvoteResult, downvoteFailed])
 
   const navigateToCategoryScreen = () => {
     //
@@ -62,8 +72,8 @@ export function PostListItem({ post }: Props) {
     <View style={styles.bottomSection}>
       <View style={styles.voteContainer}>
         <View style={styles.voteActionContainer}>
-          <Icon size={20} onPress={() => { console.log("up") }} style={upVoteIconStyle} name="arrow-up" />
-          <Icon size={20} onPress={() => { console.log("down") }} style={downVoteIconStyle} name="arrow-down" />
+          <Icon size={30} onPress={() => { upvote({}) }} style={upVoteIconStyle} name="arrow-up" />
+          <Icon size={30} onPress={() => { downvote({}) }} style={downVoteIconStyle} name="arrow-down" />
         </View>
         <Text>{post.voteCount}</Text>
       </View>
