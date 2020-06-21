@@ -12,13 +12,13 @@ export interface UserTag {
 interface Props {
   isVisible: boolean;
   userTags: UserViewModel[];
-  onSelect: (selectedTag: string) => void;
+  onSelect: (selectedTag: string, userId: string) => void;
 }
 export default function UserTagSuggestionPopUp({ userTags, isVisible, onSelect }: Props) {
   return isVisible && userTags.length > 0 ?
     <View style={styles.container}>
       {userTags.map(user => <TouchableOpacity key={user.email}
-        onPress={() => onSelect(getPrefix(user.email))}
+        onPress={() => onSelect(getPrefix(user.email), user.id)}
       >
         <Text>{getPrefix(user.email)}</Text>
       </TouchableOpacity>)}

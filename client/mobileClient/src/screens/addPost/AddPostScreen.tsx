@@ -15,6 +15,7 @@ import { useHashtagByName } from "../../api/hashtags/HashtagsApiHook";
 import { HashtagViewModel } from "../../api/hashtags/HashtagsApiModel";
 import { useUsersByEmail } from "../../api/users/UsersApiHook";
 import MediaSection, { UploadedImage } from "./MediaSection";
+import { UserTagNode } from "./AddPostUtils";
 
 type AddPostScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -29,12 +30,8 @@ interface SubmitState {
   uploadedContentsId: string[];
   category: CategoryViewModel;
 }
-const initialUserTags: UserTag[] = [{ userId: "test1", username: "ako" }, { userId: "test2", username: "bubuta" }, { userId: "test3", username: "janxeqsa" }];
-const initialPostTags: HashtagViewModel[] = [{ name: "uni", }, { name: "macs", }, { name: "sagamocdo", }];
 export default function AddPostScreen() {
   const { post } = usePostCreate();
-  // const [userTags, setUserTags] = useState<UserTag[]>(initialUserTags);
-  // const [postTags, setPostTags] = useState<HashtagViewModel[]>(initialPostTags);
   const { result: hashTags, setRequestInfo: fetchTags } = useHashtagByName();
   const { result: userTags, setRequestInfo: fetchUserTags } = useUsersByEmail();
 
@@ -71,6 +68,7 @@ export default function AddPostScreen() {
   }, [route])
 
   const onHashTagChange = (searchText: string) => {
+    console.log("onHashTagChange")
     fetchTags(prev => ({
       wait: false,
       info: {
@@ -96,7 +94,7 @@ export default function AddPostScreen() {
 
   const onTextChange = (textStateChange: TextStateChange) => {
     const hashTags = textStateChange.textNodes.filter(node => node.type === "#").map(node => node.value.split("#")[1]);
-    const userTags = textStateChange.textNodes.filter(node => node.type === "@").map(node => node.value.split("@")[1]);
+    const userTags = textStateChange.textNodes.filter(node => node.type === "@").map(node => (node as UserTagNode).userId);
     setSubmitState(prev => ({
       ...prev, text: textStateChange.text,
       hashTags, userTags,

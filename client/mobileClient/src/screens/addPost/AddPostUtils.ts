@@ -11,6 +11,7 @@ export interface HashTagNode extends TextNodeBase {
 }
 export interface UserTagNode extends TextNodeBase {
   type: typeof userTagSymbol;
+  userId?: string;
 }
 export interface PlainTextNode extends TextNodeBase {
   type: typeof plainText;
@@ -51,6 +52,26 @@ export function extractNodesFromInputText(text: string): TextNode[] {
   }
 
   return nodes;
+}
+
+export function getNodesWithPopulatedUserId(textNodes: TextNode[], userTag: string, userId: string) {
+  return textNodes.map(textNode => {
+    if (textNode.type === "@" && textNode.value === `@${userTag}`) {
+      return {
+        ...textNode,
+        userId
+      };
+    }
+    return textNode;
+  })
+}
+
+export function getNodesWithPopulatedUserIds(textNodes: TextNode[], oldTextNodes: TextNode[]) {
+  return textNodes.map(textNode => {
+    const oldTextNode = oldTextNodes.find(oldTextNode => oldTextNode.type === "@" && oldTextNode.value === textNode.value) as UserTagNode;
+
+    return oldTextNode ? { ...textNode, userId: oldTextNode.userId } : textNode;
+  });
 }
 
 interface Result {

@@ -3,7 +3,7 @@ import { View, StyleProp, ViewStyle, NativeSyntheticEvent, TextInputSelectionCha
 import { PostHashTag, HashTagSuggestionPopUp } from "./HashTagSuggestionPopUp";
 import UserTagSuggestionPopUp, { UserTag } from "./UserTagSuggestionPopUp";
 import { findFirst } from "../../shared/Utils";
-import { hashTagSymbol, userTagSymbol, HashTagNode, UserTagNode, TextNode, extractNodesFromInputText, TextNodeType, matchFirstUserTagReverse } from "./AddPostUtils";
+import { hashTagSymbol, userTagSymbol, HashTagNode, UserTagNode, TextNode, extractNodesFromInputText, TextNodeType, matchFirstUserTagReverse, getNodesWithPopulatedUserId, getNodesWithPopulatedUserIds } from "./AddPostUtils";
 import { TextWithTags } from "./TextWithTags";
 import { HashtagViewModel } from "../../api/hashtags/HashtagsApiModel";
 import { UserViewModel } from "../../api/users/UsersApiModel";
@@ -44,8 +44,6 @@ const initialState: State = {
 const SymbolLimit = 400;
 // eslint-disable-next-line no-useless-escape
 const regexForHashTag = /((?:#[^#\r\n\ \@]*){1})$/;
-// eslint-disable-next-line no-useless-escape
-const regexUserTag = /((?:@[^@\r\n\ \#]*){1})$/;
 const delimiters = [typeof hashTagSymbol, typeof userTagSymbol, ' '];
 export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLimit, onUserTagChange, onHashTagChange, updateHashTags, onTextChange }: Props) => {
   const [state, setState] = useState(initialState);
@@ -94,7 +92,7 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLi
     const hashTagMatch = textSubstring.match(regexForHashTag);
     const userTagMatch = matchFirstUserTagReverse(textSubstring);
     // const userTagMatch = textSubstring.match(regexUserTag);
-    const textNodes = extractNodesFromInputText(text);
+    const textNodes = getNodesWithPopulatedUserIds(extractNodesFromInputText(text), state.textNodes);
 
     if (hashTagMatch && hashTagMatch.length > 0) {
       const match = hashTagMatch[0];
@@ -103,15 +101,19 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLi
     } else if (userTagMatch && userTagMatch.length > 0) {
       // const match = userTagMatch[0];
       const match = userTagMatch;
-      const activeNode: UserTagNode = { value: match, startIndex: endIndex - match.length, endIndex, type: "@" };
+      const userTag = state.textNodes.find(node => node.type === "@" && node.value === match) || {};
+      const activeNode: UserTagNode = { ...userTag, value: match, startIndex: endIndex - match.length, endIndex, type: "@" };
       setState(prevState => ({ ...prevState, activeNode, text, isTextUpdated: false, textNodes, selection }));
     } else {
       setState(prevState => ({ ...prevState, activeNode: undefined, text, isTextUpdated: false, textNodes, selection }));
     }
+
+    console.log("state", state)
   }, [state]);
 
 
-  const tagSelect = (state: State, selectedTag: string, textNodeType: TextNodeType) => {
+  const onHashTagSelect = useCallback((selectedTag: string) => {
+    const textNodeType: TextNodeType = "#";
     const active = state.activeNode;
     const start = state.text.substring(0, active.startIndex);
     const middle = `${textNodeType}${selectedTag}`;
@@ -126,16 +128,25 @@ export const PostText = memo(({ style, userTags, hashTags, placeHolder, symbolLi
       activeNode: { value: middle, startIndex: active.startIndex, endIndex: active.startIndex + middle.length, type: textNodeType },
       selection: { start: active.startIndex + middle.length, end: active.startIndex + middle.length }
     });
-  }
-
-  // duplicate
-  const onHashTagSelect = useCallback((selectedTag: string) => {
-    tagSelect(state, selectedTag, "#")
   }, [state]);
 
-  // duplicate
-  const onUserTagSelect = useCallback((selectedTag: string) => {
-    tagSelect(state, selectedTag, "@")
+  const onUserTagSelect = useCallback((selectedTag: string, userId: string) => {
+    const textNodeType: TextNodeType = "@";
+    const active = state.activeNode;
+    const start = state.text.substring(0, active.startIndex);
+    const middle = `${textNodeType}${selectedTag}`;
+    const end = state.text.substring(active.endIndex, state.text.length);
+    const text = `${start}${middle}${end}`;
+    const textNodes = getNodesWithPopulatedUserId(extractNodesFromInputText(text), selectedTag, userId);
+    console.log("textNodes", textNodes)
+    if (state.text.length + middle.length > (SymbolLimit || symbolLimit)) {
+      return;
+    }
+    setState({
+      ...state, text, textNodes,
+      activeNode: { value: middle, startIndex: active.startIndex, endIndex: active.startIndex + middle.length, type: textNodeType, userId },
+      selection: { start: active.startIndex + middle.length, end: active.startIndex + middle.length }
+    });
   }, [state]);
 
   const getIsSuggestionVisible = useCallback((type: TextNodeType) => state.activeNode
