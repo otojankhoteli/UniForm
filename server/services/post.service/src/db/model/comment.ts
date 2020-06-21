@@ -22,7 +22,6 @@ const comment = new mongoose.Schema({
 },
 {timestamps: true});
 
-
 const CommentModel = mongoose.model<IPost & mongoose.Document>('Comment', comment);
 
 
