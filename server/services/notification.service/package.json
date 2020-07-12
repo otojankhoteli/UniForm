@@ -16,6 +16,7 @@
     "expo-server-sdk": "^3.5.0",
     "express": "^4.17.1",
     "mongoose": "^5.9.13",
+    "rabbot": "^2.1.0",
     "reflect-metadata": "^0.1.13",
     "typedi": "^0.8.0",
     "winston": "^3.2.1"

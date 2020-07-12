@@ -11,6 +11,6 @@ export default winston.createLogger({
       winston.format.splat(),
       // winston.format.json(),
       winston.format.printf(
-          (info) => `${info.timestamp} ${info.level}: ${info.message}`)),
+          (info) => `${info.timestamp} ${info.level}: ${config.serviceName} ${info.message}`)),
   transports: [new winston.transports.Console()],
 });

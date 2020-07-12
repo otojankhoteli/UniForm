@@ -46,7 +46,7 @@ interface PostUser {
   _id: string
   name: string;
   imgUrl: string
-};
+}
 
 export interface PostResponse {
   _id: string,

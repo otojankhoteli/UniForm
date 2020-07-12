@@ -1,5 +1,5 @@
 import logger from '../util/logger';
-import {NotificationPublisher} from '../service/notification/NotificationPublisher';
+import {NotificationPublisher} from '../message.queue/notification/NotificationPublisher';
 import {Container} from 'typedi';
 import {EventEmitter} from 'events';
 import {Events} from './event';
@@ -7,7 +7,7 @@ import {Events} from './event';
 
 const publishNotification = async (notification) => {
   try {
-    logger.silly('Event Handler publish notification %o', notification);
+    logger.silly('publish notification %o', notification);
     const notificationPublisher: NotificationPublisher = Container.get('NotificationPublisher');
     notificationPublisher.publish(notification);
   } catch (e) {

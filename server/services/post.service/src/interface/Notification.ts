@@ -9,7 +9,7 @@ interface BaseNotification {
   fromName: string,
   toId: string,
   toName: string,
-  // whereId: string,
+  whereId: string,
   etc?: any,
 }
 

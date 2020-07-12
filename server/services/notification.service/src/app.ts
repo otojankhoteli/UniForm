@@ -1,7 +1,11 @@
 import express from 'express';
 import errorHandler from './util/error/ErrorHandler';
+import initDIContainer from './util/dependencyInjector';
 import {config} from './config';
 import logger from './util/logger';
+import {connectDb} from './db/mongo.connect';
+import {connectRabbit} from './message.queue';
+
 
 
 const startApp = async () => {
@@ -21,7 +25,7 @@ const startApp = async () => {
     app.use(errorHandler);
 
     app.listen(config.port, () => {
-      logger.info(`notification.service listening on port ${config.port}`);
+      logger.info(`listening on port ${config.port}`);
     });
   } catch (e) {
     logger.error('Could not start application %o', e);

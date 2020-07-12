@@ -24,4 +24,5 @@ export const config = {
     user: process.env.RABBITMQ_USER ?? 'guest',
     pass: process.env.RABBITMQ_PASS ?? 'guest',
   },
+  serviceName: 'user.service',
 };

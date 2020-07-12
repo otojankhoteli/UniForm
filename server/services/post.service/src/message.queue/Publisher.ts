@@ -1,4 +1,4 @@
-import {RoutingSettings} from '../../message.queue/topology';
+import {RoutingSettings} from './topology';
 
 export interface Publish {
   publish(msg: any)
@@ -21,7 +21,7 @@ export class Publisher implements Publish {
   }
 
   publish(msg: any) {
-    this.rabbitInstance.publish(
+    return this.rabbitInstance.publish(
         this.exchange,
         {
           routingKey: this.routingKey,

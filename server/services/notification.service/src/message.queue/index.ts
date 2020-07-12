@@ -14,9 +14,9 @@ const connectRabbit = async () => {
   try {
     await rabbit.configure(settings);
 
-    logger.info(`user rabbit-mq connected on ${settings.connection.server}:${settings.connection.port}`);
+    logger.info(`rabbit-mq connected on ${settings.connection.server}:${settings.connection.port}`);
   } catch (e) {
-    logger.error('user rabbit-mq connection error: %o', e);
+    logger.error('rabbit-mq connection error: %o', e);
     throw e;
   }
   return rabbit;

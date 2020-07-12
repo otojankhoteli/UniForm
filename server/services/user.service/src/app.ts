@@ -35,7 +35,7 @@ const startApp = async () => {
       logger.info(`user.service listening on port ${config.port}`);
     });
   } catch (e) {
-    logger.error('Could not start app: %o', e);
+    logger.error('Could not start user.service: %o', e);
     process.exit(1);
   }
 };

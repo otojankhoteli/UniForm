@@ -8,7 +8,7 @@ import {HashTagModel} from '../db/model/hashtag';
 import {EventEmitter} from 'events';
 import {rabbit} from '../message.queue/index';
 import {VoteService} from '../service/vote';
-import {NotificationPublisher} from '../service/notification/NotificationPublisher';
+import {NotificationPublisher} from '../message.queue/notification/NotificationPublisher';
 import { CommentModel } from '../db/model/comment';
 
 export default () => {
