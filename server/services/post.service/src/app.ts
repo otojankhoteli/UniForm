@@ -8,7 +8,9 @@ import {config} from './config/index';
 import initDIContainer from './util/dependencyInjector';
 import {userRouter} from './api/route/user';
 import {postRouter} from './api/route/post';
+import {commentRouter} from './api/route/comment';
 import {connectRabbit} from './message.queue';
+import {registerHandlers} from './subscriber/handler';
 
 
 const startApp = async () => {
@@ -28,6 +30,7 @@ const startApp = async () => {
     app.use('/category', categoryRouter);
     app.use('/post', postRouter);
     app.use('/user', userRouter);
+    app.use('/comment', commentRouter);
     app.use(errorHandler);
 
     app.listen(config.port, () => {
