@@ -7,12 +7,11 @@ import {connectDb} from './db/mongo.connect';
 import {connectRabbit} from './message.queue';
 
 
-
 const startApp = async () => {
   try {
-    // initDIContainer();
-    // await connectDb();
-    // await connectRabbit();
+    initDIContainer();
+    await connectDb();
+    await connectRabbit();
     const app = express();
 
     app.use(express.json());
