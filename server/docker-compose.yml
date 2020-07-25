@@ -3,6 +3,10 @@ version: "3"
 services:
   user.service:
     container_name: user.service
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - MONGO_HOST=mongo-user
+      - MONGO_PORT=27017
     build:
       context: ./services/user.service
     ports:
@@ -17,6 +21,10 @@ services:
 
   post.service:
     container_name: post.service
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - MONGO_HOST=mongo-post
+      - MONGO_PORT=27017
     build:
       context: ./services/post.service
     ports:
@@ -31,6 +39,10 @@ services:
 
   blob.service:
     container_name: blob.service
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - MONGO_HOST=mongo-blob
+      - MONGO_PORT=27017
     build:
       context: ./services/blob.service
     ports:
@@ -45,6 +57,10 @@ services:
 
   notification.service:
     container_name: notification.service
+    environment:
+      - RABBITMQ_URL=rabbitmq
+      - MONGO_HOST=mongo-notification
+      - MONGO_PORT=27017
     build:
       context: ./services/notification.service
     ports:
@@ -67,7 +83,7 @@ services:
     volumes:
       - /data/uniform/user-service/data:/data/db
     ports:
-      - 27017:27017
+      - 27021:27017
 
   mongo-post:
     container_name: mongo-post
@@ -94,7 +110,7 @@ services:
       - 27019:27017
 
   mongo-notification:
-    container_name: mongo-blob
+    container_name: mongo-notification
     image: mongo
     environment:
       - MONGO_INITDB_ROOT_USERNAME=test
