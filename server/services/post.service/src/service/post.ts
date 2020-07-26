@@ -2,7 +2,7 @@ import {Service, Inject} from 'typedi';
 import {Document, Model} from 'mongoose';
 import {IUser} from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
-import {FeedPostResponse, IPost, PostResponse, UpsertPostRequest} from '../interface/Post';
+import {FeedPostResponse, IPost, PostResponse, PostSearch, UpsertPostRequest} from '../interface/Post';
 import {EventEmitter} from 'events';
 import {Logger} from 'winston';
 import {Events} from '../subscriber/event';
@@ -181,31 +181,13 @@ export class PostService {
         .lean();
   }
 
-
   public async getFeed(userId: string, skip, limit): Promise<FeedPostResponse[]> {
-    // const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
+    const posts = await this.getRawFeed(userId, skip, limit);
+    return this.addPostReacts(posts, userId);
+  }
 
-    const posts = await this.PostModel
-        .find()
-        .where('category')
-        .populate('userTags', ['name', 'imgUrl'])
-        .populate('author', ['name', 'imgUrl'])
-        .populate('category', 'name')
-    // .in(subscribedCategories)
-        .sort({updatedAt: 'desc'})
-        .skip(skip)
-        .limit(limit)
-        .lean();
 
-    // const postsRaw = posts.map((post) => {
-    //   return {
-    //     ...post,
-    //     _id: post._id.toString(),
-    //   };
-    // })
-    //
-    // console.log(postsRaw);
-
+  private async addPostReacts(posts: IPost[], userId: string) {
     const postIds = posts.map((post) => post._id.toString());
 
     const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
@@ -214,7 +196,7 @@ export class PostService {
         .map((post) => post._id.toString());
 
     const postsWithReacts = posts.map((post) => {
-      const postId = post._id;
+      const postId = post._id.toString();
       const isUpvoted = upVotedPosts.includes(postId);
       const isDownvoted = downVotedPosts.includes(postId);
 
@@ -240,8 +222,32 @@ export class PostService {
       };
       return resp;
     });
-
     return postsWithReacts;
+  }
+
+  private async getRawFeed(userId: string, skip, limit): Promise<IPost[]> {
+    // const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
+
+    return this.PostModel
+        .find()
+        .where('category')
+        .populate('userTags', ['name', 'imgUrl'])
+        .populate('author', ['name', 'imgUrl'])
+        .populate('category', 'name')
+    // .in(subscribedCategories)
+        .sort({updatedAt: 'desc'})
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    // const postsRaw = posts.map((post) => {
+    //   return {
+    //     ...post,
+    //     _id: post._id.toString(),
+    //   };
+    // })
+    //
+    // console.log(postsRaw);
   }
 
 
@@ -251,5 +257,18 @@ export class PostService {
         .populate('category', 'name')
         .populate('userTags', ['name', 'imgUrl'])
         .lean();
+  }
+
+  public async searchPost(search: PostSearch): Promise<FeedPostResponse[]> {
+    const result = await this.PostModel.find({
+      $text: {$search: search.search},
+    })
+        .populate('userTags', ['name', 'imgUrl'])
+        .populate('author', ['name', 'imgUrl'])
+        .populate('category', 'name').skip(search.skip)
+        .sort({updatedAt: 'desc'})
+        .limit(search.limit)
+        .lean();
+    return this.addPostReacts(result, search.userId);
   }
 }

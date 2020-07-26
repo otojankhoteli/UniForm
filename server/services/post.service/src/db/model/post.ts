@@ -61,6 +61,7 @@ const post = new mongoose.Schema({
 },
 {timestamps: true});
 
+post.index({text: 'text'});
 
 const PostModel = mongoose.model<IPost & mongoose.Document>('Post', post);
 

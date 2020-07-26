@@ -1,3 +1,5 @@
+import {Page} from './Common';
+
 export interface IPost {
   _id: string,
   author: any,
@@ -65,4 +67,9 @@ export interface PostResponse {
   voteCount: number,
   createdAt?: string,
   updatedAt?: string,
+}
+
+export interface PostSearch extends Page {
+  userId: string,
+  search: string
 }
