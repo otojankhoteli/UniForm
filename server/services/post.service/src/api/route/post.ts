@@ -41,7 +41,7 @@ router.get('/search',
 router.get('/:postId',
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
-      res.json(await postService.getById(req.params.postId));
+      res.json(await postService.getPostById(req.params.postId, req.currentUser._id));
     }));
 
 router.post('/:postId/_upvote',

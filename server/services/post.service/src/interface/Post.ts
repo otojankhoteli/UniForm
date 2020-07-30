@@ -1,4 +1,4 @@
-import {Page} from './Common';
+import {Page, PageResponse} from './Common';
 
 export interface IPost {
   _id: string,
@@ -42,6 +42,10 @@ export interface FeedPostResponse {
   isDownvoted: boolean;
   createdAt: string;
   files: string[];
+}
+
+export interface FeedPostResponsePage extends PageResponse {
+  docs: FeedPostResponse[]
 }
 
 interface PostUser {

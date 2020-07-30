@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import {IPost} from '../../interface/Post';
-import {votable} from './votable';
 
 
 const post = new mongoose.Schema({

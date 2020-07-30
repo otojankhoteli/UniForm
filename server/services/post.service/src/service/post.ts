@@ -2,7 +2,14 @@ import {Service, Inject} from 'typedi';
 import {Document, Model} from 'mongoose';
 import {IUser} from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
-import {FeedPostResponse, IPost, PostResponse, PostSearch, UpsertPostRequest} from '../interface/Post';
+import {
+  FeedPostResponse,
+  FeedPostResponsePage,
+  IPost,
+  PostResponse,
+  PostSearch,
+  UpsertPostRequest,
+} from '../interface/Post';
 import {EventEmitter} from 'events';
 import {Logger} from 'winston';
 import {Events} from '../subscriber/event';
@@ -187,7 +194,8 @@ export class PostService {
   }
 
 
-  private async addPostReacts(posts: IPost[], userId: string) {
+  private async addPostReacts(posts: IPost[] | IPost, userId: string) {
+    posts = [].concat(posts);
     const postIds = posts.map((post) => post._id.toString());
 
     const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
@@ -251,24 +259,48 @@ export class PostService {
   }
 
 
-  public async getById(postId: string): Promise<PostResponse> {
-    return this.PostModel.findById(postId)
+  public async getPostById(postId: string, userId: string): Promise<FeedPostResponse> {
+    return (await this.addPostReacts(await this.PostModel.findById(postId)
         .populate('author', ['name', 'imgUrl'])
         .populate('category', 'name')
         .populate('userTags', ['name', 'imgUrl'])
-        .lean();
+        .lean(), userId))[0];
   }
 
-  public async searchPost(search: PostSearch): Promise<FeedPostResponse[]> {
+  private getPageParams(query) {
+    return {
+      skip: query.skip ?? this.skip,
+      limit: query.limit ?? this.limit,
+    };
+  }
+
+  private static page({docs, skip, limit, total}) {
+    return {
+      docs,
+      skip,
+      limit,
+      total,
+    };
+  }
+
+  public async searchPost(search: PostSearch): Promise<FeedPostResponsePage> {
+    const {skip, limit} = this.getPageParams(search);
+
+    const total = await this.PostModel.countDocuments({
+      $text: {$search: search.search},
+    });
+
     const result = await this.PostModel.find({
       $text: {$search: search.search},
     })
         .populate('userTags', ['name', 'imgUrl'])
         .populate('author', ['name', 'imgUrl'])
-        .populate('category', 'name').skip(search.skip)
+        .populate('category', 'name')
+        .skip(skip)
         .sort({updatedAt: 'desc'})
-        .limit(search.limit)
+        .limit(limit)
         .lean();
-    return this.addPostReacts(result, search.userId);
+
+    return PostService.page({docs: await this.addPostReacts(result, search.userId), skip, limit, total});
   }
 }
