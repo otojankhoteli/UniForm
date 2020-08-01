@@ -11,7 +11,7 @@ services:
       context: ./services/user.service
     ports:
       - 3000:3000
-      - 9229:9229
+      - 8081:9229
     links:
       - mongo-user
       - rabbitmq
@@ -29,7 +29,7 @@ services:
       context: ./services/post.service
     ports:
       - 3001:3001
-      - 9230:9230
+      - 8082:9230
     links:
       - mongo-post
       - rabbitmq
@@ -47,7 +47,7 @@ services:
       context: ./services/blob.service
     ports:
       - 3002:3002
-      - 9231:9231
+      - 8083:9231
     links:
       - mongo-blob
       - rabbitmq

@@ -31,7 +31,7 @@ interface SubmitState {
   category: CategoryViewModel;
 }
 export default function AddPostScreen() {
-  const { post } = usePostCreate();
+  const { post,result,isError } = usePostCreate();
   const { result: hashTags, setRequestInfo: fetchTags } = useHashtagByName();
   const { result: userTags, setRequestInfo: fetchUserTags } = useUsersByEmail();
 
@@ -60,6 +60,14 @@ export default function AddPostScreen() {
   const isValidState = useCallback((text: string, category: CategoryViewModel) => {
     return text.length > 0 && category !== undefined && category !== null;
   }, [])
+
+  useEffect(() => {
+    console.log("useEffect AddPostScreen", result, isError)
+    if(result && !isError){
+      navigation.navigate("Home");
+      console.log("Homes")
+    }
+  },[result, isError])
 
   useEffect(() => {
     if (route && route.params && route.params.category) {

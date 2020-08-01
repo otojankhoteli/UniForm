@@ -23,8 +23,6 @@ export type RootStackParamList = {
 };
 const Stack = createStackNavigator();
 
-
-
 function Header(props: { tintColor?: string; }): React.ReactNode {
   return <View style={{ borderColor: "red", borderWidth: 1, height: 40 }}>
     <Button containerStyle={{ height: 20 }} onPress={() => { console.log("test") }} title="Next" />

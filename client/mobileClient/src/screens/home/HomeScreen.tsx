@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, Button, ScrollView, } from 'react-native';
 import { Text } from 'react-native-elements'
 import { StackNavigationProp } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import BottomNavigationPanel from '../../shared/components/BottomNavigationPanel';
 import { RootStackParamList } from '../StartUpScreen';
 import { useGlobalState } from '../../shared/globalState/AppContext';
@@ -17,13 +17,21 @@ type HomeScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   'Home'
 >;
+type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
+
 export default function HomeScreen() {
   const { isLoading, fetchFirstPage, fetchNextPage, fetchPrevPage, result } = useFeed();
   const navigation = useNavigation<HomeScreenNavigationProp>();
+  const route = useRoute<HomeScreenRouteProp>()
+
   const [{ account }, dispatch] = useGlobalState();
 
   useToast();
   // const route = useRoute<HomeScreenRouteProp>();
+
+  useEffect(() => { 
+    fetchFirstPage();
+  }, [route]);
 
   const onAddClick = () => {
     navigation.navigate("AddPost");
@@ -34,7 +42,7 @@ export default function HomeScreen() {
 
   return <View style={styles.container}>
     <HomeHeader dispatch={dispatch} account={account} />
-    <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }} >
+    {/* <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }} > */}
       {isData ?
         <PostList isLoading={isLoading} posts={result || []}
           onRefresh={fetchFirstPage} fetchNextPage={fetchNextPage} fetchPrevPage={fetchPrevPage} />
@@ -43,7 +51,7 @@ export default function HomeScreen() {
           <Text style={styles.text}>No Records</Text>
         </View>
       }
-    </ScrollView>
+    {/* </ScrollView> */}
     <BottomNavigationPanel onAddClick={onAddClick} />
   </View>;
 }
