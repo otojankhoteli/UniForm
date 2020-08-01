@@ -40,23 +40,17 @@ export class PostService {
   }
 
   private async _validateBeforeInsert(post: UpsertPostRequest) {
-    const category = this.CategoryModel.findById(post.categoryId);
+    const category = await this.CategoryModel.findById(post.categoryId);
 
     if (!category) {
       throw new NotFoundError(`Can not create post, category with id: ${post.categoryId} does not exist`);
     }
 
-    const user = this.UserModel.findById(post.authorId);
-
-    if (!user) {
-      throw new NotFoundError(`Can not create post, user with id: ${post.authorId} does not exist`);
-    }
-
     // ToDo check if use case exists
     if (post.id) {
-      const existingPost = this.PostModel.findOne({_id: post.id, author: post.authorId});
+      const existingPost = await this.PostModel.findOne({_id: post.id, author: post.authorId});
       if (!existingPost) {
-        throw new PermissionDeniedError("Permission denied: post doesn't belong to you");
+        throw new PermissionDeniedError('Permission denied: post doesn\'t belong to you');
       }
     }
   }
