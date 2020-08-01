@@ -3,7 +3,10 @@ import { getAccount, saveAccount, removeAccount } from "./PersistUtils";
 import { PersistAccount } from "./PersistModels";
 import { useGlobalState } from "../globalState/AppContext";
 
-const testIntitialState: UseAccountHookState = { isLoading: true, account: { token: "testToken" } as any };
+const testIntitialState: UseAccountHookState = {
+  isLoading: true,
+  account: { token: "testToken" } as any,
+};
 const initialState: UseAccountHookState = { isLoading: true };
 
 export function useAccount(): UseAccountHookState {
@@ -11,18 +14,17 @@ export function useAccount(): UseAccountHookState {
   const [state, setState] = useState<UseAccountHookState>(initialState);
 
   useEffect(() => {
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState((prev) => ({ ...prev, isLoading: true }));
     getAccount()
-      .then(account => {
+      .then((account) => {
         setState({ isLoading: false, account });
       })
       .finally(() => {
-        setState(prev => ({ ...prev, isLoading: false }));
+        setState((prev) => ({ ...prev, isLoading: false }));
       });
   }, []);
 
-
-  return { isLoading: state.isLoading, account: state.account }
+  return { isLoading: state.isLoading, account: state.account };
 }
 
 interface UseAccountHookState {
@@ -30,17 +32,14 @@ interface UseAccountHookState {
   account?: PersistAccount;
 }
 
-
 export function useAccountPersist() {
-  const [state,] = useGlobalState();
+  const [state] = useGlobalState();
 
   useEffect(() => {
     if (state.account) {
       saveAccount(state.account);
-    }else{
+    } else {
       removeAccount();
     }
-  }, [state.account])
-
+  }, [state.account]);
 }
-
