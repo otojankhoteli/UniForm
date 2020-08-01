@@ -15,6 +15,11 @@ export interface IPost {
   createdAt?: string,
   updatedAt?: string,
 }
+
+export interface IPostPage extends PageResponse {
+  docs: IPost[]
+}
+
 export interface UpsertPostRequest {
   id?:string;
   authorId: string;
@@ -24,7 +29,7 @@ export interface UpsertPostRequest {
   text: string,
   files: string[],
 }
-export interface FeedPostResponse {
+export interface PostResponse {
   id: string;
   text: string;
   authorId: string;
@@ -45,7 +50,7 @@ export interface FeedPostResponse {
 }
 
 export interface FeedPostResponsePage extends PageResponse {
-  docs: FeedPostResponse[]
+  docs: PostResponse[]
 }
 
 interface PostUser {
@@ -54,24 +59,6 @@ interface PostUser {
   imgUrl: string
 }
 
-export interface PostResponse {
-  _id: string,
-  author: PostUser,
-  type: string,
-  text: string,
-  files: string[],
-  hashTags: string[],
-  userTags: PostUser[],
-  category: {
-    _id: string;
-    name: string;
-  },
-  upVoters: string[],
-  downVoters: string[],
-  voteCount: number,
-  createdAt?: string,
-  updatedAt?: string,
-}
 
 export interface PostSearch extends Page {
   userId: string,

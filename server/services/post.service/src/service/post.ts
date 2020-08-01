@@ -3,10 +3,8 @@ import {Document, Model} from 'mongoose';
 import {IUser} from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
 import {
-  FeedPostResponse,
-  FeedPostResponsePage,
-  IPost,
   PostResponse,
+  IPost,
   PostSearch,
   UpsertPostRequest,
 } from '../interface/Post';
@@ -15,8 +13,8 @@ import {Logger} from 'winston';
 import {Events} from '../subscriber/event';
 import {ICategoryDTO} from '../interface/Category';
 import {IHashTag, IHashTagSearchModel} from '../interface/HashTag';
-import _ from 'lodash';
 import {VoteService} from './vote';
+import PermissionDeniedError from '../util/error/PermissionDeniedError';
 
 @Service()
 export class PostService {
@@ -41,14 +39,6 @@ export class PostService {
   ) {
   }
 
-  // private async _validateUser(userId) {
-  //   const user = this.UserModel.findById(user);
-  //
-  //   if (!user) {
-  //     throw new NotFoundError(`Can not create post, user with id: ${post.authorId} does not exist`);
-  //   }
-  // }
-
   private async _validateBeforeInsert(post: UpsertPostRequest) {
     const category = this.CategoryModel.findById(post.categoryId);
 
@@ -63,12 +53,12 @@ export class PostService {
     }
 
     // ToDo check if use case exists
-    // if (post._id) {
-    //   const existingPost = this.PostModel.findOne({_id: post._id, author: post.author});
-    //   if (!existingPost) {
-    //     throw new PermissionDeniedError('Permission denied: post doesn\'t belong to you');
-    //   }
-    // }
+    if (post.id) {
+      const existingPost = this.PostModel.findOne({_id: post.id, author: post.authorId});
+      if (!existingPost) {
+        throw new PermissionDeniedError("Permission denied: post doesn't belong to you");
+      }
+    }
   }
 
   private async _addHashTags(hashTags: string[]) {
@@ -188,9 +178,9 @@ export class PostService {
         .lean();
   }
 
-  public async getFeed(userId: string, skip, limit): Promise<FeedPostResponse[]> {
+  public async getFeed(userId: string, skip, limit): Promise<PostResponse[]> {
     const posts = await this.getRawFeed(userId, skip, limit);
-    return this.addPostReacts(posts, userId);
+    return this.postResponse(posts, userId);
   }
 
 
@@ -208,7 +198,7 @@ export class PostService {
       const isUpvoted = upVotedPosts.includes(postId);
       const isDownvoted = downVotedPosts.includes(postId);
 
-      const resp: FeedPostResponse = {
+      const resp: PostResponse = {
         id: post._id.toString(),
         text: post.text,
         authorId: post.author._id.toString(),
@@ -231,6 +221,10 @@ export class PostService {
       return resp;
     });
     return postsWithReacts;
+  }
+
+  private async postResponse(posts: IPost[] | IPost, userId: string) {
+    return this.addPostReacts(posts, userId);
   }
 
   private async getRawFeed(userId: string, skip, limit): Promise<IPost[]> {
@@ -259,8 +253,8 @@ export class PostService {
   }
 
 
-  public async getPostById(postId: string, userId: string): Promise<FeedPostResponse> {
-    return (await this.addPostReacts(await this.PostModel.findById(postId)
+  public async getPostById(postId: string, userId: string): Promise<PostResponse> {
+    return (await this.postResponse(await this.PostModel.findById(postId)
         .populate('author', ['name', 'imgUrl'])
         .populate('category', 'name')
         .populate('userTags', ['name', 'imgUrl'])
@@ -283,12 +277,8 @@ export class PostService {
     };
   }
 
-  public async searchPost(search: PostSearch): Promise<FeedPostResponsePage> {
+  public async searchPost(search: PostSearch): Promise<PostResponse[]> {
     const {skip, limit} = this.getPageParams(search);
-
-    const total = await this.PostModel.countDocuments({
-      $text: {$search: search.search},
-    });
 
     const result = await this.PostModel.find({
       $text: {$search: search.search},
@@ -301,6 +291,6 @@ export class PostService {
         .limit(limit)
         .lean();
 
-    return PostService.page({docs: await this.addPostReacts(result, search.userId), skip, limit, total});
+    return this.postResponse(result, search.userId);
   }
 }
