@@ -39,26 +39,16 @@ export default function HomeScreen() {
     navigation.navigate("AddPost");
   };
 
-  const isData = result != null && result !== undefined && result.length > 0;
-
   return (
     <View style={styles.container}>
       <HomeHeader dispatch={dispatch} account={account} />
-      {/* <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }} contentContainerStyle={{ flex: 1 }} > */}
-      {isData ? (
-        <PostList
-          isLoading={isLoading}
-          posts={result || []}
-          onRefresh={fetchFirstPage}
-          fetchNextPage={fetchNextPage}
-          fetchPrevPage={fetchPrevPage}
-        />
-      ) : (
-        <View style={styles.textContainer}>
-          <Text style={styles.text}>No Records</Text>
-        </View>
-      )}
-      {/* </ScrollView> */}
+      <PostList
+        isLoading={isLoading}
+        posts={result || []}
+        onRefresh={fetchFirstPage}
+        fetchNextPage={fetchNextPage}
+        fetchPrevPage={fetchPrevPage}
+      />
       <AddPostButton onPress={onAddClick} />
     </View>
   );
