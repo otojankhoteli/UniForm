@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import {IPost} from '../../interface/Post';
-import {votable} from './votable';
 
 
 const post = new mongoose.Schema({
@@ -61,6 +60,7 @@ const post = new mongoose.Schema({
 },
 {timestamps: true});
 
+post.index({text: 'text'});
 
 const PostModel = mongoose.model<IPost & mongoose.Document>('Post', post);
 

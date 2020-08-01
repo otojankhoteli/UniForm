@@ -1,3 +1,5 @@
+import {Page, PageResponse} from './Common';
+
 export interface IPost {
   _id: string,
   author: any,
@@ -42,6 +44,10 @@ export interface FeedPostResponse {
   files: string[];
 }
 
+export interface FeedPostResponsePage extends PageResponse {
+  docs: FeedPostResponse[]
+}
+
 interface PostUser {
   _id: string
   name: string;
@@ -65,4 +71,9 @@ export interface PostResponse {
   voteCount: number,
   createdAt?: string,
   updatedAt?: string,
+}
+
+export interface PostSearch extends Page {
+  userId: string,
+  search: string
 }

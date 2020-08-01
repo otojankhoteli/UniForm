@@ -2,7 +2,14 @@ import {Service, Inject} from 'typedi';
 import {Document, Model} from 'mongoose';
 import {IUser} from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
-import {FeedPostResponse, IPost, PostResponse, UpsertPostRequest} from '../interface/Post';
+import {
+  FeedPostResponse,
+  FeedPostResponsePage,
+  IPost,
+  PostResponse,
+  PostSearch,
+  UpsertPostRequest,
+} from '../interface/Post';
 import {EventEmitter} from 'events';
 import {Logger} from 'winston';
 import {Events} from '../subscriber/event';
@@ -181,31 +188,14 @@ export class PostService {
         .lean();
   }
 
-
   public async getFeed(userId: string, skip, limit): Promise<FeedPostResponse[]> {
-    // const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
+    const posts = await this.getRawFeed(userId, skip, limit);
+    return this.addPostReacts(posts, userId);
+  }
 
-    const posts = await this.PostModel
-        .find()
-        .where('category')
-        .populate('userTags', ['name', 'imgUrl'])
-        .populate('author', ['name', 'imgUrl'])
-        .populate('category', 'name')
-    // .in(subscribedCategories)
-        .sort({updatedAt: 'desc'})
-        .skip(skip)
-        .limit(limit)
-        .lean();
 
-    // const postsRaw = posts.map((post) => {
-    //   return {
-    //     ...post,
-    //     _id: post._id.toString(),
-    //   };
-    // })
-    //
-    // console.log(postsRaw);
-
+  private async addPostReacts(posts: IPost[] | IPost, userId: string) {
+    posts = [].concat(posts);
     const postIds = posts.map((post) => post._id.toString());
 
     const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
@@ -214,7 +204,7 @@ export class PostService {
         .map((post) => post._id.toString());
 
     const postsWithReacts = posts.map((post) => {
-      const postId = post._id;
+      const postId = post._id.toString();
       const isUpvoted = upVotedPosts.includes(postId);
       const isDownvoted = downVotedPosts.includes(postId);
 
@@ -240,16 +230,77 @@ export class PostService {
       };
       return resp;
     });
-
     return postsWithReacts;
   }
 
+  private async getRawFeed(userId: string, skip, limit): Promise<IPost[]> {
+    // const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
 
-  public async getById(postId: string): Promise<PostResponse> {
-    return this.PostModel.findById(postId)
+    return this.PostModel
+        .find()
+        .where('category')
+        .populate('userTags', ['name', 'imgUrl'])
+        .populate('author', ['name', 'imgUrl'])
+        .populate('category', 'name')
+    // .in(subscribedCategories)
+        .sort({updatedAt: 'desc'})
+        .skip(skip)
+        .limit(limit)
+        .lean();
+
+    // const postsRaw = posts.map((post) => {
+    //   return {
+    //     ...post,
+    //     _id: post._id.toString(),
+    //   };
+    // })
+    //
+    // console.log(postsRaw);
+  }
+
+
+  public async getPostById(postId: string, userId: string): Promise<FeedPostResponse> {
+    return (await this.addPostReacts(await this.PostModel.findById(postId)
         .populate('author', ['name', 'imgUrl'])
         .populate('category', 'name')
         .populate('userTags', ['name', 'imgUrl'])
+        .lean(), userId))[0];
+  }
+
+  private getPageParams(query) {
+    return {
+      skip: query.skip ?? this.skip,
+      limit: query.limit ?? this.limit,
+    };
+  }
+
+  private static page({docs, skip, limit, total}) {
+    return {
+      docs,
+      skip,
+      limit,
+      total,
+    };
+  }
+
+  public async searchPost(search: PostSearch): Promise<FeedPostResponsePage> {
+    const {skip, limit} = this.getPageParams(search);
+
+    const total = await this.PostModel.countDocuments({
+      $text: {$search: search.search},
+    });
+
+    const result = await this.PostModel.find({
+      $text: {$search: search.search},
+    })
+        .populate('userTags', ['name', 'imgUrl'])
+        .populate('author', ['name', 'imgUrl'])
+        .populate('category', 'name')
+        .skip(skip)
+        .sort({updatedAt: 'desc'})
+        .limit(limit)
         .lean();
+
+    return PostService.page({docs: await this.addPostReacts(result, search.userId), skip, limit, total});
   }
 }
