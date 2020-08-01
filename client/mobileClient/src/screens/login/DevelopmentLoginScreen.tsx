@@ -8,8 +8,8 @@ import {
   TextInput,
 } from "react-native";
 import { Button, SocialIcon } from "react-native-elements";
-import { Notifications } from 'expo';
-import * as Permissions from 'expo-permissions';
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { MainColor } from "../../shared/Const";
@@ -29,19 +29,18 @@ export default function DevelopmentLoginScreen() {
 
   useEffect(() => {
     if (result && !isError) {
-      console.log("result", result, isError)
+      console.log("result", result, isError);
       dispatch({
         type: "setLoggedInUser",
-        account: result
+        account: result,
       });
-      navigate("Home")
+      navigate("Home");
     }
   }, [result, isError]);
 
   const onPress = async () => {
-    let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    // let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
     const deviceId = await Notifications.getExpoPushTokenAsync();
-    console.log("onPress", deviceId, accessToken)
     post({
       deviceId,
       accessToken,
@@ -56,7 +55,18 @@ export default function DevelopmentLoginScreen() {
       blurRadius={2}
     >
       <Text style={styles.welcomeText}>Welcome Development Login</Text>
-      <TextInput onChangeText={(text) => setAccessToken(text)} style={{ borderRadius: 1, borderColor: "red", backgroundColor: "white", width: "100%" }} multiline>{accessToken}</TextInput>
+      <TextInput
+        onChangeText={(text) => setAccessToken(text)}
+        style={{
+          borderRadius: 1,
+          borderColor: "red",
+          backgroundColor: "white",
+          width: "100%",
+        }}
+        multiline
+      >
+        {accessToken}
+      </TextInput>
       <View style={styles.signInButtons}>
         <Button
           type="solid"
