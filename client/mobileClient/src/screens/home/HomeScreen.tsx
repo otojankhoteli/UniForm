@@ -3,7 +3,7 @@ import { StyleSheet, View, Button, ScrollView } from "react-native";
 import { Text } from "react-native-elements";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import BottomNavigationPanel from "../../shared/components/BottomNavigationPanel";
+import AddPostButton from "../../shared/components/AddPostButton";
 import { useGlobalState } from "../../shared/globalState/AppContext";
 import useToast from "../../shared/toast/ToastHooks";
 import HomeHeader from "./HomeHeader";
@@ -59,7 +59,7 @@ export default function HomeScreen() {
         </View>
       )}
       {/* </ScrollView> */}
-      <BottomNavigationPanel onAddClick={onAddClick} />
+      <AddPostButton onPress={onAddClick} />
     </View>
   );
 }
