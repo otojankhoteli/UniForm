@@ -11,7 +11,7 @@ import { View } from "react-native";
 const MainNavigator = React.lazy(() => import("./TabNavigator"));
 
 export default function AppNavigator() {
-  const [, dispatch] = useGlobalState();
+  const [state, dispatch] = useGlobalState();
   const { isLoading, account } = useAccount();
 
   useAccountPersist();
@@ -32,7 +32,7 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      {false ? (
+      {!state.account ? (
         <AuthStackScreen />
       ) : (
         <Suspense
