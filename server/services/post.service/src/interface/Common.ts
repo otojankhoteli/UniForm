@@ -17,4 +17,9 @@ interface Sort {
   dir: 'asc' | 'desc'
 }
 
+export interface LogDates {
+  createdAt?: string,
+  updatedAt?: string,
+}
+
 // export type SortBy = 'date' | 'rating';

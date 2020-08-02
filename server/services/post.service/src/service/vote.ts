@@ -1,22 +1,22 @@
-import { Logger } from 'winston';
+import {Logger} from 'winston';
 import _ from 'lodash';
 
 
 export class VoteService {
   constructor(
     private logger: Logger,
-    private VotableModel: any
+    private VotableModel: any,
   ) {
   }
 
   public async upVote(userId: string, votable: any) {
-    const hasUpvoted = await this.VotableModel.findOne({ _id: votable._id, upVoters: userId }).lean();
+    const hasUpvoted = await this.VotableModel.findOne({_id: votable._id, upVoters: userId}).lean();
 
-    const hasDownVoted = await this.VotableModel.findOne({ _id: votable._id, downVoters: userId }).lean();
+    const hasDownVoted = await this.VotableModel.findOne({_id: votable._id, downVoters: userId}).lean();
 
     if (hasUpvoted) {
-      // post.upVoters = post.upVoters.filter((upVoter) => upVoter.toString() !== userId);
-      // post.voteCount--;
+      votable.upVoters = votable.upVoters.filter((upVoter) => upVoter.toString() !== userId);
+      votable.voteCount--;
     } else if (hasDownVoted) {
       votable.downVoters = votable.downVoters.filter((downVoter) => downVoter.toString() !== userId);
       votable.upVoters.push(userId);
@@ -25,17 +25,17 @@ export class VoteService {
       votable.upVoters.push(userId);
       votable.voteCount++;
     }
-    return this.VotableModel.findByIdAndUpdate(votable._id, votable, { new: true });
+    return this.VotableModel.findByIdAndUpdate(votable._id, votable, {new: true});
   }
 
   public async downVote(userId: string, votable: any) {
-    const hasUpvoted = await this.VotableModel.findOne({ _id: votable._id, upVoters: userId });
+    const hasUpvoted = await this.VotableModel.findOne({_id: votable._id, upVoters: userId});
 
-    const hasDownVoted = await this.VotableModel.findOne({ _id: votable._id, downVoters: userId });
+    const hasDownVoted = await this.VotableModel.findOne({_id: votable._id, downVoters: userId});
 
     if (hasDownVoted) {
-      // post.downVoters = post.downVoters.filter((downVoter) => downVoter.toString() !== userId);
-      // post.voteCount++;
+      votable.downVoters = votable.downVoters.filter((downVoter) => downVoter.toString() !== userId);
+      votable.voteCount++;
     } else if (hasUpvoted) {
       votable.upVoters = votable.upVoters.filter((upVoter) => upVoter.toString() !== userId);
       votable.downVoters.push(userId);
@@ -44,6 +44,6 @@ export class VoteService {
       votable.downVoters.push(userId);
       votable.voteCount--;
     }
-    return this.VotableModel.findByIdAndUpdate(votable._id, votable, { new: true });
+    return this.VotableModel.findByIdAndUpdate(votable._id, votable, {new: true});
   }
 }

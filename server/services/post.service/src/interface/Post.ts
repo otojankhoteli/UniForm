@@ -1,6 +1,8 @@
-import {Page, PageResponse} from './Common';
+import {Page, PageResponse, LogDates} from './Common';
 
-export interface IPost {
+
+
+export interface IPost extends LogDates{
   _id: string,
   author: any,
   type: string,
@@ -12,8 +14,7 @@ export interface IPost {
   upVoters: string[],
   downVoters: string[],
   voteCount: number,
-  createdAt?: string,
-  updatedAt?: string,
+
 }
 
 export interface IPostPage extends PageResponse {
@@ -38,10 +39,7 @@ export interface PostResponse {
   voteCount: number;
   categoryName: string;
   categoryId: string;
-  userTags: {
-    id: string;
-    name: string;
-  }[];
+  userTags: PostUser[];
   // userTags: any,
   isUpvoted: boolean;
   isDownvoted: boolean;
@@ -53,7 +51,7 @@ export interface FeedPostResponsePage extends PageResponse {
   docs: PostResponse[]
 }
 
-interface PostUser {
+export interface PostUser {
   _id: string
   name: string;
   imgUrl: string
@@ -62,5 +60,5 @@ interface PostUser {
 
 export interface PostSearch extends Page {
   userId: string,
-  search: string
+  text: string
 }

@@ -10,26 +10,46 @@ const router = Router();
 
 router.use('/', pageParser);
 
-router.post('/', asyncMw(async (req, res, _) => {
+router.get('/:postId', asyncMw(async (req, res, _) => {
   const commentService = Container.get(CommentService);
-  // add token decode implementation
-  const Comment: UpsertCommentRequest = {...req.body, author: 'take from token'};
-  res.send(await commentService.save(Comment));
+  const userId = req.currentUser._id;
+  res.send(await commentService.getPostComments({
+    userId,
+    postId: req.params.postId,
+    skip: req.query.skip,
+    limit: req.query.limit,
+  }));
 }));
 
-router.get('/hashtag', asyncMw(async (req, res, _) => {
+router.post('/:postId', asyncMw(async (req, res, _) => {
   const commentService = Container.get(CommentService);
-  res.send(await commentService.getHashTags({...req.query}));
+  const userId = req.currentUser._id;
+  const comment: UpsertCommentRequest = {...req.body, authorId: userId, postId: req.params.postId};
+  res.send(await commentService.save(comment));
+}));
+
+router.put('/:postId/:commentId', asyncMw(async (req, res, _) => {
+  const commentService = Container.get(CommentService);
+  const userId = req.currentUser._id;
+  const comment: UpsertCommentRequest = {
+    ...req.body,
+    authorId: userId,
+    postId: req.params.postId,
+    id: req.params.commentId,
+  };
+  res.send(await commentService.update(comment));
 }));
 
 router.post('/:commentId/_upvote', asyncMw(async (req, res, _) => {
   const commentService = Container.get(CommentService);
-  res.json(await commentService.upVote(req.params.commentId, req.body.userId));
+  const userId = req.currentUser._id;
+  res.json(await commentService.upVote(req.params.commentId, userId));
 }));
 
 router.post('/:commentId/_downvote', asyncMw(async (req, res, _) => {
   const commentService = Container.get(CommentService);
-  res.json(await commentService.downVote(req.params.commentId, req.body.userId));
+  const userId = req.currentUser._id;
+  res.json(await commentService.downVote(req.params.commentId, userId));
 }));
 
 export {router as commentRouter};

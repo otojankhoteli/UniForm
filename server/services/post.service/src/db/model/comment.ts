@@ -1,9 +1,13 @@
 import mongoose from 'mongoose';
 import {IPost} from '../../interface/Post';
-import {votable} from './votable';
+import {IComment} from "../../interface/Comment";
 
 const comment = new mongoose.Schema({
-  ...votable,
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
 
   text: {
     type: String,
@@ -11,7 +15,9 @@ const comment = new mongoose.Schema({
   },
 
   userTags: [{
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
   }],
 
   post: {
@@ -19,12 +25,32 @@ const comment = new mongoose.Schema({
     required: true,
     ref: 'Post',
   },
+
+  upVoters: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
+    default: [],
+  }],
+
+  downVoters: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
+    default: [],
+  }],
+
+  voteCount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
 },
 {timestamps: true});
 
 comment.index({text: 'text'});
 
-const CommentModel = mongoose.model<IPost & mongoose.Document>('Comment', comment);
+const CommentModel = mongoose.model<IComment & mongoose.Document>('Comment', comment);
 
 
 export {CommentModel};

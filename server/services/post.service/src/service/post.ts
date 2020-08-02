@@ -73,35 +73,47 @@ export class PostService {
     return this.HashTagModel.insertMany(newHashTags);
   }
 
-  public async save(upsertPostRequest: UpsertPostRequest) {
+  public async save(upsertPostRequest: UpsertPostRequest): Promise<IPost & any> {
     this.logger.silly('creating new post %o', upsertPostRequest);
     await this._validateBeforeInsert(upsertPostRequest);
 
-    let newPost: IPost = {
-      _id: upsertPostRequest.id,
-      author: upsertPostRequest.authorId,
+    const newPost = {
+      ...upsertPostRequest,
       category: upsertPostRequest.categoryId,
-      text: upsertPostRequest.text,
+      author: upsertPostRequest.authorId,
       type: 'test',
-      files: upsertPostRequest.files,
-      hashTags: upsertPostRequest.hashTags,
-      userTags: upsertPostRequest.userTags,
-      upVoters: [], // fixme
-      downVoters: [],
-      voteCount: 0,
     };
-    if (newPost._id) {
-      newPost = await this.PostModel.findByIdAndUpdate(newPost._id, newPost, {new: true});
-    } else {
-      newPost = await this.PostModel.create(newPost);
-    }
 
-    await this._addHashTags(newPost.hashTags);
+    const result = await this.PostModel.create(newPost);
 
-    this.eventEmitter.emit(Events.post.new, newPost);
+    await this._addHashTags(result.hashTags);
 
-    return newPost;
+    this.eventEmitter.emit(Events.post.new, result);
+
+    return result;
   }
+
+  public async update(upsertPostRequest: UpsertPostRequest): Promise<IPost & any> {
+    this.logger.silly('updating post %o', upsertPostRequest);
+    await this._validateBeforeInsert(upsertPostRequest);
+
+    const newPost = {
+      ...upsertPostRequest,
+      category: upsertPostRequest.categoryId,
+      author: upsertPostRequest.authorId,
+      type: 'test',
+    };
+
+    const result = await this.PostModel.findByIdAndUpdate(newPost.id, newPost, {upsert: true, new: true});
+
+    // @ts-ignore
+    await this._addHashTags(result.hashTags);
+
+    this.eventEmitter.emit(Events.post.update, result);
+
+    return result;
+  }
+
 
   public async getHashTags(query: IHashTagSearchModel) {
     this.logger.silly('getting hashtags: %o', query);
@@ -131,27 +143,23 @@ export class PostService {
         .lean();
   }
 
-  private async _validateVoteAndGetPost(postId, userId) {
+  private async _validateVoteAndGetPost(postId) {
     const post = await this.PostModel.findById(postId);
-    const user = await this.UserModel.findById(userId);
 
     if (!post) {
       throw new NotFoundError(`can not upvote, post with id: ${postId} does not exist`);
     }
 
-    if (!user) {
-      // throw new NotFoundError(`can not upvote, user with id: ${userId} does not exist`);
-    }
     return post;
   }
 
   public async upVote(postId: string, userId: string) {
-    const post = await this._validateVoteAndGetPost(postId, userId);
+    const post = await this._validateVoteAndGetPost(postId);
     return this.VoteService.upVote(userId, post);
   }
 
   public async downVote(postId: string, userId: string) {
-    const post = await this._validateVoteAndGetPost(postId, userId);
+    const post = await this._validateVoteAndGetPost(postId);
     return this.VoteService.downVote(userId, post);
   }
 
@@ -200,12 +208,14 @@ export class PostService {
         authorProfilePic: post.author.imgUrl,
         voteCount: post.voteCount,
         categoryId: post.category._id.toString(),
-        userTags: post.userTags.map((userTag) => {
-          return {
-            id: userTag._id.toString(),
-            name: userTag.name,
-          };
-        }),
+        // userTags: post.userTags.map((userTag) => {
+        //   return {
+        //     id: userTag._id.toString(),
+        //     name: userTag.name,
+        //     imgUrl: userTag.imgUrl,
+        //   };
+        // }),
+        userTags: post.userTags,
         categoryName: post.category.name,
         isUpvoted: isUpvoted,
         isDownvoted: isDownvoted,
@@ -275,7 +285,7 @@ export class PostService {
     const {skip, limit} = this.getPageParams(search);
 
     const result = await this.PostModel.find({
-      $text: {$search: search.search},
+      $text: {$search: search.text},
     })
         .populate('userTags', ['name', 'imgUrl'])
         .populate('author', ['name', 'imgUrl'])

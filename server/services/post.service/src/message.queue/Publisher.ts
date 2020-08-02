@@ -26,7 +26,7 @@ export class Publisher implements Publish {
         {
           routingKey: this.routingKey,
           type: this.type,
-          text: msg,
+          body: msg,
         },
     );
   }
