@@ -5,13 +5,14 @@ import ChooseCategoryScreen from "../../screens/postCategories/ChooseCategoryScr
 import HomeScreen from "../../screens/home/HomeScreen";
 import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
 import PostScreen from "../../screens/post/PostScreen";
+import { PostViewModel } from "../../api/posts/PostsApiModel";
 
 export type HomeStackParamList = {
   Home: undefined;
   AddPost: { category: CategoryViewModel };
   ChooseCategory: undefined;
   Feed: { sort: "latest" | "top" } | undefined;
-  Post: { postId: string };
+  Post: { post: PostViewModel };
 };
 const HomeStack = createStackNavigator();
 
