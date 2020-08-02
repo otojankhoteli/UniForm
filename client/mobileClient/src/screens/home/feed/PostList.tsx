@@ -69,14 +69,15 @@ export function PostList({
           <Text style={styles.text}>No Records</Text>
         </View>
       }
-      data={internalPosts}
+      data={posts}
       renderItem={(post) => (
         <PostListItem refresh={onRefresh} key={post.item.id} post={post.item} />
       )}
-      onMomentumScrollEnd={onScrollEnd}
-      refreshControl={
-        <RefreshControl refreshing={isLoading} onRefresh={onRefreshInternal} />
-      }
+      extraData={[]}
+      // onMomentumScrollEnd={onScrollEnd}
+      // refreshControl={
+      //   <RefreshControl refreshing={isLoading} onRefresh={onRefreshInternal} />
+      // }
     />
   );
 }

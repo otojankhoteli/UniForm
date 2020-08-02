@@ -2,6 +2,8 @@ import React, { useMemo, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import OctIcon from "react-native-vector-icons/Octicons";
+import FeatherIcon from "react-native-vector-icons/Feather";
 import { PostViewModel } from "../../../api/posts/PostsApiModel";
 import AvatarCustom from "../../../shared/components/Avatar";
 import { MainColor } from "../../../shared/Const";
@@ -10,20 +12,25 @@ import { getTimeFormat } from "../../../shared/Utils";
 import { extractNodesFromInputText } from "../../addPost/AddPostUtils";
 import { TextWithTags } from "../../addPost/TextWithTags";
 import { useUpvote, useDownvote } from "../../../api/posts/PostsApiHook";
+import { useNavigation } from "@react-navigation/native";
 
 interface Props {
   post: PostViewModel;
   refresh: () => void;
 }
 export function PostListItem({ post, refresh }: Props) {
+  const navigation = useNavigation();
+
   const textNodes = useMemo(() => extractNodesFromInputText(post.text), [
     post.text,
   ]);
+
   const {
     post: upvote,
     result: upvoteResult,
     isError: upvoteFailed,
   } = useUpvote(post.id);
+
   const {
     post: downvote,
     result: downvoteResult,
@@ -55,71 +62,106 @@ export function PostListItem({ post, refresh }: Props) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.topSection}>
-        <AvatarCustom photoUrl={post.authorProfilePic} />
-        <View style={styles.topMiddleSection}>
-          <View style={styles.categorySection}>
-            <Text style={styles.clickableCategoryName}>u/</Text>
-            <TouchableOpacity onPress={navigateToCategoryScreen}>
-              <Text style={styles.clickableCategoryName}>
-                {post.categoryName}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.authorSection}>
-            <Text style={styles.timePassedText}>Posted by </Text>
-            <Text style={styles.clickableAuthorName}>s/</Text>
-            <TouchableOpacity onPress={navigateToCategoryScreen}>
-              <Text style={styles.clickableAuthorName}>
-                {post.authorUsername}
-              </Text>
-            </TouchableOpacity>
-            <Text style={styles.timePassedText}>
-              {" "}
-              {getTimeFormat(new Date(), new Date(post.createdAt))}
-            </Text>
-          </View>
-        </View>
+    <TouchableOpacity
+      style={styles.container}
+      activeOpacity={1}
+      onPress={() => {
+        navigation.navigate("Post", { post });
+      }}
+    >
+      <View style={styles.voteActionContainer}>
         <Icon
-          color={post.isJoined ? "#AA061A" : "gray"}
-          size={20}
-          solid={post.isJoined}
-          style={styles.joinCategoryIcon}
-          onPress={joinCategory}
-          name="heart"
+          size={30}
+          onPress={() => {
+            upvote({});
+          }}
+          style={upVoteIconStyle}
+          name="chevron-up"
+        />
+        <Text>{post.voteCount}</Text>
+        <Icon
+          size={30}
+          onPress={() => {
+            downvote({});
+          }}
+          style={downVoteIconStyle}
+          name="chevron-down"
         />
       </View>
-      {/* <Text style={styles.postText}>{post.text}</Text> */}
-      <View style={styles.postText}>
-        <TextWithTags nodes={textNodes} />
-      </View>
-      <HorizontalLine mode="short" />
-      <View style={styles.bottomSection}>
-        <View style={styles.voteContainer}>
-          <View style={styles.voteActionContainer}>
-            <Icon
-              size={30}
-              onPress={() => {
-                upvote({});
-              }}
-              style={upVoteIconStyle}
-              name="arrow-up"
-            />
-            <Icon
-              size={30}
-              onPress={() => {
-                downvote({});
-              }}
-              style={downVoteIconStyle}
-              name="arrow-down"
-            />
+      <View style={styles.content}>
+        <View style={styles.topSection}>
+          <AvatarCustom photoUrl={post.authorProfilePic} />
+          <View style={styles.topMiddleSection}>
+            <View style={styles.categorySection}>
+              <Text style={styles.clickableCategoryName}>u/</Text>
+              <TouchableOpacity onPress={navigateToCategoryScreen}>
+                <Text style={styles.clickableCategoryName}>
+                  {post.categoryName}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.authorSection}>
+              <Text style={styles.timePassedText}>Posted by </Text>
+              <Text style={styles.clickableAuthorName}>s/</Text>
+              <TouchableOpacity onPress={navigateToCategoryScreen}>
+                <Text style={styles.clickableAuthorName}>
+                  {post.authorUsername}
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.timePassedText}>
+                {" "}
+                {getTimeFormat(new Date(), new Date(post.createdAt))}
+              </Text>
+            </View>
           </View>
-          <Text>{post.voteCount}</Text>
+          <Icon
+            color={post.isJoined ? "#AA061A" : "gray"}
+            size={20}
+            solid={post.isJoined}
+            style={styles.joinCategoryIcon}
+            onPress={joinCategory}
+            name="heart"
+          />
         </View>
-        <Icon size={40} style={{ color: "gray" }} name="comments" />
+        {/* <Text style={styles.postText}>{post.text}</Text> */}
+        <View style={styles.postText}>
+          <TextWithTags nodes={[...textNodes]} />
+        </View>
+        <View
+          style={{
+            height: 0.5,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            marginRight: 10,
+          }}
+        />
+        <View style={styles.bottomSection}>
+          <TouchableOpacity
+            style={{ marginRight: 10 }}
+            onPress={() => {
+              alert("comments");
+            }}
+          >
+            <OctIcon
+              name={"comment-discussion"}
+              size={27}
+              color={"black"}
+            ></OctIcon>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ marginRight: 10 }}
+            onPress={() => {
+              alert("comments");
+            }}
+          >
+            <FeatherIcon
+              name={"bookmark"}
+              size={27}
+              color={"black"}
+            ></FeatherIcon>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -132,11 +174,9 @@ const styles = StyleSheet.create({
     marginRight: "auto",
   },
   bottomSection: {
-    alignItems: "center",
-    display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
-    marginTop: "auto",
+    padding: 5,
+    marginVertical: 10,
   },
   categorySection: {
     alignItems: "center",
@@ -157,26 +197,24 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "white",
-    borderRadius: 20,
-    elevation: 10,
+    borderRadius: 5,
+    elevation: 3,
     margin: 5,
     padding: 3,
+    flexDirection: "row",
     // width: "100%",
   },
   joinCategoryIcon: {
     marginLeft: "auto",
     marginRight: 10,
+    marginTop: 5,
   },
   notVotedIconColor: {
     color: "gray",
   },
   postText: {
-    borderColor: "red",
-    borderWidth: 1,
     paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingTop: 10,
+    paddingHorizontal: 5,
   },
   timePassedText: {
     fontSize: 10,
@@ -187,25 +225,23 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   topSection: {
-    alignItems: "center",
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 10,
   },
   voteActionContainer: {
-    display: "flex",
     flexDirection: "column",
-  },
-  voteContainer: {
     alignItems: "center",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
     marginLeft: 10,
-    marginRight: "auto",
+    marginRight: 15,
+    // borderWidth: 1,
+    // borderColor: "red",
   },
   votedIconColor: {
     color: "#386083",
+  },
+  content: {
+    flex: 1,
   },
 });
