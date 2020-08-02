@@ -18,7 +18,6 @@ router.use('/',
 router.post('/',
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
-      // add token decode implementation
       const post: UpsertPostRequest = {...req.body, authorId: req.currentUser._id};
       res.json(await postService.save(post));
     }));
@@ -33,7 +32,6 @@ router.get('/hashtag',
 router.get('/search',
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
-      // const currentUser = req.params.user;
       const search: PostSearch = {userId: req.currentUser._id, ...req.query};
       res.send(await postService.searchPost(search));
     }));
@@ -42,6 +40,13 @@ router.get('/:postId',
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
       res.json(await postService.getPostById(req.params.postId, req.currentUser._id));
+    }));
+
+router.put('/:postId',
+    asyncMw(async (req, res, _) => {
+      const postService = Container.get(PostService);
+      const post: UpsertPostRequest = {...req.body, id: req.params.postId, authorId: req.currentUser._id};
+      res.json(await postService.update(post));
     }));
 
 router.post('/:postId/_upvote',

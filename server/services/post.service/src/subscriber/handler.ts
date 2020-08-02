@@ -9,8 +9,9 @@ const publishNotification = async (notification) => {
   try {
     logger.silly('publish notification %o', notification);
     const notificationPublisher: NotificationPublisher = Container.get('NotificationPublisher');
-    notificationPublisher.publish(notification);
+    await notificationPublisher.publish(notification);
   } catch (e) {
+    logger.error('error publishing post');
     logger.error(e);
   }
 };

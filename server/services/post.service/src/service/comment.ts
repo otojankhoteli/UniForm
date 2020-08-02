@@ -1,15 +1,16 @@
-import { Service, Inject } from 'typedi';
-import { Document, Model } from 'mongoose';
-import { IUser } from '../interface/User';
+import {Service, Inject} from 'typedi';
+import {Document, Model} from 'mongoose';
+import {IUser} from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
-import { IPost, UpsertPostRequest } from '../interface/Post';
-import { EventEmitter } from 'events';
-import { Logger } from 'winston';
-import { Events } from '../subscriber/event';
-import { IHashTag, IHashTagSearchModel } from '../interface/HashTag';
+import {IPost, PostResponse, UpsertPostRequest} from '../interface/Post';
+import {EventEmitter} from 'events';
+import {Logger} from 'winston';
+import {Events} from '../subscriber/event';
+import {IHashTag, IHashTagSearchModel} from '../interface/HashTag';
 import _ from 'lodash';
-import { VoteService } from './vote';
-import { IComment, UpsertCommentRequest } from '../interface/Comment';
+import {VoteService} from './vote';
+import {CommentResponse, IComment, UpsertCommentRequest} from '../interface/Comment';
+import PermissionDeniedError from '../util/error/PermissionDeniedError';
 
 @Service()
 export class CommentService {
@@ -34,130 +35,142 @@ export class CommentService {
   ) {
   }
 
-  // private async _validateUser(userId) {
-  //   const user = this.UserModel.findById(user);
-  //
-  //   if (!user) {
-  //     throw new NotFoundError(`Can not create post, user with id: ${post.authorId} does not exist`);
-  //   }
-  // }
 
   private async _validateBeforeInsert(comment: UpsertCommentRequest) {
-    const category = this.PostModel.findById(comment.postId);
-    if (!category) {
+    const post = await this.PostModel.findById(comment.postId);
+    if (!post) {
       throw new NotFoundError(`Can not write comment, on post with id: ${comment.postId} does not exist`);
     }
 
-    const user = this.UserModel.findById(comment.authorId);
-    if (!user) {
-      throw new NotFoundError(`Can not write comment, user with id: ${comment.authorId} does not exist`);
+    if (comment.id) {
+      const existingPost = await this.CommentModel.findOne({_id: comment.id, author: comment.authorId});
+      if (!existingPost) {
+        throw new PermissionDeniedError('Permission denied: comment doesn\'t belong to you');
+      }
     }
-
-    // ToDo check if use case exists
-    // if (post._id) {
-    //   const existingPost = this.PostModel.findOne({_id: post._id, author: post.author});
-    //   if (!existingPost) {
-    //     throw new PermissionDeniedError('Permission denied: post doesn\'t belong to you');
-    //   }
-    // }
   }
 
-  private async _addHashTags(hashTags: string[]) {
-    hashTags = [].concat(hashTags);
 
-    const existingHashTags = await this.HashTagModel
-      .find()
-      .where('name')
-      .in(hashTags);
-
-    const existingHashTagNames = [].concat(existingHashTags).map((tag) => tag.name);
-    console.log(existingHashTagNames);
-    const newHashTags = hashTags
-      .filter((name) => !existingHashTagNames.includes(name))
-      .map((name) => {
-        return { name };
-      });
-
-    return this.HashTagModel.insertMany(newHashTags);
-  }
-
-  public async save(upsertCommentRequest: UpsertCommentRequest): Promise<IComment> {
+  public async save(upsertCommentRequest: UpsertCommentRequest): Promise<IComment & any> {
     this.logger.silly('creating new comment %o', upsertCommentRequest);
     await this._validateBeforeInsert(upsertCommentRequest);
 
-    let newComment: IComment = {
-      _id: upsertCommentRequest.id,
+    const newComment = {
+      ...upsertCommentRequest,
       author: upsertCommentRequest.authorId,
-      text: upsertCommentRequest.text,
-      type: 'test',
-      files: upsertCommentRequest.files,
-      userTags: upsertCommentRequest.userTags,
-      upVoters: [], // fixme
-      downVoters: [],
-      voteCount: 0,
+      post: upsertCommentRequest.postId,
     };
 
-    if (newComment._id) {
-      newComment = await this.CommentModel.findByIdAndUpdate(newComment._id, newComment, { new: true });
-    } else {
-      newComment = await this.CommentModel.create(newComment);
-    }
+    const result = await this.CommentModel.create(newComment);
 
-    // await this._addHashTags(newComment.hashTags); TODO write addUserTags
+    this.eventEmitter.emit(Events.comment.new, newComment);
 
-    this.eventEmitter.emit(Events.comment.new, newComment);//TODO change to comment
-
-    return newComment;
+    return result;
   }
 
-  public async getHashTags(query: IHashTagSearchModel) {
-    this.logger.silly('getting hashtags: %o', query);
 
-    if (!query.skip) query.skip = this.skip;
-    if (!query.limit) query.limit = this.limit;
+  public async update(upsertCommentRequest: UpsertCommentRequest): Promise<IComment & any> {
+    this.logger.silly('updating comment %o', upsertCommentRequest);
+    await this._validateBeforeInsert(upsertCommentRequest);
 
-    return this.HashTagModel
-      .find()
-      .where('name')
-      .regex(new RegExp(`^${query.name}`))
-      .skip(query.skip)
-      .limit(query.limit);
+    const newComment = {
+      ...upsertCommentRequest,
+      author: upsertCommentRequest.authorId,
+      post: upsertCommentRequest.postId,
+    };
+
+    const result = await this.CommentModel.findByIdAndUpdate(newComment.id, newComment, {upsert: true, new: true}).lean();
+
+    this.eventEmitter.emit(Events.comment.new, newComment);
+
+    return result;
   }
 
-  public async getPostComments({ postId, skip, limit }) {
-    this.logger.silly('getting comments from post: %o', postId);
+  public async getPostComments({userId, postId, skip, limit}) {
+    this.logger.silly('getting comments of post: %o', postId);
     if (!skip) skip = this.skip;
     if (!limit) limit = this.limit;
 
-    return this.PostModel
-      .find()
-      .where('post')
-      .equals(postId)
-      .skip(skip)
-      .limit(limit);
+    const result = await this.CommentModel
+        .find()
+        .where('post')
+        .equals(postId)
+        .populate('author', ['name', 'imgUrl'])
+        .populate('category', 'name')
+        .populate('userTags', ['name', 'imgUrl'])
+        .sort({updatedAt: 'desc'})
+        .skip(skip)
+        .limit(limit)
+        .lean();
+    return this.addCommentReacts(result, userId);
   }
 
-  private async _validateVoteAndGetComment(commentId, userId) {
+  private async _validateVoteAndGetComment(commentId) {
     const comment = await this.CommentModel.findById(commentId);
-    const user = await this.UserModel.findById(userId);
 
     if (!comment) {
       throw new NotFoundError(`can not upvote, comment with id: ${commentId} does not exist`);
     }
 
-    if (!user) {
-      // throw new NotFoundError(`can not upvote, user with id: ${userId} does not exist`);
-    }
     return comment;
   }
 
   public async upVote(commentId: string, userId: string) {
-    const post = await this._validateVoteAndGetComment(commentId, userId);
-    return this.VoteService.upVote(userId, post);
+    const comment = await this._validateVoteAndGetComment(commentId);
+    return this.VoteService.upVote(userId, comment);
   }
 
   public async downVote(commentId: string, userId: string) {
-    const comment = await this._validateVoteAndGetComment(commentId, userId);
+    const comment = await this._validateVoteAndGetComment(commentId);
     return this.VoteService.downVote(userId, comment);
+  }
+
+  private async addCommentReacts(comments: IComment[] | IComment, userId: string) {
+    comments = [].concat(comments);
+    const commentIds = comments.map((post) => post._id.toString());
+
+    const upVotedPosts = (await this.filterReactedComments(commentIds, userId, 'upvote'))
+        .map((comment) => comment._id.toString());
+    const downVotedPosts = (await this.filterReactedComments(commentIds, userId, 'downvote'))
+        .map((comment) => comment._id.toString());
+
+    const commentsWithReacts = comments.map((comment) => {
+      const commentId = comment._id.toString();
+      const isUpvoted = upVotedPosts.includes(commentId);
+      const isDownvoted = downVotedPosts.includes(commentId);
+
+      const result: CommentResponse = {
+        id: comment._id.toString(),
+        text: comment.text,
+        authorId: comment.author._id.toString(),
+        authorUsername: comment.author.name,
+        authorProfilePic: comment.author.imgUrl,
+        voteCount: comment.voteCount,
+        userTags: comment.userTags,
+        isUpvoted: isUpvoted,
+        isDownvoted: isDownvoted,
+        createdAt: comment.createdAt,
+        files: comment.files,
+      };
+      return result;
+    });
+    return commentsWithReacts;
+  }
+
+  public async filterReactedComments(commentIds: string[], userId: string, reaction: 'upvote' | 'downvote') {
+    let modelReaction;
+    if (reaction === 'upvote') {
+      modelReaction = 'upVoters';
+    } else if (reaction === 'downvote') {
+      modelReaction = 'downVoters';
+    }
+    return this.CommentModel
+        .find()
+        .where('_id')
+        .in(commentIds)
+        .where(modelReaction)
+        .equals(userId)
+        .select('_id')
+        .lean();
   }
 }

@@ -26,6 +26,7 @@ const post = new mongoose.Schema({
   hashTags: [{
     type: String,
     index: true,
+    default: [],
   }],
 
   userTags: [{
@@ -44,12 +45,14 @@ const post = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     index: true,
+    default: [],
   }],
 
   downVoters: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     index: true,
+    default: [],
   }],
 
   voteCount: {
