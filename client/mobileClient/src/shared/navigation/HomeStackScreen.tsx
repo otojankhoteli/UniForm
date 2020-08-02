@@ -4,12 +4,14 @@ import AddPostScreen from "../../screens/addPost/AddPostScreen";
 import ChooseCategoryScreen from "../../screens/postCategories/ChooseCategoryScreen";
 import HomeScreen from "../../screens/home/HomeScreen";
 import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
+import PostScreen from "../../screens/post/PostScreen";
 
 export type HomeStackParamList = {
   Home: undefined;
   AddPost: { category: CategoryViewModel };
   ChooseCategory: undefined;
   Feed: { sort: "latest" | "top" } | undefined;
+  Post: { postId: string };
 };
 const HomeStack = createStackNavigator();
 
@@ -30,6 +32,11 @@ const HomeStackScreen: React.FC = () => {
         name="ChooseCategory"
         component={ChooseCategoryScreen}
         options={{ headerTitle: "Choose Category" }}
+      />
+      <HomeStack.Screen
+        name="Post"
+        component={PostScreen}
+        options={{ headerTitle: "Post" }}
       />
     </HomeStack.Navigator>
   );
