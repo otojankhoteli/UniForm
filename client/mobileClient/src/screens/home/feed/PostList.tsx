@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { FlatList } from 'react-native-gesture-handler';
-import { RefreshControl, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
-import { PostViewModel } from '../../../api/posts/PostsApiModel';
-import { PostListItem } from './PostListItem';
-import CategoryListItem from '../../postCategories/CategoryListItem';
+import React, { useState, useEffect } from "react";
+import { FlatList } from "react-native-gesture-handler";
+import {
+  RefreshControl,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  View,
+  Text,
+  StyleSheet,
+} from "react-native";
+import { PostViewModel } from "../../../api/posts/PostsApiModel";
+import { PostListItem } from "./PostListItem";
+import { MainColor } from "../../../shared/Const";
 
 interface Props {
   posts: PostViewModel[];
@@ -13,21 +20,26 @@ interface Props {
   fetchNextPage: () => void;
   fetchPrevPage: () => void;
 }
-export function PostList({ posts, isLoading, fetchNextPage, onRefresh }: Props) {
+export function PostList({
+  posts,
+  isLoading,
+  fetchNextPage,
+  onRefresh,
+}: Props) {
   const [internalPosts, setInternalPosts] = useState<PostViewModel[]>([]);
 
   useEffect(() => {
-    setInternalPosts(category => {
+    setInternalPosts((category) => {
       const map = new Map<string, PostViewModel>();
       const concated = category.concat(posts);
 
-      concated.forEach(item => {
+      concated.forEach((item) => {
         map.set(item.id, item);
-      })
+      });
 
       return [...map.values()];
     });
-  }, [posts])
+  }, [posts]);
 
   const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     let { contentOffset } = e.nativeEvent;
@@ -35,22 +47,51 @@ export function PostList({ posts, isLoading, fetchNextPage, onRefresh }: Props) 
 
     let pageNum = Math.round(contentOffset.y / viewSize.height);
     console.log("pageNum", pageNum, contentOffset.y, viewSize.height);
+    console.log(contentOffset.y);
     if (contentOffset.y > 0) {
       fetchNextPage();
     }
-  }
+  };
 
   const onRefreshInternal = () => {
     setInternalPosts([]);
     onRefresh();
-  }
-  console.log("result", posts);
-  return <FlatList
-    style={{ flex: 1 }}
-    contentContainerStyle={{ justifyContent: "flex-start", alignItems: "center", display: "flex", flexDirection: "column", flex: 1, borderWidth: 1, borderColor: "red" }}
-    data={internalPosts}
-    renderItem={post => (<PostListItem refresh={onRefresh} key={post.item.id} post={post.item} />)}
-    onMomentumScrollEnd={onScrollEnd}
-    showsVerticalScrollIndicator
-    refreshControl={<RefreshControl refreshing={isLoading} onRefresh={onRefreshInternal} />} />
+  };
+
+  return (
+    <FlatList
+      style={{ flex: 1 }}
+      contentContainerStyle={{
+        padding: 10,
+      }}
+      ListEmptyComponent={
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>No Records</Text>
+        </View>
+      }
+      data={internalPosts}
+      renderItem={(post) => (
+        <PostListItem refresh={onRefresh} key={post.item.id} post={post.item} />
+      )}
+      onMomentumScrollEnd={onScrollEnd}
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={onRefreshInternal} />
+      }
+    />
+  );
 }
+
+const styles = StyleSheet.create({
+  text: {
+    color: MainColor,
+    fontSize: 21,
+    fontWeight: "bold",
+    marginRight: 5,
+  },
+  textContainer: {
+    alignItems: "center",
+    height: 100,
+    justifyContent: "center",
+    width: "100%",
+  },
+});

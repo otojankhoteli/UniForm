@@ -1,21 +1,19 @@
 import { useState, useEffect } from "react";
-import {
-  ApiErrorResponse,
-  GetRequestInfo
-} from "./ApiResponse";
+import { ApiErrorResponse, GetRequestInfo } from "./ApiResponse";
 import { PagingLimit, PagingSkip } from "./ApiConst";
 import {
   getWithAuthorizeHeader,
   getUri,
-  getUriFromQueryObject
-  ,
-  getBodyAndHeaderFromType
+  getUriFromQueryObject,
+  getBodyAndHeaderFromType,
 } from "./ApiUtils";
-
 
 import { useGlobalState } from "../../shared/globalState/AppContext";
 import { useApiErrorHandling } from "../../shared/exceptionHandling/ExceptionHandlingHooks";
-import { BackendApiException, ApiStatusCode } from "../../shared/exceptionHandling/ExceptionHandlingModels";
+import {
+  BackendApiException,
+  ApiStatusCode,
+} from "../../shared/exceptionHandling/ExceptionHandlingModels";
 
 interface PostApiHookResult<TRequest, TResponse> {
   error: ApiHookError | undefined;
@@ -48,7 +46,6 @@ export interface GetApiHookResult<TResponse, TResponseViewModel = {}> {
   fetchFirstPage: () => void;
 }
 
-
 export type ApiBodyType = "json" | "urlencoded" | "multipart";
 export type ApiHookError = BackendApiException;
 
@@ -58,17 +55,17 @@ export interface ResponseState<TResponse> {
   isError: boolean;
 }
 
-
-
 export function usePostApi<TRequest = {}, TResponse = {}>(
   uri: string,
   bodyType: ApiBodyType = "json",
   includeAuthroize = true,
   authorizeToken: string = undefined
 ): PostApiHookResult<TRequest, TResponse> {
-  const [requestBody, setRequestBody] = useState<TRequest | undefined>(undefined);
+  const [requestBody, setRequestBody] = useState<TRequest | undefined>(
+    undefined
+  );
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
-    isError: false
+    isError: false,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -81,25 +78,35 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
       // Todo remove logged user
       fetch(uri, {
         method: "post",
-        headers: getWithAuthorizeHeader(authorizeToken, headers, includeAuthroize),
-        body
+        headers: getWithAuthorizeHeader(
+          authorizeToken,
+          headers,
+          includeAuthroize
+        ),
+        body,
       })
-        .then(async value => {
+        .then(async (value) => {
           let body = {} as any;
           try {
             body = await value.json();
-            console.log("Body",body)
+            console.log("Body", body);
           } catch (error) {
             body = {};
           }
           if (!value.ok) {
             setResponseState({
               isError: true,
-              error: { type: "ApiError", errorObject: body, statusCode: value.status as ApiStatusCode, method: "post", uri }
+              error: {
+                type: "ApiError",
+                errorObject: body,
+                statusCode: value.status as ApiStatusCode,
+                method: "post",
+                uri,
+              },
             });
             setIsLoading(false);
           } else {
-            setResponseState({ isError: false, result: body })
+            setResponseState({ isError: false, result: body });
           }
 
           setIsLoading(false);
@@ -108,14 +115,18 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
           console.log("On error", error);
           setResponseState({
             isError: true,
-            error: { errorObject: error, type: "NetworkError", method: "post", uri }
+            error: {
+              errorObject: error,
+              type: "NetworkError",
+              method: "post",
+              uri,
+            },
           });
         })
         .finally(() => {
-          setIsLoading(false);
+          // setIsLoading(false);
         });
     }
-
   }, [requestBody]);
 
   return {
@@ -123,16 +134,22 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
     isLoading,
     post: setRequestBody,
     error: responseState.error,
-    isError: responseState.isError
+    isError: responseState.isError,
   };
 }
 
 export function usePostApiWithAuth<TRequest = {}, TResponse = {}>(
   uri: string,
-  bodyType: ApiBodyType = "json") {
+  bodyType: ApiBodyType = "json"
+) {
   const [{ account: loggedUser }] = useGlobalState();
 
-  return usePostApi<TRequest, TResponse>(uri, bodyType, true, loggedUser && loggedUser.token);
+  return usePostApi<TRequest, TResponse>(
+    uri,
+    bodyType,
+    true,
+    loggedUser && loggedUser.token
+  );
 }
 
 export function usePutApi<TRequest = {}, TResponse = {}>(
@@ -140,9 +157,11 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
   bodyType: ApiBodyType = "json",
   includeAuthroize = true
 ): PostApiHookResult<TRequest, TResponse> {
-  const [requestBody, setRequestBody] = useState<TRequest | undefined>(undefined);
+  const [requestBody, setRequestBody] = useState<TRequest | undefined>(
+    undefined
+  );
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
-    isError: false
+    isError: false,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -156,10 +175,14 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
 
       fetch(uri, {
         method: "put",
-        headers: getWithAuthorizeHeader(loggedUser && loggedUser.token, headers, includeAuthroize),
-        body
+        headers: getWithAuthorizeHeader(
+          loggedUser && loggedUser.token,
+          headers,
+          includeAuthroize
+        ),
+        body,
       })
-        .then(async value => {
+        .then(async (value) => {
           if (!value.ok) {
             let errorObject;
             try {
@@ -167,7 +190,11 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
             } catch (error) {
               setResponseState({
                 isError: true,
-                error: { errorObject, statusCode: value.status as ApiStatusCode, type: "ApiError" }
+                error: {
+                  errorObject,
+                  statusCode: value.status as ApiStatusCode,
+                  type: "ApiError",
+                },
               });
               setIsLoading(false);
             }
@@ -175,14 +202,14 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
 
           return value.json();
         })
-        .then(result => {
+        .then((result) => {
           setResponseState({ isError: false, result });
           setIsLoading(false);
         })
         .catch((error) => {
           setResponseState({
             isError: true,
-            error: { errorObject: error, type: "NetworkError" }
+            error: { errorObject: error, type: "NetworkError" },
           });
           setIsLoading(false);
         });
@@ -194,7 +221,7 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
     isLoading,
     post: setRequestBody,
     error: responseState.error,
-    isError: responseState.isError
+    isError: responseState.isError,
   };
 }
 
@@ -202,9 +229,11 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
   uri: string,
   includeAuthroize = true
 ): DeleteApiHookResult<TRequest, TResponse> {
-  const [requestQuery, setRequestQuery] = useState<TRequest | undefined>(undefined);
+  const [requestQuery, setRequestQuery] = useState<TRequest | undefined>(
+    undefined
+  );
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
-    isError: false
+    isError: false,
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -220,10 +249,14 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
 
       fetch(getUriFromQueryObject<TRequest>(uri, requestQuery), {
         method: "delete",
-        headers: getWithAuthorizeHeader(loggedUser && loggedUser.token, headers, includeAuthroize),
-        body
+        headers: getWithAuthorizeHeader(
+          loggedUser && loggedUser.token,
+          headers,
+          includeAuthroize
+        ),
+        body,
       })
-        .then(async value => {
+        .then(async (value) => {
           if (!value.ok) {
             let errorObject;
             try {
@@ -231,7 +264,11 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
             } catch (error) {
               setResponseState({
                 isError: true,
-                error: { errorObject, statusCode: value.status as ApiStatusCode, type: "ApiError" }
+                error: {
+                  errorObject,
+                  statusCode: value.status as ApiStatusCode,
+                  type: "ApiError",
+                },
               });
               setIsLoading(false);
             }
@@ -239,14 +276,14 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
 
           return value.json();
         })
-        .then(result => {
+        .then((result) => {
           setResponseState({ isError: false, result });
           setIsLoading(false);
         })
         .catch((error) => {
           setResponseState({
             isError: true,
-            error: { errorObject: error, type: "NetworkError" }
+            error: { errorObject: error, type: "NetworkError" },
           });
           setIsLoading(false);
         });
@@ -258,7 +295,7 @@ export function useDeleteApi<TRequest = {}, TResponse = {}>(
     isLoading,
     delete: setRequestQuery,
     error: responseState.error,
-    isError: responseState.isError
+    isError: responseState.isError,
   };
 }
 
@@ -278,13 +315,16 @@ interface FinalUriType {
 export function useGetApi<TResponse, TResponseViewModel = {}>(
   uri: string,
   includeAuthorize = true,
-  requestInfo: GetRequestOptions<TResponseViewModel> = { wait: false, info: { limit: PagingLimit, skip: PagingSkip, queryParams: [] } }
+  requestInfo: GetRequestOptions<TResponseViewModel> = {
+    wait: false,
+    info: { limit: PagingLimit, skip: PagingSkip, queryParams: [] },
+  }
 ): GetApiHookResult<TResponse, TResponseViewModel> {
   const [finalUri, setFinalUri] = useState<FinalUriType>();
   const [internalUri, setInternalUri] = useState(uri);
   const [internalRequestInfo, setInternalRequestInfo] = useState(requestInfo);
   const [responseState, setResponseState] = useState<ResponseState<TResponse>>({
-    isError: false
+    isError: false,
   });
   const [isLoading, setIsLoading] = useState(!requestInfo.wait);
 
@@ -293,7 +333,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
 
   const fetchNextPage = () => {
     if (responseState.isError) return;
-    setInternalRequestInfo(prev => {
+    setInternalRequestInfo((prev) => {
       const limit = (prev && prev.info && prev.info.limit) || PagingLimit;
       const skip = (prev && prev.info && prev.info.skip) || PagingSkip;
 
@@ -303,15 +343,15 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
           limit,
           skip: skip + limit,
           orderBy: prev && prev.info && prev.info.orderBy,
-          queryParams: (prev && prev.info && prev.info.queryParams) || []
-        }
+          queryParams: (prev && prev.info && prev.info.queryParams) || [],
+        },
       };
     });
   };
 
   const fetchPrevPage = () => {
     if (responseState.isError) return;
-    setInternalRequestInfo(prev => {
+    setInternalRequestInfo((prev) => {
       const limit = (prev && prev.info && prev.info.limit) || PagingLimit;
       const skip = (prev && prev.info && prev.info.skip) || PagingSkip;
 
@@ -319,20 +359,17 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
         wait: prev.wait,
         info: {
           limit,
-          skip:
-            skip > 0
-              ? skip - limit
-              : skip,
+          skip: skip > 0 ? skip - limit : skip,
           orderBy: prev && prev.info && prev.info.orderBy,
-          queryParams: (prev && prev.info && prev.info.queryParams) || []
-        }
+          queryParams: (prev && prev.info && prev.info.queryParams) || [],
+        },
       };
     });
   };
 
   const fetchFirstPage = () => {
     if (responseState.isError) return;
-    setInternalRequestInfo(prev => {
+    setInternalRequestInfo((prev) => {
       const limit = (prev && prev.info && prev.info.limit) || PagingLimit;
       const skip = 0;
 
@@ -342,8 +379,8 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
           limit,
           skip,
           orderBy: prev && prev.info && prev.info.orderBy,
-          queryParams: (prev && prev.info && prev.info.queryParams) || []
-        }
+          queryParams: (prev && prev.info && prev.info.queryParams) || [],
+        },
       };
     });
   };
@@ -352,7 +389,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
     if (internalUri && internalRequestInfo && internalRequestInfo.info) {
       setFinalUri({
         wait: internalRequestInfo.wait,
-        uri: getUri(internalUri, internalRequestInfo.info)
+        uri: getUri(internalUri, internalRequestInfo.info),
       });
     } else if (internalUri && internalRequestInfo) {
       setFinalUri({ uri: internalUri, wait: internalRequestInfo.wait });
@@ -367,9 +404,13 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
 
       fetch(finalUri.uri, {
         method: "get",
-        headers: getWithAuthorizeHeader(loggedUser && loggedUser.token, headers, includeAuthorize)
+        headers: getWithAuthorizeHeader(
+          loggedUser && loggedUser.token,
+          headers,
+          includeAuthorize
+        ),
       })
-        .then(async value => {
+        .then(async (value) => {
           let body: any = {};
           try {
             body = await value.json();
@@ -379,11 +420,17 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
           if (!value.ok) {
             setResponseState({
               isError: true,
-              error: { type: "ApiError", errorObject: body, statusCode: value.status as ApiStatusCode, method: "get", uri }
+              error: {
+                type: "ApiError",
+                errorObject: body,
+                statusCode: value.status as ApiStatusCode,
+                method: "get",
+                uri,
+              },
             });
             setIsLoading(false);
           } else {
-            setResponseState({ isError: false, result: body })
+            setResponseState({ isError: false, result: body });
           }
 
           setIsLoading(false);
@@ -391,7 +438,12 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
         .catch((error) => {
           setResponseState({
             isError: true,
-            error: { type: "NetworkError", uri, method: "get", errorObject: error }
+            error: {
+              type: "NetworkError",
+              uri,
+              method: "get",
+              errorObject: error,
+            },
           });
           setIsLoading(false);
         });
@@ -409,7 +461,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
     fetchPrevPage,
     fetchFirstPage,
     refetch: () => {
-      setInternalRequestInfo(prev => ({ ...prev }));
-    }
+      setInternalRequestInfo((prev) => ({ ...prev }));
+    },
   };
 }

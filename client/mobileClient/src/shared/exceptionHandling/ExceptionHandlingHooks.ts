@@ -3,7 +3,6 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ApiHookError } from "../../api/shared/ApiHook";
 import { useGlobalState } from "../globalState/AppContext";
-import { RootStackParamList } from "../../screens/StartUpScreen";
 import { navigate } from "../navigation/RootNavigation";
 
 export function useApiErrorHandling(error: ApiHookError | undefined) {
@@ -15,7 +14,7 @@ export function useApiErrorHandling(error: ApiHookError | undefined) {
     }
     dispatch({
       type: "setError",
-      exception: error
+      exception: error,
     });
   }, [error]);
 }

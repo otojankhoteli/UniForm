@@ -16,7 +16,6 @@ import { MainColor } from "../../shared/Const";
 import { useGlobalState } from "../../shared/globalState/AppContext";
 import { useSignUp } from "../../api/auth/AuthApiHook";
 import { useTokenRefreshHandler } from "../../shared/auth/AuthHook";
-import { RootStackParamList } from "../StartUpScreen";
 import { navigate } from "../../shared/navigation/RootNavigation";
 // const BackgroundImage = require('../../../assets/backgroundImage.jpg');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -34,16 +33,17 @@ export default function DevelopmentLoginScreen() {
         type: "setLoggedInUser",
         account: result,
       });
-      navigate("Home");
+      // navigate("Home");
     }
   }, [result, isError]);
 
   const onPress = async () => {
     // let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-    const deviceId = await Notifications.getExpoPushTokenAsync();
+    // const deviceId = await Notifications.getExpoPushTokenAsync();
     post({
-      deviceId,
-      accessToken,
+      deviceId: "emulator123",
+      accessToken:
+        "ya29.a0AfH6SMBkMUZzx-SQA8zq8JPaChNMxooek4my7QiY7eyYpT9dAZjjrhG4tIpfTNG8bCwYJnvyzFXw-yvjlFfxC8Yv9Lp3NsIpV-pgShqaqtMTpJRhvdDiY6BN2z3hgpaiLkPx591qN7LLZF7eXhmgTy1r_JflQRiLWCw",
     });
   };
 
