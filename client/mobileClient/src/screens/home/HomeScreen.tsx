@@ -50,7 +50,7 @@ export default function HomeScreen() {
         fetchNextPage={fetchNextPage}
         fetchPrevPage={fetchPrevPage}
       />
-      <AddPostButton onPress={onAddClick} />
+      <AddPostButton onPress={onAddClick} color={"rgba(64,128,255,1)"} />
     </View>
   );
 }

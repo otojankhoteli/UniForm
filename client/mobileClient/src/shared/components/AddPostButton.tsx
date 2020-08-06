@@ -4,13 +4,14 @@ import { Button, Icon } from "react-native-elements";
 
 interface Props {
   onPress: () => void;
+  color: string;
 }
 
 export default function AddPostButton(props: Props) {
   return (
     <Button
       containerStyle={styles.addButtonContainer}
-      buttonStyle={styles.addButton}
+      buttonStyle={{ ...styles.addButton, backgroundColor: props.color }}
       onPress={props.onPress}
       icon={
         <Icon
