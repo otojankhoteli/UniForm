@@ -1,6 +1,6 @@
 import React from "react";
 import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
-import { FlatList } from "react-native";
+import { FlatList, View } from "react-native";
 import CategoryListItem from "./CategoryListItem";
 
 interface Props {

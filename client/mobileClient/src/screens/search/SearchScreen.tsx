@@ -3,6 +3,8 @@ import { View, TextInput, TouchableHighlight, Text } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import { Button } from "react-native-elements";
 import AddPostButton from "../../shared/components/AddPostButton";
+import CategoryList from "./CategoryList";
+import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
 
 const SearchScreen: React.FC = () => {
   const [inputText, setInputText] = useState("");
@@ -33,6 +35,7 @@ const SearchScreen: React.FC = () => {
           }}
         />
       </View>
+      <CategoryList data={tempData} />
       <AddPostButton
         onPress={() => {
           alert("new category");
@@ -44,3 +47,134 @@ const SearchScreen: React.FC = () => {
 };
 
 export default SearchScreen;
+
+const tempData: CategoryViewModel[] = [
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category1",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category2",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category3",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category4",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category5",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category6",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category7",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category8",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category9",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category10",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category11",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category12",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category13",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category14",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category15",
+    postCount: 100,
+  },
+  {
+    author: "ako",
+    id: "1",
+    isVerified: true,
+    memberCount: 10,
+    name: "Category17",
+    postCount: 100,
+  },
+];
