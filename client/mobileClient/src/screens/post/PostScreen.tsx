@@ -1,25 +1,21 @@
-import React, { useMemo, useEffect } from "react";
+import { useRoute, RouteProp } from "@react-navigation/native";
+import { HomeStackParamList } from "../../shared/navigation/HomeStackScreen";
+import React, { useMemo, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import OctIcon from "react-native-vector-icons/Octicons";
 import FeatherIcon from "react-native-vector-icons/Feather";
-import { PostViewModel } from "../../../api/posts/PostsApiModel";
-import AvatarCustom from "../../../shared/components/Avatar";
-import { MainColor } from "../../../shared/Const";
-import HorizontalLine from "../../../shared/components/HorizontalLine";
-import { getTimeFormat } from "../../../shared/Utils";
-import { extractNodesFromInputText } from "../../addPost/AddPostUtils";
-import { TextWithTags } from "../../addPost/TextWithTags";
-import { useUpvote, useDownvote } from "../../../api/posts/PostsApiHook";
-import { useNavigation } from "@react-navigation/native";
+import AvatarCustom from "../../shared/components/Avatar";
+import { getTimeFormat } from "../../shared/Utils";
+import { TextWithTags } from "../addPost/TextWithTags";
+import { MainColor } from "../../shared/Const";
+import { extractNodesFromInputText } from "../addPost/AddPostUtils";
+import { useUpvote, useDownvote } from "../../api/posts/PostsApiHook";
 
-interface Props {
-  post: PostViewModel;
-  refresh: () => void;
-}
-export function PostListItem({ post, refresh }: Props) {
-  const navigation = useNavigation();
+const PostScreen: React.FC = () => {
+  const route = useRoute<RouteProp<HomeStackParamList, "Post">>();
+  const post = useRef(route.params.post).current;
 
   const textNodes = useMemo(() => extractNodesFromInputText(post.text), [
     post.text,
@@ -49,7 +45,7 @@ export function PostListItem({ post, refresh }: Props) {
       (upvoteResult && !upvoteFailed) ||
       (downvoteResult && !downvoteFailed)
     ) {
-      refresh();
+      // refresh();
     }
   }, [upvoteResult, upvoteFailed, downvoteResult, downvoteFailed]);
 
@@ -62,13 +58,7 @@ export function PostListItem({ post, refresh }: Props) {
   };
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      activeOpacity={1}
-      onPress={() => {
-        navigation.navigate("Post", { post });
-      }}
-    >
+    <View style={styles.container}>
       <View style={styles.voteActionContainer}>
         <Icon
           size={30}
@@ -134,38 +124,20 @@ export function PostListItem({ post, refresh }: Props) {
             marginRight: 10,
           }}
         />
-        <View style={styles.bottomSection}>
-          <TouchableOpacity
-            style={{ marginRight: 10 }}
-            onPress={() => {
-              alert("comments");
-            }}
-          >
-            <OctIcon
-              name={"comment-discussion"}
-              size={27}
-              color={"black"}
-            ></OctIcon>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ marginRight: 10 }}
-            onPress={() => {
-              alert("comments");
-            }}
-          >
-            <FeatherIcon
-              name={"bookmark"}
-              size={27}
-              color={"black"}
-            ></FeatherIcon>
-          </TouchableOpacity>
-        </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
-}
+};
+
+export default PostScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+    flexDirection: "row",
+    // width: "100%",
+  },
   authorSection: {
     alignItems: "center",
     alignSelf: "center",
@@ -194,15 +166,6 @@ const styles = StyleSheet.create({
     color: MainColor,
     fontSize: 15,
     fontWeight: "bold",
-  },
-  container: {
-    backgroundColor: "white",
-    borderRadius: 5,
-    elevation: 3,
-    margin: 5,
-    padding: 3,
-    flexDirection: "row",
-    // width: "100%",
   },
   joinCategoryIcon: {
     marginLeft: "auto",
@@ -233,15 +196,16 @@ const styles = StyleSheet.create({
   voteActionContainer: {
     flexDirection: "column",
     alignItems: "center",
-    marginLeft: 10,
+    marginLeft: 15,
     marginRight: 15,
-    // borderWidth: 1,
-    // borderColor: "red",
+    marginTop: 10,
   },
   votedIconColor: {
     color: "#386083",
   },
   content: {
     flex: 1,
+    paddingTop: 15,
+    paddingRight: 10,
   },
 });

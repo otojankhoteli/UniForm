@@ -68,22 +68,20 @@ export default function ChooseCategoryScreen() {
         style={{ maxHeight: 60 }}
         onChangeText={onSearchChange}
       />
-      <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }}>
-        {isData ? (
-          <CategoryList
-            isLoading={isLoading}
-            onSelect={onCategorySelect}
-            categories={result || []}
-            onRefresh={fetchFirstPage}
-            fetchNextPage={fetchNextPage}
-            fetchPrevPage={fetchPrevPage}
-          />
-        ) : (
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>No Records</Text>
-          </View>
-        )}
-      </ScrollView>
+      {isData ? (
+        <CategoryList
+          isLoading={isLoading}
+          onSelect={onCategorySelect}
+          categories={result || []}
+          onRefresh={fetchFirstPage}
+          fetchNextPage={fetchNextPage}
+          fetchPrevPage={fetchPrevPage}
+        />
+      ) : (
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>No Records</Text>
+        </View>
+      )}
     </View>
   );
 }

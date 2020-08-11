@@ -1,24 +1,35 @@
-import React, { memo } from 'react';
-import { Text } from 'react-native-elements'
-import { TextNode } from './AddPostUtils';
+import React, { memo } from "react";
+import { Text } from "react-native-elements";
+import { TextNode } from "./AddPostUtils";
 
 interface Props {
-  nodes: TextNode[]
+  nodes: TextNode[];
 }
 export const TextWithTags = memo(({ nodes }: Props) => {
-  const getKey = (node: TextNode) => `TextWithTags${node.value}${node.startIndex}${node.endIndex}`
+  const getKey = (node: TextNode) =>
+    `TextWithTags${node.value}${node.startIndex}${node.endIndex}`;
   const getText = (node: TextNode) => {
     switch (node.type) {
       case "#":
-        return <Text key={getKey(node)} style={{ color: "blue" }}>{node.value}</Text>
+        return (
+          <Text key={getKey(node)} style={{ color: "blue", fontSize: 18 }}>
+            {node.value}
+          </Text>
+        );
       case "@":
-        return <Text key={getKey(node)} style={{ color: "green" }}>{node.value}</Text>
+        return (
+          <Text key={getKey(node)} style={{ color: "green", fontSize: 18 }}>
+            {node.value}
+          </Text>
+        );
       default:
-        return <Text key={getKey(node)} >{node.value}</Text>
+        return (
+          <Text key={getKey(node)} style={{ fontSize: 18 }}>
+            {node.value}
+          </Text>
+        );
     }
-  }
+  };
 
-  return <>
-    {nodes.map(getText)}
-  </>
+  return <>{nodes.map(getText)}</>;
 });
