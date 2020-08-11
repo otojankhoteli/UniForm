@@ -3,8 +3,9 @@ import { StyleSheet } from "react-native";
 import { Button, Icon } from "react-native-elements";
 
 interface Props {
-  onPress: () => void;
-  color: string;
+  readonly onPress: () => void;
+  readonly color: string;
+  readonly type: "add" | "confirm";
 }
 
 export default function AddPostButton(props: Props) {
@@ -15,7 +16,7 @@ export default function AddPostButton(props: Props) {
       onPress={props.onPress}
       icon={
         <Icon
-          name="plus"
+          name={props.type == "add" ? "plus" : "check"}
           type="font-awesome"
           color="white"
           size={25}

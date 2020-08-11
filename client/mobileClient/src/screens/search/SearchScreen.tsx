@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, TouchableHighlight, Text } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import { Button } from "react-native-elements";
-import AddPostButton from "../../shared/components/AddPostButton";
+import FloatingButton from "../../shared/components/FloatingButton";
 import CategoryList from "./CategoryList";
 import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
 
@@ -36,11 +36,12 @@ const SearchScreen: React.FC = () => {
         />
       </View>
       <CategoryList data={tempData} />
-      <AddPostButton
+      <FloatingButton
         onPress={() => {
           alert("new category");
         }}
         color={"rgba(32,255,64,1)"}
+        type={"add"}
       />
     </View>
   );

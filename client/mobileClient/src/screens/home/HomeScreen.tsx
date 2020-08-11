@@ -3,7 +3,7 @@ import { StyleSheet, View, Button, ScrollView } from "react-native";
 import { Text } from "react-native-elements";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import AddPostButton from "../../shared/components/AddPostButton";
+import FloatingButton from "../../shared/components/FloatingButton";
 import { useGlobalState } from "../../shared/globalState/AppContext";
 import useToast from "../../shared/toast/ToastHooks";
 import HomeHeader from "./HomeHeader";
@@ -50,7 +50,11 @@ export default function HomeScreen() {
         fetchNextPage={fetchNextPage}
         fetchPrevPage={fetchPrevPage}
       />
-      <AddPostButton onPress={onAddClick} color={"rgba(64,128,255,1)"} />
+      <FloatingButton
+        onPress={onAddClick}
+        color={"rgba(64,128,255,1)"}
+        type={"add"}
+      />
     </View>
   );
 }
