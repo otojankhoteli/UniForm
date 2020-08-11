@@ -5,8 +5,11 @@ import { Button } from "react-native-elements";
 import FloatingButton from "../../shared/components/FloatingButton";
 import CategoryList from "./CategoryList";
 import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
+import { useNavigation } from "@react-navigation/native";
 
 const SearchScreen: React.FC = () => {
+  const navigation = useNavigation();
+
   const [inputText, setInputText] = useState("");
 
   return (
@@ -38,7 +41,7 @@ const SearchScreen: React.FC = () => {
       <CategoryList data={tempData} />
       <FloatingButton
         onPress={() => {
-          alert("new category");
+          navigation.navigate("AddCategory");
         }}
         color={"rgba(32,255,64,1)"}
         type={"add"}
