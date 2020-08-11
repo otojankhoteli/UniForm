@@ -155,12 +155,22 @@ export class PostService {
 
   public async upVote(postId: string, userId: string) {
     const post = await this._validateVoteAndGetPost(postId);
-    return this.VoteService.upVote(userId, post);
+    const result = await this.VoteService.upVote(userId, post);
+    this.eventEmitter.emit(Events.post.upvote, postId);
+    return result;
   }
 
   public async downVote(postId: string, userId: string) {
     const post = await this._validateVoteAndGetPost(postId);
-    return this.VoteService.downVote(userId, post);
+    const result = await this.VoteService.downVote(userId, post);
+    this.eventEmitter.emit(Events.post.downVote, result);
+    return result;
+  }
+
+  public async unReact(postId: string, userId: string) {
+    const post = await this._validateVoteAndGetPost(postId);
+    const result = await this.VoteService.unReact(userId, post);
+    return result;
   }
 
   public async filterReactedPosts(postIds: string[], userId: string, reaction: 'upvote' | 'downvote') {

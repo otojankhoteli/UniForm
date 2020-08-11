@@ -9,6 +9,14 @@ import authenticate from '../middleware/authenticate';
 
 const router = Router();
 
+// router.use('/', (req, res, next) => {
+//   // @ts-ignore
+//   req.currentUser = {
+//     _id: '5ebc4ef165f4ab9597d4aa1e',
+//   };
+//   next();
+// });
+
 router.use('/',
     pageParser,
     authenticate,
@@ -62,6 +70,11 @@ router.post('/:postId/_downvote',
       res.json(await postService.downVote(req.params.postId, req.currentUser._id));
     }));
 
+router.post('/:postId/_unreact',
+    asyncMw(async (req, res, _) => {
+      const postService = Container.get(PostService);
+      res.json(await postService.unReact(req.params.postId, req.currentUser._id));
+    }));
 
 router.post('/test/:userId',
     asyncMw(async (req, res, _) => {
