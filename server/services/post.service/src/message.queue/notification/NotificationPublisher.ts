@@ -19,10 +19,6 @@ class PostNotificationPublisher implements Publish {
     this.notificationPublisher = notificationPublisher;
   }
 
-  // private async stripPostNotification(post: IPost) {
-  //   const
-  // }
-
   publish(msg: any) {
     const notification = 1;
 

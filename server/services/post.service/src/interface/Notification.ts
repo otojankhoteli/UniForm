@@ -1,10 +1,5 @@
-enum NotificationType {
-  Post = 'POST',
-  Comment = 'COMMENT',
-}
-
 interface BaseNotification {
-  type: NotificationType,
+  type: string,
   fromId: string,
   fromName: string,
   toId: string,
