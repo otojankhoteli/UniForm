@@ -1,28 +1,39 @@
 import mongoose from 'mongoose';
+import {INotification} from '../../interface/Notification';
 
 const notification = new mongoose.Schema({
   type: {
     type: String,
   },
 
-  deviceId: {
-    type: String,
+  from: {
+    _id: {
+      type: String,
+    },
+    name: {
+      type: String,
+    },
   },
 
-  fromId: {
-    type: String,
+  to: {
+    _id: {
+      type: String,
+    },
+    name: {
+      type: String,
+    },
+    deviceId: {
+      type: String,
+    },
   },
 
-  fromName: {
-    type: String,
-  },
-
-  toId: {
-    type: String,
-  },
-
-  toName: {
-    type: String,
+  where: {
+    _id: {
+      type: String,
+    },
+    text: {
+      type: String,
+    },
   },
 
   etc: {},
@@ -31,4 +42,4 @@ const notification = new mongoose.Schema({
 {timestamps: true});
 
 
-const NotificationModel = mongoose.model<mongoose.Document>('Notification', notification);
+export const NotificationModel = mongoose.model<INotification & mongoose.Document>('Notification', notification);

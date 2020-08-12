@@ -1,9 +1,8 @@
 import logger from '../util/logger';
-import {NotificationPublisher} from '../message.queue/notification/NotificationPublisher';
+import {NotificationPublisher, PostNotificationPublisher} from '../message.queue/notification/NotificationPublisher';
 import {Container} from 'typedi';
 import {EventEmitter} from 'events';
 import {Events} from './event';
-
 
 const publishNotification = async (notification) => {
   try {
@@ -19,8 +18,11 @@ const publishNotification = async (notification) => {
 
 const registerHandlers = () => {
   const emitter: EventEmitter = Container.get('EventEmitter');
+  const postNotificationPublisher: PostNotificationPublisher = Container.get(PostNotificationPublisher);
 
-  emitter.on(Events.post.new, publishNotification);
+  emitter.on(Events.post.upvote, async (data) => {
+    await postNotificationPublisher.upvote(data);
+  });
   logger.info('user signup handler registered');
 };
 

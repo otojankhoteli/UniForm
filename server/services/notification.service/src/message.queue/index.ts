@@ -1,10 +1,12 @@
 import rabbit from 'rabbot';
 import logger from '../util/logger';
-import {settings} from './topology';
+import {NotificationPublisherSettings, settings} from './topology';
+import {receiveNotification} from './handler';
 
 
 const registerRabbitHandlers = () => {
   logger.info('registering rabbit handlers');
+  rabbit.handle(NotificationPublisherSettings.type, receiveNotification);
 };
 
 

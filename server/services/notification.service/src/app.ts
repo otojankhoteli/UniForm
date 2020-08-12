@@ -1,3 +1,4 @@
+import 'reflect-metadata'; // We need this in order to use @DecoratorsGET
 import express from 'express';
 import errorHandler from './util/error/ErrorHandler';
 import initDIContainer from './util/dependencyInjector';

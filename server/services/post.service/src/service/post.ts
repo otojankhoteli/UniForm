@@ -156,7 +156,7 @@ export class PostService {
   public async upVote(postId: string, userId: string) {
     const post = await this._validateVoteAndGetPost(postId);
     const result = await this.VoteService.upVote(userId, post);
-    this.eventEmitter.emit(Events.post.upvote, postId);
+    this.eventEmitter.emit(Events.post.upvote, {postId, upvoterId: userId});
     return result;
   }
 

@@ -8,6 +8,10 @@ const user = new mongoose.Schema({
     index: true,
   },
 
+  deviceId: {
+    type: String,
+  },
+
   email: {
     type: String,
     unique: true,
