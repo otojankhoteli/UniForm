@@ -163,7 +163,7 @@ export class PostService {
   public async downVote(postId: string, userId: string) {
     const post = await this._validateVoteAndGetPost(postId);
     const result = await this.VoteService.downVote(userId, post);
-    this.eventEmitter.emit(Events.post.downVote, result);
+    this.eventEmitter.emit(Events.post.downVote, {postId, downvoterId: userId});
     return result;
   }
 

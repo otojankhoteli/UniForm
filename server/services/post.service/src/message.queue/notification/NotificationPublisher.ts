@@ -34,7 +34,7 @@ export class PostNotificationPublisher {
   }
 
 
-  public async upvote({postId, upvoterId}) {
+  private async _react({postId, reactorId, reaction}) {
     this.logger.silly('sending upvote notification');
 
     const post = await this.PostModel
@@ -42,13 +42,13 @@ export class PostNotificationPublisher {
         .populate('author', ['name', 'imgUrl', 'deviceId'])
         .lean();
 
-    const upvoter = await this.UserModel.findById(upvoterId).lean();
+    const reactor = await this.UserModel.findById(reactorId).lean();
 
     const result: PostUpVoteNotification = {
-      type: PostNotification.Upvote,
+      type: reaction,
       from: {
-        _id: upvoter._id,
-        name: upvoter.name,
+        _id: reactor._id,
+        name: reactor.name,
       },
       to: {
         _id: post.author._id,
@@ -61,5 +61,13 @@ export class PostNotificationPublisher {
       },
     };
     return this.publish(result);
+  }
+
+  public async upVote({postId, upvoterId}) {
+    return this._react({postId, reactorId: upvoterId, reaction: PostNotification.Upvote});
+  }
+
+  public async downVote({postId, downvoterId}) {
+    return this._react({postId, reactorId: downvoterId, reaction: PostNotification.Downvote});
   }
 }

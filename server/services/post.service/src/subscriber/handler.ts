@@ -21,7 +21,10 @@ const registerHandlers = () => {
   const postNotificationPublisher: PostNotificationPublisher = Container.get(PostNotificationPublisher);
 
   emitter.on(Events.post.upvote, async (data) => {
-    await postNotificationPublisher.upvote(data);
+    await postNotificationPublisher.upVote(data);
+  });
+  emitter.on(Events.post.downVote, async (data) => {
+    await postNotificationPublisher.downVote(data);
   });
   logger.info('user signup handler registered');
 };
