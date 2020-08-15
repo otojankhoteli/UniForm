@@ -88,7 +88,7 @@ export class PostService {
 
     await this._addHashTags(result.hashTags);
 
-    this.eventEmitter.emit(Events.post.new, result);
+    this.eventEmitter.emit(Events.post.new, result._id.toString());
 
     return result;
   }
@@ -196,7 +196,7 @@ export class PostService {
   }
 
 
-  private async addPostReacts(posts: IPost[] | IPost, userId: string) {
+  private async postResponse(posts: IPost[] | IPost, userId: string) {
     posts = [].concat(posts);
     const postIds = posts.map((post) => post._id.toString());
 
@@ -237,9 +237,6 @@ export class PostService {
     return postsWithReacts;
   }
 
-  private async postResponse(posts: IPost[] | IPost, userId: string) {
-    return this.addPostReacts(posts, userId);
-  }
 
   private async getRawFeed(userId: string, skip, limit): Promise<IPost[]> {
     // const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;

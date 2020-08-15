@@ -1,3 +1,11 @@
+export enum PostNotification {
+  Upvote = 'post_upvote',
+  Downvote = 'post_downvote',
+  React = 'post_react',
+  Tag = 'post_tag',
+}
+
+
 export interface INotification {
   _id: string,
   type: string,

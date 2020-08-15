@@ -5,7 +5,7 @@ import {Inject, Service} from 'typedi';
 import {Document, Model} from 'mongoose';
 import {IPost} from '../../interface/Post';
 import {IUser} from '../../interface/User';
-import {PostNotification, PostUpVoteNotification} from '../../interface/Notification';
+import {PostDownVoteNotification, PostNotification, PostUpVoteNotification} from '../../interface/Notification';
 
 
 export class NotificationPublisher extends Publisher {
@@ -18,19 +18,21 @@ export class NotificationPublisher extends Publisher {
 
 @Service()
 export class PostNotificationPublisher {
+  private postNotificationEnum = PostNotification;
+
   constructor(
-              @Inject('NotificationPublisher')
-              private readonly notificationPublisher: NotificationPublisher,
-              @Inject('logger')
-              private logger: Logger,
-              @Inject('PostModel')
-              private PostModel: Model<IPost & Document>,
-              @Inject('UserModel')
-              private UserModel: Model<IUser & Document>) {
+    @Inject('NotificationPublisher')
+    private readonly notificationPublisher: NotificationPublisher,
+    @Inject('logger')
+    private logger: Logger,
+    @Inject('PostModel')
+    private PostModel: Model<IPost & Document>,
+    @Inject('UserModel')
+    private UserModel: Model<IUser & Document>) {
   }
 
-  private publish(msg: any) {
-    return this.notificationPublisher.publish(msg);
+  private publish({msg, type}) {
+    return this.notificationPublisher.publish({msg, type});
   }
 
 
@@ -44,30 +46,50 @@ export class PostNotificationPublisher {
 
     const reactor = await this.UserModel.findById(reactorId).lean();
 
-    const result: PostUpVoteNotification = {
+    const result = {
       type: reaction,
       from: {
         _id: reactor._id,
         name: reactor.name,
       },
-      to: {
-        _id: post.author._id,
-        name: post.author.name,
-        deviceId: post.author.deviceId,
-      },
+      to: post.author,
       where: {
         _id: post._id,
         text: post.text,
       },
     };
-    return this.publish(result);
+    return this.publish({msg: result, type: this.postNotificationEnum.React});
   }
 
   public async upVote({postId, upvoterId}) {
-    return this._react({postId, reactorId: upvoterId, reaction: PostNotification.Upvote});
+    return this._react({postId, reactorId: upvoterId, reaction: this.postNotificationEnum.Upvote});
   }
 
   public async downVote({postId, downvoterId}) {
-    return this._react({postId, reactorId: downvoterId, reaction: PostNotification.Downvote});
+    return this._react({postId, reactorId: downvoterId, reaction: this.postNotificationEnum.Downvote});
+  }
+
+  public async postTag(postId: string) {
+    const post: IPost = await this.PostModel
+        .findById(postId)
+        .populate('author', ['name', 'imgUrl', 'deviceId'])
+        .populate('userTags', ['name', 'imgUrl', 'deviceId'])
+        .populate('category', ['name'])
+        .lean();
+
+
+    if (post.userTags.length) {
+      const result = {
+        type: this.postNotificationEnum.Tag,
+        from: post.author,
+        to: post.userTags,
+        where: {
+          _id: post._id,
+          text: post.text,
+        },
+      };
+
+      return this.publish({msg: result, type: this.postNotificationEnum.Tag});
+    }
   }
 }

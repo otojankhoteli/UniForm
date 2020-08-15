@@ -16,4 +16,8 @@ export class NotificationService {
     console.log('saving notification: ', notification);
     return this.NotificationModel.create(notification);
   }
+
+  public async saveBulk(notifications: INotification[]) {
+    return this.NotificationModel.insertMany(notifications);
+  }
 }

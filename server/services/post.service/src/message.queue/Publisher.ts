@@ -20,12 +20,12 @@ export class Publisher implements Publish {
     this.rabbitInstance = rabbitInstance;
   }
 
-  publish(msg: any) {
+  publish({msg, type}) {
     return this.rabbitInstance.publish(
         this.exchange,
         {
           routingKey: this.routingKey,
-          type: this.type,
+          type: type || this.type,
           body: msg,
         },
     );
