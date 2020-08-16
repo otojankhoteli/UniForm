@@ -96,7 +96,6 @@ export class CommentService {
         .where('post')
         .equals(postId)
         .populate('author', ['name', 'imgUrl'])
-        .populate('category', 'name')
         .populate('userTags', ['name', 'imgUrl'])
         .sort({updatedAt: 'desc'})
         .skip(skip)
@@ -172,5 +171,19 @@ export class CommentService {
         .equals(userId)
         .select('_id')
         .lean();
+  }
+
+  public async getCommentsOf({userId, skip = this.skip, limit = this.limit}) {
+    const result = await this.CommentModel
+        .find()
+        .where('author')
+        .equals(userId)
+        .populate('author', ['name', 'imgUrl'])
+        .populate('userTags', ['name', 'imgUrl'])
+        .sort({updatedAt: 'desc'})
+        .skip(skip)
+        .limit(limit)
+        .lean();
+    return this.addCommentReacts(result, userId);
   }
 }

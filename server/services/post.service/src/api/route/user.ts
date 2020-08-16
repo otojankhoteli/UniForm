@@ -1,11 +1,12 @@
-import { Router } from 'express';
+import {Router} from 'express';
 import asyncMw from '../../util/AsyncMW';
-import { IUser } from '../../interface/User';
-import { UserService } from '../../service/user';
-import { Container } from 'typedi';
-import { PostService } from '../../service/post';
-import { pageParser } from '../middleware/util';
+import {IUser} from '../../interface/User';
+import {UserService} from '../../service/user';
+import {Container} from 'typedi';
+import {PostService} from '../../service/post';
+import {pageParser} from '../middleware/util';
 import authenticate from '../middleware/authenticate';
+import {CommentService} from '../../service/comment';
 
 const router = Router();
 
@@ -20,23 +21,30 @@ router.post('/', asyncMw(async (req, res, _) => {
 }));
 
 router.get('/feed',
-  authenticate,
-  asyncMw(async (req, res, _) => {
-  const postService = Container.get(PostService);
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const postService = Container.get(PostService);
 
-  // todo get from token
-  const userId = req.currentUser._id;
-  res.json(await postService.getFeed(userId, req.query.skip, req.query.limit));
-}));
+      // todo get from token
+      const userId = req.currentUser._id;
+      res.json(await postService.getFeed(userId, req.query.skip, req.query.limit));
+    }));
 
 router.get('/activity/posts',
-  // authenticate,
-  asyncMw(async (req, res, _) => {
-    const postService = Container.get(PostService);
-    const userId = req.currentUser._id;
-    res.json(await postService.getPostsOf({userId, skip: req.query.skip, limit: req.query.limit}));
-  }));
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const postService = Container.get(PostService);
+      const userId = req.currentUser._id;
+      res.json(await postService.getPostsOf({userId, skip: req.query.skip, limit: req.query.limit}));
+    }));
 
+router.get('/activity/comments',
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const commentService = Container.get(CommentService);
+      const userId = req.currentUser._id;
+      res.json(await commentService.getCommentsOf({userId, skip: req.query.skip, limit: req.query.limit}));
+    }));
 
 // router.get('/feed/:id',
 //   // authenticate,
@@ -51,4 +59,4 @@ router.get('/activity/posts',
 //   }));
 
 
-export { router as userRouter };
+export {router as userRouter};

@@ -12,7 +12,8 @@ router.use('/', pageParser);
 
 router.get('/:postId', asyncMw(async (req, res, _) => {
   const commentService = Container.get(CommentService);
-  const userId = req.currentUser._id;
+  // const userId = req.currentUser._id;
+  const userId = '5ebfd7a5c2be538124b18cd7';
   res.send(await commentService.getPostComments({
     userId,
     postId: req.params.postId,
