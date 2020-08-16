@@ -16,7 +16,7 @@ router.use('/', pageParser);
 router.post('/', asyncMw(async (req, res, _) => {
   const userService = Container.get(UserService);
   const user: IUser = req.body;
-  res.send(await userService.save(user));
+  res.json(await userService.save(user));
 }));
 
 router.get('/feed',
@@ -26,8 +26,17 @@ router.get('/feed',
 
   // todo get from token
   const userId = req.currentUser._id;
-  res.send(await postService.getFeed(userId, req.query.skip, req.query.limit));
+  res.json(await postService.getFeed(userId, req.query.skip, req.query.limit));
 }));
+
+router.get('/activity/posts',
+  // authenticate,
+  asyncMw(async (req, res, _) => {
+    const postService = Container.get(PostService);
+    const userId = req.currentUser._id;
+    res.json(await postService.getPostsOf({userId, skip: req.query.skip, limit: req.query.limit}));
+  }));
+
 
 // router.get('/feed/:id',
 //   // authenticate,

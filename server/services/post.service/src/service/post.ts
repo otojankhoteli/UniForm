@@ -297,11 +297,25 @@ export class PostService {
         .populate('userTags', ['name', 'imgUrl'])
         .populate('author', ['name', 'imgUrl'])
         .populate('category', 'name')
-        .skip(skip)
         .sort({updatedAt: 'desc'})
+        .skip(skip)
         .limit(limit)
         .lean();
 
     return this.postResponse(result, search.userId);
+  }
+
+  public async getPostsOf({userId, skip = this.skip, limit = this.limit}): Promise<PostResponse[]> {
+    const result = await this.PostModel
+        .find()
+        .where('author')
+        .equals(userId)
+        .populate('userTags', ['name', 'imgUrl'])
+        .populate('author', ['name', 'imgUrl'])
+        .populate('category', ['name'])
+        .sort({createdAt: 'desc'})
+        .skip(skip)
+        .limit(limit);
+    return this.postResponse(result, userId);
   }
 }
