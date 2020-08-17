@@ -18,12 +18,11 @@ trigger:
 
 variables:
   imageName: 'uniform-user-service:latest'
-  dockerId: ''
-  accessToken: ''
 
 steps:
 - script: |
-    docker build -f server/services/user.service/Dockerfile -t $(dockerId)/$(imageName) .
+    cd server/services/user.service
+    docker build -t $(dockerId)/$(imageName) .
     docker login -u $(dockerId) -p $(accessToken)
     docker push $(dockerId)/$(imageName)
   displayName: 'docker build'
