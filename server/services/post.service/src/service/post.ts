@@ -86,7 +86,11 @@ export class PostService {
 
     const result = await this.PostModel.create(newPost);
 
+    await this.CategoryModel
+        .findByIdAndUpdate(upsertPostRequest.categoryId, {$inc: {postCount: 1}});
+
     await this._addHashTags(result.hashTags);
+
 
     this.eventEmitter.emit(Events.post.new, result._id.toString());
 

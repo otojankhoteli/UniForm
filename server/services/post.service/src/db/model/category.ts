@@ -18,12 +18,6 @@ const category = new mongoose.Schema<ICategoryDTO>({
     type: String,
   },
 
-  subscribers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'User',
-  }],
-
   memberCount: {
     type: Number,
     required: true,
