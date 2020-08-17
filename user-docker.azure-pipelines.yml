@@ -1,0 +1,29 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+trigger:
+  branches:
+    include:
+    - master
+    - releases/*
+  paths:
+    include:
+    - server/services/user.service
+
+variables:
+  imageName: 'uniform-user-service:latest'
+  dockerId: ''
+  accessToken: ''
+
+steps:
+- script: |
+    docker build -f server/services/user.service/Dockerfile -t $(dockerId)/$(imageName) .
+    docker login -u $(dockerId) -p $(accessToken)
+    docker push $(dockerId)/$(imageName)
+  displayName: 'docker build'
