@@ -18,12 +18,11 @@ trigger:
 
 variables:
   imageName: 'uniform-notification-service:latest'
-  dockerId: ''
-  accessToken: ''
 
 steps:
 - script: |
-    docker build -f server/services/notification.service/Dockerfile -t $(dockerId)/$(imageName) .
+    cd server/services/notification.service
+    docker build -t $(dockerId)/$(imageName) .
     docker login -u $(dockerId) -p $(accessToken)
     docker push $(dockerId)/$(imageName)
   displayName: 'docker build'
