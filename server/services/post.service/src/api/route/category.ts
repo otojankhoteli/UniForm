@@ -33,13 +33,16 @@ router.get('/posts', asyncMw(async (req, res, _) => {
   res.send(await postService.getCategoryPosts({ ...req.query }));
 }));
 
-router.post('/:id/_subscribe', authenticate, asyncMw(async (req, res, _) => {
+router.post('/:id/_subscribe',
+  // authenticate,
+  asyncMw(async (req, res, _) => {
   const userService = Container.get(UserService);
-  // todo get userId from token
   res.send(await userService.subscribe(req.currentUser._id, req.params.id));
 }));
 
-router.post('/:id/_unsubscribe', authenticate, asyncMw(async (req, res, _) => {
+router.post('/:id/_unsubscribe',
+  // authenticate,
+  asyncMw(async (req, res, _) => {
   const userService = Container.get(UserService);
   // todo get userId from token
   res.send(await userService.unsubscribe(req.currentUser._id, req.params.id));

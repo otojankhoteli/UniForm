@@ -9,6 +9,7 @@ import NotFoundError from '../util/error/NotFoundError';
 export class UserService {
   constructor(
       @Inject('UserModel') private UserModel: Model<IUser & Document>,
+      @Inject('CategoryModel') private CategoryModel: Model<Document>,
   ) {
   }
 
@@ -33,20 +34,27 @@ export class UserService {
     return user.isAdmin;
   }
 
-  public test() {
-    return 'user';
+  private async isSubscribedTo(userId, categoryId) {
+    return this.UserModel
+        .findOne({_id: userId, subscribedCategories: categoryId});
   }
 
   // todo better be transactional
   async subscribe(userId: string, categoryId: string) {
-    // this.
-    return this.UserModel
-        .findByIdAndUpdate(userId, {$addToSet: {subscribedCategories: categoryId}}, {new: true});
+    if (!await this.isSubscribedTo(userId, categoryId)) {
+      await this.UserModel
+          .findByIdAndUpdate(userId, {$addToSet: {subscribedCategories: categoryId}}, {new: true});
+
+      await this.CategoryModel.findByIdAndUpdate(categoryId, {$inc: {memberCount: 1}});
+    }
   }
 
   // todo better be transactional
   async unsubscribe(userId: string, categoryId: string) {
-    return this.UserModel
-        .findByIdAndUpdate(userId, {$pullAll: {subscribedCategories: [categoryId]}}, {new: true});
+    if (await this.isSubscribedTo(userId, categoryId)) {
+      await this.UserModel
+          .findByIdAndUpdate(userId, {$pullAll: {subscribedCategories: [categoryId]}}, {new: true});
+      await this.CategoryModel.findByIdAndUpdate(categoryId, {$inc: {memberCount: -1}});
+    }
   }
 }
