@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, StatusBar } from "react-native";
 import React from "react";
 import { PersistAccount } from "../../shared/persist/PersistModels";
 import AvatarCustom from "../../shared/components/Avatar";
@@ -12,15 +12,17 @@ interface Props {
 export default function HomeHeader({ account, dispatch }: Props) {
   return (
     <View style={styles.container}>
-      <AvatarCustom
-        style={styles.avatar}
-        photoUrl={account && account.user && account.user.photoURL}
-      />
-      <SearchBarCustom
-        onChangeText={(text) => {
-          console.log("text", text);
-        }}
-      />
+      <View style={styles.contentContainer}>
+        <AvatarCustom
+          style={styles.avatar}
+          photoUrl={account && account.user && account.user.photoURL}
+        />
+        <SearchBarCustom
+          onChangeText={(text) => {
+            console.log("text", text);
+          }}
+        />
+      </View>
     </View>
   );
 }
@@ -30,13 +32,14 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   container: {
-    alignItems: "center",
     backgroundColor: "#fff",
-    display: "flex",
-    elevation: 10,
+    elevation: 7,
+    height: 80,
+  },
+  contentContainer: {
+    alignItems: "center",
     flexDirection: "row",
-    height: 70,
     justifyContent: "center",
-    marginTop: 50,
+    marginTop: StatusBar.currentHeight,
   },
 });
