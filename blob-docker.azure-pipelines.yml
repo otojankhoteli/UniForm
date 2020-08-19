@@ -1,0 +1,28 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+trigger:
+  branches:
+    include:
+    - master
+    - releases/*
+  paths:
+    include:
+    - server/services/blob.service
+
+variables:
+  imageName: 'uniform-blob-service:latest'
+
+steps:
+- script: |
+    cd server/services/blob.service
+    docker build -t $(dockerId)/$(imageName) .
+    docker login -u $(dockerId) -p $(accessToken)
+    docker push $(dockerId)/$(imageName)
+  displayName: 'docker build'
