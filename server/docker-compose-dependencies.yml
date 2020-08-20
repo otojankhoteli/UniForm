@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+  mongo-user:
+    container_name: mongo-user
+    image: mongo
+    environment:
+      #      - MONGO_INITDB_DATABASE=user-mongodb
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/uniform/user-service/data:/data/db
+    networks:
+      - uniform-net
+
+  mongo-post:
+    container_name: mongo-post
+    image: mongo
+    environment:
+#      - MONGO_INITDB_DATABASE=post-mongodb
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/uniform/post-service/data:/data/db
+    networks:
+      - uniform-net
+
+  mongo-blob:
+    container_name: mongo-blob
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/uniform/blob-service/data:/data/db
+    networks:
+      - uniform-net
+
+  mongo-notification:
+    container_name: mongo-notification
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+    volumes:
+      - /data/uniform/notification-service/data:/data/db
+    networks:
+      - uniform-net
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    networks:
+      - uniform-net
+
+networks:
+  uniform-net:
+    driver: bridge
