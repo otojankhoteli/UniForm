@@ -22,7 +22,7 @@ router.post('/', asyncMw(async (req, res, _) => {
 router.get('/', asyncMw(async (req, res, _) => {
   const categoryService = Container.get(CategoryService);
   const searchModel: ICategorySearchModel = {...req.query};
-  const result = searchModel?.name ?
+  const result: ICategoryDTO[] = searchModel?.name ?
     (await categoryService.findByPrefix(searchModel)) :
     (await categoryService.findTop(searchModel));
   res.send(result);

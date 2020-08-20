@@ -5,7 +5,12 @@ import {Inject, Service} from 'typedi';
 import {Document, Model} from 'mongoose';
 import {IPost} from '../../interface/Post';
 import {IUser} from '../../interface/User';
-import {PostDownVoteNotification, PostNotification, PostUpVoteNotification} from '../../interface/Notification';
+import {
+  PostDownVoteNotification,
+  PostNotification,
+  PostTagNotification,
+  PostUpVoteNotification
+} from '../../interface/Notification';
 
 
 export class NotificationPublisher extends Publisher {
@@ -79,7 +84,7 @@ export class PostNotificationPublisher {
 
 
     if (post.userTags.length) {
-      const result = {
+      const result: PostTagNotification = {
         type: this.postNotificationEnum.Tag,
         from: post.author,
         to: post.userTags,
