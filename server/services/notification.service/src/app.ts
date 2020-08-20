@@ -6,7 +6,7 @@ import {config} from './config';
 import logger from './util/logger';
 import {connectDb} from './db/mongo.connect';
 import {connectRabbit} from './message.queue';
-
+import {notificationRouter} from './api/route/notification';
 
 const startApp = async () => {
   try {
@@ -21,6 +21,7 @@ const startApp = async () => {
       res.send('pong');
     });
 
+    app.use('/notifications', notificationRouter);
 
     app.use(errorHandler);
 
