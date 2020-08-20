@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { IUser } from '../../interface/user ';
+import {IUser} from '../../interface/user ';
 
 const user = new mongoose.Schema<IUser>({
   name: {
@@ -7,17 +7,25 @@ const user = new mongoose.Schema<IUser>({
     required: [true, 'Please enter a full name'],
     index: true,
   },
+
   surname: {
     type: String,
   },
+
+  deviceId: {
+    type: String,
+  },
+
   photoURL: {
     type: String,
   },
+
   email: {
     type: String,
     unique: true,
     index: true,
   },
+
   role: {
     type: String,
     default: 'user',
