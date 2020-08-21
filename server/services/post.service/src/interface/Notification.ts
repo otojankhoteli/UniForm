@@ -1,8 +1,12 @@
-export enum PostNotification {
-  Upvote = 'post_upvote',
-  Downvote = 'post_downvote',
-  React = 'post_react',
-  Tag = 'post_tag',
+export enum NotificationType {
+  SingleAddress = 'single_address',
+  MultiAddress = 'multi_address',
+  PostUpvote = 'post_upvote',
+  PostDownvote = 'post_downvote',
+  PostReact = 'post_react',
+  PostTag = 'post_tag',
+  CommentNew = 'comment_new',
+  CommentTag = 'comment_tag',
 }
 
 interface From {
@@ -31,16 +35,16 @@ interface BaseNotification {
 
 
 export interface PostUpVoteNotification extends BaseNotification {
-  type: PostNotification.Upvote,
+  type: NotificationType.PostUpvote,
   to: To,
 }
 
 export interface PostDownVoteNotification extends BaseNotification {
-  type: PostNotification.Downvote,
+  type: NotificationType.PostDownvote,
   to: To,
 }
 
 export interface PostTagNotification extends BaseNotification {
-  type: PostNotification.Tag,
+  type: NotificationType.PostTag,
   to: To[],
 }
