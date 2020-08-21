@@ -76,8 +76,6 @@ const singleAddressNotificationHandler = (msg) => {
 
     const notificationSender = Container.get(NotificationSender);
     await notificationSender.sendSingle(formattedNotification);
-
-    logger.silly('react notification created');
   })(msg);
 };
 
@@ -90,13 +88,13 @@ const multiAddressNotificationHandler = (msg) => {
     const notification: MultiAddressNotification = msg.body;
 
     const notifications = formatMultiAddressNotification(notification);
-    console.log(notifications);
     const notificationService = Container.get(NotificationService);
-    await notificationService.saveBulk(notifications);
 
     notifications.forEach((e) => {
       e.notificationText = getNotificationText(e);
     });
+
+    await notificationService.saveBulk(notifications);
 
     const notificationSender = Container.get(NotificationSender);
     await notificationSender.sendMultiple(notifications);

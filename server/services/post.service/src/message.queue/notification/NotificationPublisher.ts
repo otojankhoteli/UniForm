@@ -104,7 +104,7 @@ export class PostNotificationPublisher {
     const comment = await this.CommentModel
         .findById(commentId)
         .populate('author', ['name'])
-        .populate('userTags', ['name'])
+        .populate('userTags', ['name', 'deviceId'])
         .populate({
           path: 'post',
           populate: {path: 'author', select: ['name', 'deviceId']},
@@ -117,7 +117,7 @@ export class PostNotificationPublisher {
       to: comment.post.author,
       where: {
         _id: comment._id,
-        whereText: comment.text,
+        text: comment.text,
       },
       etc: {
         postId: comment.post._id,
@@ -131,7 +131,7 @@ export class PostNotificationPublisher {
       to: comment.userTags,
       where: {
         _id: comment._id,
-        whereText: comment.text,
+        text: comment.text,
       },
       etc: {
         postId: comment.post._id,

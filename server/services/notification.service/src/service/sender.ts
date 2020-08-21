@@ -37,7 +37,7 @@ export class NotificationSender {
 
   public async sendSingle(msg: NotificationViewModel) {
     const expoMessage = this.constructExpoMessage(msg);
-    if (this.expo.isExpoPushToken(expoMessage.to)) {
+    if (Expo.isExpoPushToken(expoMessage.to)) {
       return this.expo.sendPushNotificationsAsync([expoMessage]);
     }
     throw new Error('Sending notification failed, invalid expo token');
