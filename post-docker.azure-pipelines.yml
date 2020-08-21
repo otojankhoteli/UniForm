@@ -26,3 +26,10 @@ steps:
     docker login -u $(dockerId) -p $(accessToken)
     docker push $(dockerId)/$(imageName)
   displayName: 'docker build'
+- task: CopyFiles@2
+  displayName: 'Copy docker-compose-files'
+  inputs:
+    Contents: |
+      server\docker-compose-prod.yml
+      server\docker-compose-dependencies.yml
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
