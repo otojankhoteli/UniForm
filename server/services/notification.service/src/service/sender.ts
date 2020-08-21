@@ -20,10 +20,9 @@ export class NotificationSender {
       // title: 'UniForm',
       to: msg.toDeviceId,
       body: msg.notificationText,
-      data: {id: msg.id},
+      data: msg,
     };
   }
-
 
 
   // public async send(msg: NotificationViewModel) {
@@ -37,7 +36,16 @@ export class NotificationSender {
   // }
 
   public async sendSingle(msg: NotificationViewModel) {
-    return this.expo.sendPushNotificationsAsync([this.constructExpoMessage(msg)]);
+    const expoMessage = this.constructExpoMessage(msg);
+    if (this.expo.isExpoPushToken(expoMessage.to)) {
+      return this.expo.sendPushNotificationsAsync([expoMessage]);
+    }
+    throw new Error('Sending notification failed, invalid expo token');
+  }
+
+  public async sendMultiple(messages: NotificationViewModel[]) {
+    const expoMessages = messages.map(this.constructExpoMessage);
+    return this.expo.sendPushNotificationsAsync(expoMessages);
   }
 
   public async test() {
