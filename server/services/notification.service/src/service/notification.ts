@@ -30,6 +30,10 @@ export class NotificationService {
         .limit(limit)
         .sort({createdAt: 'desc'})
         .lean();
+    const ids = result.map((e) => {
+      return e._id;
+    });
+    await this.NotificationModel.updateMany({_id: {$in: ids}}, {seen: true});
     return result.map<NotificationViewModel>(NotificationService.toViewModel);
   }
 
