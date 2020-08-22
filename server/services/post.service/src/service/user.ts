@@ -23,11 +23,13 @@ export class UserService {
   }
 
   public async find(options) {
-    return this.UserModel.find(options);
+    return this.UserModel.find(options)
+        .lean();
   }
 
   public async findById(id) {
-    return this.UserModel.findById(id);
+    return this.UserModel.findById(id)
+        .lean();
   }
 
   public isAdmin(user) {
@@ -54,6 +56,7 @@ export class UserService {
     if (await this.isSubscribedTo(userId, categoryId)) {
       await this.UserModel
           .findByIdAndUpdate(userId, {$pullAll: {subscribedCategories: [categoryId]}}, {new: true});
+
       await this.CategoryModel.findByIdAndUpdate(categoryId, {$inc: {memberCount: -1}});
     }
   }
