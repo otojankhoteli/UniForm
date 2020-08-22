@@ -31,6 +31,7 @@ const notification = new mongoose.Schema({
   },
   seen: {
     type: Boolean,
+    default: false,
   },
   etc: {},
 },

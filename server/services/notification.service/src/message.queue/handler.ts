@@ -1,8 +1,25 @@
 import logger from '../util/logger';
 import {Container} from 'typedi';
 import {NotificationService} from '../service/notification';
-import {NotificationViewModel, SingleAddressNotification} from '../interface/Notification';
+import {MultiAddressNotification, NotificationViewModel, SingleAddressNotification} from '../interface/Notification';
 import {NotificationSender} from '../service/sender';
+import {NotificationType} from '../interface/Notification';
+
+
+const getNotificationText = (notification: NotificationViewModel) => {
+  switch (notification.type) {
+    case NotificationType.PostUpvote:
+      return `${notification.fromName} upvoted your post: ${notification.whereText}`;
+    case NotificationType.PostDownvote:
+      return `${notification.fromName} downvoted your post: ${notification.whereText}`;
+    case NotificationType.CommentNew:
+      return `${notification.fromName} commented on your post: ${notification.whereText}`;
+    case NotificationType.PostTag:
+      return `${notification.fromName} tagged you in a post: ${notification.whereText}`;
+    case NotificationType.CommentTag:
+      return `${notification.fromName} tagged you in a comment: ${notification.whereText}`;
+  }
+};
 
 const wrapper = (fn) => {
   return async (msg) => {
@@ -28,40 +45,61 @@ const formatSingleNotification = (notification: SingleAddressNotification): Noti
   };
 };
 
-const notificationTemplate = (from, action, type, text) => {
-  return `${from} ${action} on ${type}: ${text}`;
+const formatMultiAddressNotification = (notification: MultiAddressNotification): NotificationViewModel[] => {
+  return notification.to.map((to) => {
+    return {
+      type: notification.type,
+      fromId: notification.from._id,
+      fromName: notification.from.name,
+      toId: to._id,
+      toName: to.name,
+      toDeviceId: to.deviceId,
+      whereId: notification.where._id,
+      whereText: notification.where.text,
+      etc: notification.etc,
+    };
+  });
 };
 
-const reactNotification = (msg) => {
+const singleAddressNotificationHandler = (msg) => {
   return wrapper(async () => {
-    logger.silly('got react notification: %o', msg.body);
+    logger.silly('got single address notification: %o', msg.body);
     msg.ack();
 
     const notification: SingleAddressNotification = msg.body;
 
     const formattedNotification = formatSingleNotification(notification);
-    formattedNotification.notificationText = notificationTemplate(formattedNotification.fromName, 'reacted', 'comment', formattedNotification.whereText);
+    formattedNotification.notificationText = getNotificationText(formattedNotification);
 
     const notificationService = Container.get(NotificationService);
     await notificationService.save(formattedNotification);
 
     const notificationSender = Container.get(NotificationSender);
-    const expoResp = await notificationSender.sendSingle(formattedNotification);
-    console.log(expoResp);
-
-    logger.silly('react notification created');
+    await notificationSender.sendSingle(formattedNotification);
   })(msg);
 };
 
 
-const tagNotification = (msg) => {
+const multiAddressNotificationHandler = (msg) => {
   return wrapper(async () => {
-    logger.silly('got tag notification: %o', msg.body);
+    logger.silly('got multi address notification: %o', msg.body);
     msg.ack();
 
+    const notification: MultiAddressNotification = msg.body;
+
+    const notifications = formatMultiAddressNotification(notification);
     const notificationService = Container.get(NotificationService);
-    // todo handle notification
+
+    notifications.forEach((e) => {
+      e.notificationText = getNotificationText(e);
+    });
+
+    await notificationService.saveBulk(notifications);
+
+    const notificationSender = Container.get(NotificationSender);
+    await notificationSender.sendMultiple(notifications);
   })(msg);
 };
 
-export {reactNotification, tagNotification};
+
+export {singleAddressNotificationHandler, multiAddressNotificationHandler};

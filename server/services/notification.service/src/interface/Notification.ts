@@ -1,8 +1,12 @@
-export enum PostNotification {
-  Upvote = 'post_upvote',
-  Downvote = 'post_downvote',
-  React = 'post_react',
-  Tag = 'post_tag',
+export enum NotificationType {
+  SingleAddress = 'single_address',
+  MultiAddress = 'multi_address',
+  PostUpvote = 'post_upvote',
+  PostDownvote = 'post_downvote',
+  PostReact = 'post_react',
+  PostTag = 'post_tag',
+  CommentNew = 'comment_new',
+  CommentTag = 'comment_tag',
 }
 
 export interface NotificationViewModel {
@@ -14,12 +18,18 @@ export interface NotificationViewModel {
   toName: string,
   toDeviceId: string,
   whereId: string,
-  whereText: string,
+  whereText?: string,
   notificationText?: string,
   seen?: boolean,
   etc?: any,
   createdAt?: Date,
   updatedAt?: Date,
+}
+
+interface CommentNotificationViewModel extends NotificationViewModel {
+  etc: {
+    postId: string,
+  }
 }
 
 interface To {

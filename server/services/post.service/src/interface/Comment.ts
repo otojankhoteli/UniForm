@@ -4,6 +4,7 @@ import {LogDates} from './Common';
 export interface IComment extends LogDates{
   _id: string,
   author: any,
+  post: any,
   text: string,
   files: string[],
   userTags: any[],

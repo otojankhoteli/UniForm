@@ -27,6 +27,12 @@ const user = new mongoose.Schema({
     default: 'user',
   },
 
+  voteCount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+
   subscribedCategories: [{
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -34,11 +40,11 @@ const user = new mongoose.Schema({
     ref: 'Category',
   }],
 
-  upVotedPosts: [{
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'Post',
-  }],
+  // upVotedPosts: [{
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   required: true,
+  //   ref: 'Post',
+  // }],
 });
 
 

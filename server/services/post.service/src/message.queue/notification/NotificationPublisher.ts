@@ -7,10 +7,11 @@ import {IPost} from '../../interface/Post';
 import {IUser} from '../../interface/User';
 import {
   PostDownVoteNotification,
-  PostNotification,
+  NotificationType,
   PostTagNotification,
-  PostUpVoteNotification
+  PostUpVoteNotification,
 } from '../../interface/Notification';
+import {IComment} from '../../interface/Comment';
 
 
 export class NotificationPublisher extends Publisher {
@@ -23,7 +24,7 @@ export class NotificationPublisher extends Publisher {
 
 @Service()
 export class PostNotificationPublisher {
-  private postNotificationEnum = PostNotification;
+  private postNotificationEnum = NotificationType;
 
   constructor(
     @Inject('NotificationPublisher')
@@ -33,8 +34,9 @@ export class PostNotificationPublisher {
     @Inject('PostModel')
     private PostModel: Model<IPost & Document>,
     @Inject('UserModel')
-    private UserModel: Model<IUser & Document>) {
-  }
+    private UserModel: Model<IUser & Document>,
+    @Inject('CommentModel')
+    private CommentModel: Model<IComment & Document>) {}
 
   private publish({msg, type}) {
     return this.notificationPublisher.publish({msg, type});
@@ -63,15 +65,15 @@ export class PostNotificationPublisher {
         text: post.text,
       },
     };
-    return this.publish({msg: result, type: this.postNotificationEnum.React});
+    return this.publish({msg: result, type: this.postNotificationEnum.SingleAddress});
   }
 
   public async upVote({postId, upvoterId}) {
-    return this._react({postId, reactorId: upvoterId, reaction: this.postNotificationEnum.Upvote});
+    return this._react({postId, reactorId: upvoterId, reaction: this.postNotificationEnum.PostUpvote});
   }
 
   public async downVote({postId, downvoterId}) {
-    return this._react({postId, reactorId: downvoterId, reaction: this.postNotificationEnum.Downvote});
+    return this._react({postId, reactorId: downvoterId, reaction: this.postNotificationEnum.PostDownvote});
   }
 
   public async postTag(postId: string) {
@@ -85,7 +87,7 @@ export class PostNotificationPublisher {
 
     if (post.userTags.length) {
       const result: PostTagNotification = {
-        type: this.postNotificationEnum.Tag,
+        type: this.postNotificationEnum.PostTag,
         from: post.author,
         to: post.userTags,
         where: {
@@ -94,7 +96,51 @@ export class PostNotificationPublisher {
         },
       };
 
-      return this.publish({msg: result, type: this.postNotificationEnum.Tag});
+      return this.publish({msg: result, type: this.postNotificationEnum.MultiAddress});
     }
   }
+
+  public async newComment(commentId) {
+    const comment = await this.CommentModel
+        .findById(commentId)
+        .populate('author', ['name'])
+        .populate('userTags', ['name', 'deviceId'])
+        .populate({
+          path: 'post',
+          populate: {path: 'author', select: ['name', 'deviceId']},
+        })
+        .lean();
+
+    const newCommentNotification = {
+      type: this.postNotificationEnum.CommentNew,
+      from: comment.author,
+      to: comment.post.author,
+      where: {
+        _id: comment._id,
+        text: comment.text,
+      },
+      etc: {
+        postId: comment.post._id,
+      },
+    };
+    await this.publish({msg: newCommentNotification, type: this.postNotificationEnum.SingleAddress});
+
+    const commentTagsNotification = {
+      type: this.postNotificationEnum.CommentTag,
+      from: comment.author,
+      to: comment.userTags,
+      where: {
+        _id: comment._id,
+        text: comment.text,
+      },
+      etc: {
+        postId: comment.post._id,
+      },
+    };
+
+    await this.publish({msg: commentTagsNotification, type: this.postNotificationEnum.MultiAddress});
+  }
+
+
+  // public async commentOnPost()
 }
