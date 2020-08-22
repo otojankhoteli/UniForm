@@ -19,8 +19,8 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
   inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/docker-compose-prod.yml'
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/server/docker-compose-prod.yml'
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
   inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)/docker-compose-dependencies.yml'
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/server/docker-compose-dependencies.yml'
