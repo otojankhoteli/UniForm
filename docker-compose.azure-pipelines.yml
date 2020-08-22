@@ -17,10 +17,6 @@ pool:
   vmImage: 'ubuntu-latest'
 steps:
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: docker-compose-prod'
+  displayName: 'Publish Artifact: drop'
   inputs:
     PathtoPublish: 'docker-compose.prod.yml'
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: docker-compose-dependencies'
-  inputs:
-    PathtoPublish: 'docker-compose-dependencies.yml'
