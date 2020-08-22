@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import {IPost} from '../../interface/Post';
-import {IComment} from "../../interface/Comment";
+import {IComment} from '../../interface/Comment';
 
 const comment = new mongoose.Schema({
   author: {

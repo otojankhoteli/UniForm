@@ -7,7 +7,6 @@ import {EventEmitter} from 'events';
 import {Logger} from 'winston';
 import {Events} from '../subscriber/event';
 import {IHashTag, IHashTagSearchModel} from '../interface/HashTag';
-import _ from 'lodash';
 import {VoteService} from './vote';
 import {CommentResponse, IComment, UpsertCommentRequest} from '../interface/Comment';
 import PermissionDeniedError from '../util/error/PermissionDeniedError';
@@ -63,7 +62,7 @@ export class CommentService {
 
     const result = await this.CommentModel.create(newComment);
 
-    this.eventEmitter.emit(Events.comment.new, newComment);
+    this.eventEmitter.emit(Events.comment.new, result._id);
 
     return result;
   }
@@ -96,7 +95,6 @@ export class CommentService {
         .where('post')
         .equals(postId)
         .populate('author', ['name', 'imgUrl'])
-        .populate('category', 'name')
         .populate('userTags', ['name', 'imgUrl'])
         .sort({updatedAt: 'desc'})
         .skip(skip)
@@ -172,5 +170,19 @@ export class CommentService {
         .equals(userId)
         .select('_id')
         .lean();
+  }
+
+  public async getCommentsOf({userId, skip = this.skip, limit = this.limit}): Promise<CommentResponse[]> {
+    const result = await this.CommentModel
+        .find()
+        .where('author')
+        .equals(userId)
+        .populate('author', ['name', 'imgUrl'])
+        .populate('userTags', ['name', 'imgUrl'])
+        .sort({updatedAt: 'desc'})
+        .skip(skip)
+        .limit(limit)
+        .lean();
+    return this.addCommentReacts(result, userId);
   }
 }

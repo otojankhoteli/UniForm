@@ -86,9 +86,13 @@ export class PostService {
 
     const result = await this.PostModel.create(newPost);
 
+    await this.CategoryModel
+        .findByIdAndUpdate(upsertPostRequest.categoryId, {$inc: {postCount: 1}});
+
     await this._addHashTags(result.hashTags);
 
-    this.eventEmitter.emit(Events.post.new, result);
+
+    this.eventEmitter.emit(Events.post.new, result._id.toString());
 
     return result;
   }
@@ -155,12 +159,22 @@ export class PostService {
 
   public async upVote(postId: string, userId: string) {
     const post = await this._validateVoteAndGetPost(postId);
-    return this.VoteService.upVote(userId, post);
+    const result = await this.VoteService.upVote(userId, post);
+    this.eventEmitter.emit(Events.post.upvote, {postId, upvoterId: userId});
+    return result;
   }
 
   public async downVote(postId: string, userId: string) {
     const post = await this._validateVoteAndGetPost(postId);
-    return this.VoteService.downVote(userId, post);
+    const result = await this.VoteService.downVote(userId, post);
+    this.eventEmitter.emit(Events.post.downVote, {postId, downvoterId: userId});
+    return result;
+  }
+
+  public async unReact(postId: string, userId: string) {
+    const post = await this._validateVoteAndGetPost(postId);
+    const result = await this.VoteService.unReact(userId, post);
+    return result;
   }
 
   public async filterReactedPosts(postIds: string[], userId: string, reaction: 'upvote' | 'downvote') {
@@ -186,7 +200,7 @@ export class PostService {
   }
 
 
-  private async addPostReacts(posts: IPost[] | IPost, userId: string) {
+  private async postResponse(posts: IPost[] | IPost, userId: string) {
     posts = [].concat(posts);
     const postIds = posts.map((post) => post._id.toString());
 
@@ -227,9 +241,6 @@ export class PostService {
     return postsWithReacts;
   }
 
-  private async postResponse(posts: IPost[] | IPost, userId: string) {
-    return this.addPostReacts(posts, userId);
-  }
 
   private async getRawFeed(userId: string, skip, limit): Promise<IPost[]> {
     // const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
@@ -290,11 +301,25 @@ export class PostService {
         .populate('userTags', ['name', 'imgUrl'])
         .populate('author', ['name', 'imgUrl'])
         .populate('category', 'name')
-        .skip(skip)
         .sort({updatedAt: 'desc'})
+        .skip(skip)
         .limit(limit)
         .lean();
 
     return this.postResponse(result, search.userId);
+  }
+
+  public async getPostsOf({userId, skip = this.skip, limit = this.limit}): Promise<PostResponse[]> {
+    const result = await this.PostModel
+        .find()
+        .where('author')
+        .equals(userId)
+        .populate('userTags', ['name', 'imgUrl'])
+        .populate('author', ['name', 'imgUrl'])
+        .populate('category', ['name'])
+        .sort({createdAt: 'desc'})
+        .skip(skip)
+        .limit(limit);
+    return this.postResponse(result, userId);
   }
 }

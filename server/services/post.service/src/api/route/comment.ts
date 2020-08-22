@@ -10,12 +10,13 @@ const router = Router();
 
 router.use('/', pageParser);
 
-router.get('/:postId', asyncMw(async (req, res, _) => {
+router.get('/', asyncMw(async (req, res, _) => {
   const commentService = Container.get(CommentService);
-  const userId = req.currentUser._id;
+  // const userId = req.currentUser._id;
+  const userId = '5ebfd7a5c2be538124b18cd7';
   res.send(await commentService.getPostComments({
     userId,
-    postId: req.params.postId,
+    postId: req.query.postId,
     skip: req.query.skip,
     limit: req.query.limit,
   }));
@@ -23,7 +24,8 @@ router.get('/:postId', asyncMw(async (req, res, _) => {
 
 router.post('/:postId', asyncMw(async (req, res, _) => {
   const commentService = Container.get(CommentService);
-  const userId = req.currentUser._id;
+  // const userId = req.currentUser._id;
+  const userId = '5ebfd7a5c2be538124b18cd7';
   const comment: UpsertCommentRequest = {...req.body, authorId: userId, postId: req.params.postId};
   res.send(await commentService.save(comment));
 }));

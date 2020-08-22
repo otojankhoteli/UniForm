@@ -1,4 +1,4 @@
-import {Container, ContainerInstance} from 'typedi';
+import {Container} from 'typedi';
 import logger from './logger';
 import CategoryModel from '../db/model/category';
 import {UserService} from '../service/user';
@@ -8,11 +8,13 @@ import {HashTagModel} from '../db/model/hashtag';
 import {EventEmitter} from 'events';
 import {rabbit} from '../message.queue/index';
 import {VoteService} from '../service/vote';
-import {NotificationPublisher} from '../message.queue/notification/NotificationPublisher';
-import { CommentModel } from '../db/model/comment';
+import {NotificationPublisher, PostNotificationPublisher} from '../message.queue/notification/NotificationPublisher';
+import {CommentModel} from '../db/model/comment';
 
 export default () => {
   try {
+    Container.set('EventEmitter', new EventEmitter());
+    Container.set('logger', logger);
     Container.set('CategoryModel', CategoryModel);
     Container.set('UserModel', UserModel);
     Container.set('PostModel', PostModel);
@@ -20,8 +22,8 @@ export default () => {
     Container.set('HashTagModel', HashTagModel);
     Container.set('Rabbit', rabbit);
     Container.set('NotificationPublisher', new NotificationPublisher(Container.get('Rabbit')));
-    Container.set('EventEmitter', new EventEmitter());
-    Container.set('logger', logger);
+    // Container.set('PostNotificationPublisher', new PostNotificationPublisher(Container.get('NotificationPublisher'),
+    //     Container.get('logger')));
     Container.set('PostVoteService', new VoteService(Container.get('logger'), Container.get('PostModel')));
     Container.set('CommentVoteService', new VoteService(Container.get('logger'), Container.get('CommentModel')));
     logger.info('Agenda injected into container');

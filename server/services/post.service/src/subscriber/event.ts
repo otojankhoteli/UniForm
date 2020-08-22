@@ -1,9 +1,11 @@
 export const Events = {
   post: {
-    new: 'newPost',
-    update: 'updatePost',
+    new: 'post_new',
+    update: 'post_update',
+    upvote: 'post_upvote',
+    downVote: 'post_downvote',
   },
   comment: {
-    new: 'newComment',
-  }
+    new: 'comment_new',
+  },
 };

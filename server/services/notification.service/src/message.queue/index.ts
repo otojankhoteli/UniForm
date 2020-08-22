@@ -1,10 +1,14 @@
 import rabbit from 'rabbot';
 import logger from '../util/logger';
 import {settings} from './topology';
+import {singleAddressNotificationHandler, multiAddressNotificationHandler} from './handler';
+import {NotificationType} from '../interface/Notification';
 
 
 const registerRabbitHandlers = () => {
   logger.info('registering rabbit handlers');
+  rabbit.handle(NotificationType.SingleAddress, singleAddressNotificationHandler);
+  rabbit.handle(NotificationType.MultiAddress, multiAddressNotificationHandler);
 };
 
 
