@@ -1,11 +1,12 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import AddPostScreen from "../../screens/addPost/AddPostScreen";
-import ChooseCategoryScreen from "../../screens/postCategories/ChooseCategoryScreen";
+import ChooseCategoryScreen from "../../screens/chooseCategory/ChooseCategoryScreen";
 import HomeScreen from "../../screens/home/HomeScreen";
 import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
 import PostScreen from "../../screens/post/PostScreen";
 import { PostViewModel } from "../../api/posts/PostsApiModel";
+import ProfileScreen from "../../screens/profile/ProfileScreen";
 
 export type HomeStackParamList = {
   Home: undefined;
@@ -13,8 +14,10 @@ export type HomeStackParamList = {
   ChooseCategory: undefined;
   Feed: { sort: "latest" | "top" } | undefined;
   Post: { post: PostViewModel };
+  Profile: { userId: string };
 };
-const HomeStack = createStackNavigator();
+
+const HomeStack = createStackNavigator<HomeStackParamList>();
 
 const HomeStackScreen: React.FC = () => {
   return (
@@ -38,6 +41,11 @@ const HomeStackScreen: React.FC = () => {
         name="Post"
         component={PostScreen}
         options={{ headerTitle: "Post" }}
+      />
+      <HomeStack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ headerTitle: "Profile" }}
       />
     </HomeStack.Navigator>
   );

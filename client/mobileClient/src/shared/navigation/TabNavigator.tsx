@@ -13,7 +13,7 @@ export type TabParamList = {
   Home: undefined;
   Search: undefined;
   Notification: undefined;
-  Profile: undefined;
+  ProfileStack: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -67,9 +67,10 @@ const MainNavigator: React.FC = () => {
         }}
       ></Tab.Screen>
       <Tab.Screen
-        name={"Profile"}
+        name={"ProfileStack"}
         component={ProfileStackScreen}
         options={{
+          unmountOnBlur: true,
           tabBarIcon: ({ focused, color }) => {
             return (
               <FontAwesomeIcon
