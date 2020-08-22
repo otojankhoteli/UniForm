@@ -29,6 +29,7 @@ const SearchScreen: React.FC = () => {
         <FeatherIcon name={"search"} size={30} />
         <TextInput
           style={{ flex: 1, marginLeft: 10, fontSize: 16 }}
+          placeholder={"Search Categories..."}
           value={inputText}
           onChangeText={(text) => {
             setInputText(text);
@@ -59,6 +60,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category1",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -67,6 +69,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category2",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -75,6 +78,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category3",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -83,6 +87,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category4",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -91,6 +96,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category5",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -99,6 +105,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category6",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -107,6 +114,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category7",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -115,6 +123,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category8",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -123,6 +132,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category9",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -131,6 +141,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category10",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -139,6 +150,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category11",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -147,6 +159,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category12",
+    description: "Category Description",
     postCount: 100,
   },
   {
@@ -155,6 +168,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category13",
+    description: "Cateogyr Description",
     postCount: 100,
   },
   {
@@ -163,6 +177,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category14",
+    description: "Cateogyr Description",
     postCount: 100,
   },
   {
@@ -171,6 +186,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category15",
+    description: "Cateogyr Description",
     postCount: 100,
   },
   {
@@ -179,6 +195,7 @@ const tempData: CategoryViewModel[] = [
     isVerified: true,
     memberCount: 10,
     name: "Category17",
+    description: "Cateogyr Description",
     postCount: 100,
   },
 ];
