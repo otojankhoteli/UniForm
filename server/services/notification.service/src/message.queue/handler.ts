@@ -75,7 +75,7 @@ const singleAddressNotificationHandler = (msg) => {
     await notificationService.save(formattedNotification);
 
     const notificationSender = Container.get(NotificationSender);
-    // await notificationSender.sendSingle(formattedNotification);
+    await notificationSender.sendSingle(formattedNotification);
   })(msg);
 };
 
@@ -97,7 +97,7 @@ const multiAddressNotificationHandler = (msg) => {
     await notificationService.saveBulk(notifications);
 
     const notificationSender = Container.get(NotificationSender);
-    // await notificationSender.sendMultiple(notifications);
+    await notificationSender.sendMultiple(notifications);
   })(msg);
 };
 

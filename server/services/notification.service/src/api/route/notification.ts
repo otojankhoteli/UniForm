@@ -7,7 +7,7 @@ import authenticate from '../middleware/authenticate';
 const router = Router();
 
 router.get('/',
-    // authenticate,
+    authenticate,
     asyncMw(async (req, res, _) => {
       const notificationService = Container.get(NotificationService);
       const currentUser = req.currentUser._id;
