@@ -1,5 +1,10 @@
-import {PostUser} from './Post';
 import {LogDates} from './Common';
+
+interface User {
+  _id: string
+  name: string;
+  imgUrl: string
+}
 
 export interface IComment extends LogDates{
   _id: string,
@@ -28,9 +33,10 @@ export interface CommentResponse extends LogDates {
   authorUsername: string;
   authorProfilePic: string;
   voteCount: number;
-  userTags: PostUser[];
+  userTags: User[];
   isUpvoted: boolean;
   isDownvoted: boolean;
   createdAt: string;
+  updatedAt: string,
   files: string[];
 }

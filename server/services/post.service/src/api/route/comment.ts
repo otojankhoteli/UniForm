@@ -22,21 +22,27 @@ router.get('/', asyncMw(async (req, res, _) => {
   }));
 }));
 
-router.post('/:postId', asyncMw(async (req, res, _) => {
+router.get('/:commentId', asyncMw(async (req, res, _) => {
   const commentService = Container.get(CommentService);
   // const userId = req.currentUser._id;
   const userId = '5ebfd7a5c2be538124b18cd7';
-  const comment: UpsertCommentRequest = {...req.body, authorId: userId, postId: req.params.postId};
+  res.send(await commentService.getCommentById(req.params.commentId, userId));
+}));
+
+router.post('/', asyncMw(async (req, res, _) => {
+  const commentService = Container.get(CommentService);
+  // const userId = req.currentUser._id;
+  const userId = '5ebfd7a5c2be538124b18cd7';
+  const comment: UpsertCommentRequest = {...req.body, authorId: userId};
   res.send(await commentService.save(comment));
 }));
 
-router.put('/:postId/:commentId', asyncMw(async (req, res, _) => {
+router.put('/:commentId', asyncMw(async (req, res, _) => {
   const commentService = Container.get(CommentService);
   const userId = req.currentUser._id;
   const comment: UpsertCommentRequest = {
     ...req.body,
     authorId: userId,
-    postId: req.params.postId,
     id: req.params.commentId,
   };
   res.send(await commentService.update(comment));
