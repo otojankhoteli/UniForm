@@ -135,6 +135,11 @@ export class CommentService {
     return this.VoteService.downVote(userId, comment);
   }
 
+  async unReact(commentId: any, userId: string) {
+    const comment = await this._validateVoteAndGetComment(commentId);
+    return this.VoteService.unReact(userId, comment);
+  }
+
   private async commentResponse(comments: IComment[] | IComment, userId: string) {
     comments = [].concat(comments);
     const commentIds = comments.map((post) => post._id.toString());
