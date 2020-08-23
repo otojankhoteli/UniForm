@@ -9,15 +9,15 @@ import {NotificationType} from '../interface/Notification';
 const getNotificationText = (notification: NotificationViewModel) => {
   switch (notification.type) {
     case NotificationType.PostUpvote:
-      return `${notification.fromName} upvoted your post: ${notification.whereText}`;
+      return `${notification.fromName} upvoted your post: ${notification.postText}`;
     case NotificationType.PostDownvote:
-      return `${notification.fromName} downvoted your post: ${notification.whereText}`;
+      return `${notification.fromName} downvoted your post: ${notification.postText}`;
     case NotificationType.CommentNew:
-      return `${notification.fromName} commented on your post: ${notification.whereText}`;
+      return `${notification.fromName} commented on your post: ${notification.postText}`;
     case NotificationType.PostTag:
-      return `${notification.fromName} tagged you in a post: ${notification.whereText}`;
+      return `${notification.fromName} tagged you in a post: ${notification.postText}`;
     case NotificationType.CommentTag:
-      return `${notification.fromName} tagged you in a comment: ${notification.whereText}`;
+      return `${notification.fromName} tagged you in a comment: ${notification.commentText}`;
   }
 };
 
@@ -39,8 +39,10 @@ const formatSingleNotification = (notification: SingleAddressNotification): Noti
     toId: notification.to._id,
     toName: notification.to.name,
     toDeviceId: notification.to.deviceId,
-    whereId: notification.where._id,
-    whereText: notification.where.text,
+    postId: notification.postId,
+    postText: notification.postText,
+    commentId: notification.commentId,
+    commentText: notification.commentText,
     etc: notification.etc,
   };
 };
@@ -54,8 +56,10 @@ const formatMultiAddressNotification = (notification: MultiAddressNotification):
       toId: to._id,
       toName: to.name,
       toDeviceId: to.deviceId,
-      whereId: notification.where._id,
-      whereText: notification.where.text,
+      postId: notification.postId,
+      postText: notification.postText,
+      commentId: notification.commentId,
+      commentText: notification.commentText,
       etc: notification.etc,
     };
   });
@@ -75,7 +79,7 @@ const singleAddressNotificationHandler = (msg) => {
     await notificationService.save(formattedNotification);
 
     const notificationSender = Container.get(NotificationSender);
-    await notificationSender.sendSingle(formattedNotification);
+    // await notificationSender.sendSingle(formattedNotification);
   })(msg);
 };
 
@@ -97,7 +101,7 @@ const multiAddressNotificationHandler = (msg) => {
     await notificationService.saveBulk(notifications);
 
     const notificationSender = Container.get(NotificationSender);
-    await notificationSender.sendMultiple(notifications);
+    // await notificationSender.sendMultiple(notifications);
   })(msg);
 };
 

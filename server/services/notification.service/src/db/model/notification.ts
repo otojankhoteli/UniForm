@@ -20,10 +20,16 @@ const notification = new mongoose.Schema({
   toDeviceId: {
     type: String,
   },
-  whereId: {
+  postId: {
     type: String,
   },
-  whereText: {
+  postText: {
+    type: String,
+  },
+  commentId: {
+    type: String,
+  },
+  commentText: {
     type: String,
   },
   notificationText: {
