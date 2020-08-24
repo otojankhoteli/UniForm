@@ -17,8 +17,10 @@ export interface NotificationViewModel {
   toId: string,
   toName: string,
   toDeviceId: string,
-  whereId: string,
-  whereText?: string,
+  postId?: string,
+  postText?: string,
+  commentId?: string,
+  commentText?: string,
   notificationText?: string,
   seen?: boolean,
   etc?: any,
@@ -45,10 +47,10 @@ interface PostServiceNotification {
     _id: string,
     name: string,
   },
-  where: {
-    _id: string,
-    text?: string,
-  },
+  postId?: string,
+  postText?: string,
+  commentId?: string,
+  commentText?: string,
   etc?: any,
 }
 

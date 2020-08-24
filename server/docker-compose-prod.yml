@@ -2,13 +2,12 @@ version: "3"
 
 services:
   user.service:
+    image: janxo/uniform-user-service
     container_name: user.service
     environment:
       - RABBITMQ_URL=rabbitmq
       - MONGO_HOST=mongo-user
       - MONGO_PORT=27017
-    build:
-      context: ./services/user.service
     ports:
       - 3000:3000
       - 8081:9229
@@ -16,13 +15,12 @@ services:
       - uniform-net
 
   post.service:
+    image: janxo/uniform-post-service
     container_name: post.service
     environment:
       - RABBITMQ_URL=rabbitmq
       - MONGO_HOST=mongo-post
       - MONGO_PORT=27017
-    build:
-      context: ./services/post.service
     ports:
       - 3001:3001
       - 8082:9230
@@ -30,13 +28,12 @@ services:
       - uniform-net
 
   blob.service:
+    image: janxo/uniform-blob-service
     container_name: blob.service
     environment:
       - RABBITMQ_URL=rabbitmq
       - MONGO_HOST=mongo-blob
       - MONGO_PORT=27017
-    build:
-      context: ./services/blob.service
     ports:
       - 3002:3002
       - 8083:9231
@@ -44,13 +41,12 @@ services:
       - uniform-net
 
   notification.service:
+    image: janxo/uniform-notification-service
     container_name: notification.service
     environment:
       - RABBITMQ_URL=rabbitmq
       - MONGO_HOST=mongo-notification
       - MONGO_PORT=27017
-    build:
-      context: ./services/notification.service
     ports:
       - 3003:3003
       - 9232:9232

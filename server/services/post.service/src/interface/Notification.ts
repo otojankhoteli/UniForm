@@ -29,7 +29,9 @@ interface BaseNotification {
   type: string,
   from: From,
   to: To | To[],
-  where: Where,
+  // where: Where,
+  postId: string,
+  postText?: string,
   etc?: any,
 }
 

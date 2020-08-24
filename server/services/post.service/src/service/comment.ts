@@ -38,7 +38,7 @@ export class CommentService {
   private async _validateBeforeInsert(comment: UpsertCommentRequest) {
     const post = await this.PostModel.findById(comment.postId);
     if (!post) {
-      throw new NotFoundError(`Can not write comment, on post with id: ${comment.postId} does not exist`);
+      throw new NotFoundError(`Can not write comment, post with id: '${comment.postId}' does not exist`);
     }
 
     if (comment.id) {
@@ -78,11 +78,23 @@ export class CommentService {
       post: upsertCommentRequest.postId,
     };
 
-    const result = await this.CommentModel.findByIdAndUpdate(newComment.id, newComment, {upsert: true, new: true}).lean();
+    const result = await this.CommentModel.findByIdAndUpdate(newComment.id, newComment, {
+      upsert: true,
+      new: true,
+    }).lean();
 
     this.eventEmitter.emit(Events.comment.new, newComment);
 
     return result;
+  }
+
+  public async getCommentById(commentId, userId) {
+    const result = await this.CommentModel
+        .findById(commentId)
+        .populate('author', ['name', 'imgUrl'])
+        .populate('userTags', ['name', 'imgUrl'])
+        .lean();
+    return this.commentResponse(result, userId);
   }
 
   public async getPostComments({userId, postId, skip, limit}) {
@@ -100,7 +112,7 @@ export class CommentService {
         .skip(skip)
         .limit(limit)
         .lean();
-    return this.addCommentReacts(result, userId);
+    return this.commentResponse(result, userId);
   }
 
   private async _validateVoteAndGetComment(commentId) {
@@ -123,7 +135,12 @@ export class CommentService {
     return this.VoteService.downVote(userId, comment);
   }
 
-  private async addCommentReacts(comments: IComment[] | IComment, userId: string) {
+  async unReact(commentId: any, userId: string) {
+    const comment = await this._validateVoteAndGetComment(commentId);
+    return this.VoteService.unReact(userId, comment);
+  }
+
+  private async commentResponse(comments: IComment[] | IComment, userId: string) {
     comments = [].concat(comments);
     const commentIds = comments.map((post) => post._id.toString());
 
@@ -148,6 +165,7 @@ export class CommentService {
         isUpvoted: isUpvoted,
         isDownvoted: isDownvoted,
         createdAt: comment.createdAt,
+        updatedAt: comment.updatedAt,
         files: comment.files,
       };
       return result;
@@ -183,6 +201,6 @@ export class CommentService {
         .skip(skip)
         .limit(limit)
         .lean();
-    return this.addCommentReacts(result, userId);
+    return this.commentResponse(result, userId);
   }
 }

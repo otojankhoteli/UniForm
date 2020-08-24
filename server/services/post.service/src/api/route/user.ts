@@ -46,6 +46,15 @@ router.get('/activity/comments',
       res.json(await commentService.getCommentsOf({userId, skip: req.query.skip, limit: req.query.limit}));
     }));
 
+router.get('/info',
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const userService = Container.get(UserService);
+      const userId = req.currentUser._id;
+      // const userId = '5ebc4ef165f4ab9597d4aa1e';
+      res.json(await userService.findById(userId));
+    }));
+
 // router.get('/feed/:id',
 //   // authenticate,
 //   asyncMw(async (req, res, _) => {

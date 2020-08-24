@@ -24,8 +24,8 @@ export default () => {
     Container.set('NotificationPublisher', new NotificationPublisher(Container.get('Rabbit')));
     // Container.set('PostNotificationPublisher', new PostNotificationPublisher(Container.get('NotificationPublisher'),
     //     Container.get('logger')));
-    Container.set('PostVoteService', new VoteService(Container.get('logger'), Container.get('PostModel')));
-    Container.set('CommentVoteService', new VoteService(Container.get('logger'), Container.get('CommentModel')));
+    Container.set('PostVoteService', new VoteService(Container.get('logger'), Container.get('PostModel'), Container.get('UserModel')));
+    Container.set('CommentVoteService', new VoteService(Container.get('logger'), Container.get('CommentModel'), Container.get('UserModel')));
     logger.info('Agenda injected into container');
   } catch (e) {
     logger.error('🔥 Error on dependency injector loader: %o', e);

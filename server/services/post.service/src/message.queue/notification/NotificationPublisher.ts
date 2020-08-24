@@ -60,10 +60,12 @@ export class PostNotificationPublisher {
         name: reactor.name,
       },
       to: post.author,
-      where: {
-        _id: post._id,
-        text: post.text,
-      },
+      postId: post._id,
+      postText: post.text,
+      // where: {
+      //   _id: post._id,
+      //   text: post.text,
+      // },
     };
     return this.publish({msg: result, type: this.postNotificationEnum.SingleAddress});
   }
@@ -90,10 +92,12 @@ export class PostNotificationPublisher {
         type: this.postNotificationEnum.PostTag,
         from: post.author,
         to: post.userTags,
-        where: {
-          _id: post._id,
-          text: post.text,
-        },
+        postId: post._id,
+        postText: post.text,
+        // where: {
+        //   _id: post._id,
+        //   text: post.text,
+        // },
       };
 
       return this.publish({msg: result, type: this.postNotificationEnum.MultiAddress});
@@ -115,13 +119,16 @@ export class PostNotificationPublisher {
       type: this.postNotificationEnum.CommentNew,
       from: comment.author,
       to: comment.post.author,
-      where: {
-        _id: comment._id,
-        text: comment.text,
-      },
-      etc: {
-        postId: comment.post._id,
-      },
+      commentId: comment._id,
+      commentText: comment.text,
+      postId: comment.post._id,
+      // where: {
+      //   _id: comment._id,
+      //   text: comment.text,
+      // },
+      // etc: {
+      //   postId: comment.post._id,
+      // },
     };
     await this.publish({msg: newCommentNotification, type: this.postNotificationEnum.SingleAddress});
 
@@ -129,13 +136,16 @@ export class PostNotificationPublisher {
       type: this.postNotificationEnum.CommentTag,
       from: comment.author,
       to: comment.userTags,
-      where: {
-        _id: comment._id,
-        text: comment.text,
-      },
-      etc: {
-        postId: comment.post._id,
-      },
+      postId: comment.post._id,
+      commentId: comment._id,
+      commentText: comment.text,
+      // where: {
+      //   _id: comment._id,
+      //   text: comment.text,
+      // },
+      // etc: {
+      //   postId: comment.post._id,
+      // },
     };
 
     await this.publish({msg: commentTagsNotification, type: this.postNotificationEnum.MultiAddress});

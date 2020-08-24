@@ -1,12 +1,13 @@
 import {Logger} from 'winston';
-import _ from 'lodash';
 import OperationError from '../util/error/OperationError';
-
+import {Document, Model} from 'mongoose';
+import {IUser} from '../interface/User';
 
 export class VoteService {
   constructor(
     private logger: Logger,
     private VotableModel: any,
+    private UserModel: Model<IUser & Document>,
   ) {
   }
 
@@ -17,9 +18,13 @@ export class VoteService {
       votable.downVoters = votable.downVoters.filter((downVoter) => downVoter.toString() !== userId);
       votable.upVoters.push(userId);
       votable.voteCount += 2;
+
+      await this.UserModel.findByIdAndUpdate(votable.author, {$inc: {voteCount: 2}});
     } else {
       votable.upVoters.push(userId);
       votable.voteCount++;
+
+      await this.UserModel.findByIdAndUpdate(votable.author, {$inc: {voteCount: 1}});
     }
     return this.VotableModel.findByIdAndUpdate(votable._id, votable, {new: true});
   }
@@ -39,9 +44,13 @@ export class VoteService {
       votable.upVoters = votable.upVoters.filter((upVoter) => upVoter.toString() !== userId);
       votable.downVoters.push(userId);
       votable.voteCount -= 2;
+
+      await this.UserModel.findByIdAndUpdate(votable.author, {$inc: {voteCount: -2}});
     } else {
       votable.downVoters.push(userId);
       votable.voteCount--;
+
+      await this.UserModel.findByIdAndUpdate(votable.author, {$inc: {voteCount: -1}});
     }
     return this.VotableModel.findByIdAndUpdate(votable._id, votable, {new: true});
   }
