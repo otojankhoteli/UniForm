@@ -1,8 +1,7 @@
 import React from "react";
-import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
-import { View, Text, TouchableHighlight } from "react-native";
-import AvatarCustom from "../../shared/components/Avatar";
+import { View, Text, TouchableHighlight, Image } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
+import { CategoryViewModel } from "../../../api/categories/CategoriesApiModel";
 
 interface Props {
   readonly categoryData: CategoryViewModel;
@@ -21,7 +20,14 @@ const CategoryListItem: React.FC<Props> = (props) => {
         borderRadius: 5,
       }}
     >
-      <AvatarCustom photoUrl={""} />
+      <Image
+        style={{ width: 40, height: 40, borderRadius: 20 }}
+        source={{
+          uri:
+            props.categoryData.photoUri ||
+            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.w3schools.com%2Fw3css%2Fimg_snowtops.jpg&f=1&nofb=1",
+        }}
+      ></Image>
       <View style={{ marginLeft: 10 }}>
         <Text style={{ fontSize: 18 }}>
           u/
@@ -31,7 +37,7 @@ const CategoryListItem: React.FC<Props> = (props) => {
           <Text style={{ color: "rgba(80,80,80,1)", fontWeight: "normal" }}>
             Created By{" "}
           </Text>
-          s/{props.categoryData.author}
+          s/{props.categoryData.author.name} {props.categoryData.author.surname}
         </Text>
         <Text style={{ marginTop: 5, fontSize: 16 }}>
           {props.categoryData.description}

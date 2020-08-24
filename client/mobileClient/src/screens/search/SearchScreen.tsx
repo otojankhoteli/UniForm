@@ -1,19 +1,24 @@
-import React, { useState } from "react";
-import { View, TextInput, TouchableHighlight, Text } from "react-native";
+import React, { useState, useRef } from "react";
+import { View, TextInput, ScrollView, StatusBar } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
-import { Button } from "react-native-elements";
-import FloatingButton from "../../shared/components/FloatingButton";
-import CategoryList from "./CategoryList";
-import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
-import { useNavigation } from "@react-navigation/native";
+import CategoryList from "./categories/CategoryList";
+import UserList from "./users/UserList";
+import PostSearchList from "./posts/PostList";
+import ViewPager from "@react-native-community/viewpager";
+import SearchTabs from "./SearchTabs";
 
 const SearchScreen: React.FC = () => {
-  const navigation = useNavigation();
-
   const [inputText, setInputText] = useState("");
+  const [tabIndex, setTabIndex] = useState(0);
 
   return (
-    <View style={{ flex: 1, backgroundColor: "rgba(255, 255, 255, 1)" }}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "white",
+        marginTop: StatusBar.currentHeight ? StatusBar.currentHeight : 24,
+      }}
+    >
       <View
         style={{
           height: 50,
@@ -39,163 +44,31 @@ const SearchScreen: React.FC = () => {
           }}
         />
       </View>
-      <CategoryList data={tempData} />
-      <FloatingButton
-        onPress={() => {
-          navigation.navigate("AddCategory");
+      <SearchTabs
+        tabIndex={tabIndex}
+        onPress={(index) => {
+          console.log(index);
+          setTabIndex(index);
         }}
-        color={"rgba(32,255,64,1)"}
-        type={"add"}
       />
+      <ViewPager
+        style={{ flex: 1 }}
+        onPageSelected={(e) => {
+          setTabIndex(e.nativeEvent.position);
+        }}
+      >
+        <View key="1">
+          <CategoryList searchTerm={""} visible={tabIndex == 0} />
+        </View>
+        <View key={"2"}>
+          <UserList searchTerm={""} visible={tabIndex == 1} />
+        </View>
+        <View key={"3"}>
+          <PostSearchList searchTerm={""} visible={tabIndex == 2} />
+        </View>
+      </ViewPager>
     </View>
   );
 };
 
 export default SearchScreen;
-
-const tempData: CategoryViewModel[] = [
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category1",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category2",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category3",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category4",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category5",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category6",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category7",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category8",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category9",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category10",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category11",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category12",
-    description: "Category Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category13",
-    description: "Cateogyr Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category14",
-    description: "Cateogyr Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category15",
-    description: "Cateogyr Description",
-    postCount: 100,
-  },
-  {
-    author: "ako",
-    id: "1",
-    isVerified: true,
-    memberCount: 10,
-    name: "Category17",
-    description: "Cateogyr Description",
-    postCount: 100,
-  },
-];
