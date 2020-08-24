@@ -11,15 +11,16 @@ import { ProfileStackParamList } from "../../shared/navigation/ProfileStackScree
 import { SearchStackParamList } from "../../shared/navigation/SearchStackScreen";
 import { NotificationsStackParamList } from "../../shared/navigation/NotificationsStackScreen";
 import { User } from "../../api/auth/AuthApiModel";
+import { UserViewModel } from "../../api/users/UsersApiModel";
 
 const ProfileScreen: React.FC = () => {
   const [{ account }, dispatch] = useGlobalState();
-  const [user, setUser] = useState<User>({
-    _id: "1",
+  const [user, setUser] = useState<UserViewModel>({
+    id: "1",
     email: "t",
     role: "student",
-    firstName: "Tornike",
-    lastName: "Bubuteishvili",
+    name: "Tornike",
+    surname: "Bubuteishvili",
     photoURL: null,
   });
   const [profilePosts, setProfilePosts] = useState<PostViewModel[]>([]);
@@ -36,15 +37,16 @@ const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
 
   const isSelf = useMemo(() => {
-    if (account && account.user && account.user._id)
-      return account.user._id == route.params.userId;
+    if (!route.params || !route.params.userId) return true;
+    if (account && account.user && account.user.id)
+      return account.user.id == route.params.userId;
     return true;
   }, []);
 
   useEffect(() => {
-    if (user.firstName) {
+    if (user.name) {
       navigation.setOptions({
-        headerTitle: user.firstName + " " + user.lastName,
+        headerTitle: user.name + " " + user.surname,
       });
     }
   });

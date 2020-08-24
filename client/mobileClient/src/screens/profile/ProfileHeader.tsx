@@ -5,10 +5,11 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ProfileStackParamList } from "../../shared/navigation/ProfileStackScreen";
 import FeatherIcon from "react-native-vector-icons/Feather";
+import { UserViewModel } from "../../api/users/UsersApiModel";
 
 interface Props {
   readonly isSelf: boolean;
-  readonly user: User;
+  readonly user: UserViewModel;
 }
 
 const ProfileHeader: React.FC<Props> = (props) => {
@@ -16,18 +17,22 @@ const ProfileHeader: React.FC<Props> = (props) => {
     StackNavigationProp<ProfileStackParamList, "Profile">
   >();
   return (
-    <View style={{ flexDirection: "row", padding: 15 }}>
+    <View style={{ padding: 15, alignItems: "center" }}>
       <Image
-        style={{ width: 100, height: 100 }}
+        style={{ width: 100, height: 100, borderRadius: 50 }}
         source={{
           uri: props.user.photoURL
             ? props.user.photoURL
             : "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn2.iconfinder.com%2Fdata%2Ficons%2Frcons-user%2F32%2Fmale-shadow-circle-512.png&f=1&nofb=1",
         }}
       ></Image>
-      <View style={{ marginLeft: 15 }}>
-        <Text style={{ fontSize: 24, fontWeight: "bold" }}></Text>
-        <Text style={{ fontSize: 16 }}>{props.user.role}</Text>
+      <View style={{ marginTop: 10 }}>
+        <Text style={{ fontSize: 16, textAlign: "center" }}>
+          {props.user.email}
+        </Text>
+        <Text style={{ fontSize: 16, textAlign: "center" }}>
+          {props.user.role}
+        </Text>
       </View>
       <View style={{ marginLeft: "auto" }}>
         <TouchableHighlight
@@ -37,6 +42,9 @@ const ProfileHeader: React.FC<Props> = (props) => {
             borderRadius: 25,
             justifyContent: "center",
             alignItems: "center",
+            position: "absolute",
+            left: 15,
+            top: 50,
           }}
           onPress={() => {
             navigation.navigate("EditProfile");
