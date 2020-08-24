@@ -9,8 +9,8 @@ import {
   StyleSheet,
 } from "react-native";
 import { PostViewModel } from "../../../api/posts/PostsApiModel";
-import { PostListItem } from "./PostListItem";
 import { MainColor } from "../../../shared/Const";
+import { PostListItem } from "../../../shared/components/postList/PostListItem";
 
 interface Props {
   posts: PostViewModel[];
@@ -61,9 +61,7 @@ export function PostList({
   return (
     <FlatList
       style={{ flex: 1 }}
-      contentContainerStyle={{
-        padding: 10,
-      }}
+      contentContainerStyle={{}}
       ListEmptyComponent={
         <View style={styles.textContainer}>
           <Text style={styles.text}>No Records</Text>
@@ -71,7 +69,7 @@ export function PostList({
       }
       data={posts}
       renderItem={(post) => (
-        <PostListItem refresh={onRefresh} key={post.item.id} post={post.item} />
+        <PostListItem key={post.item.id} post={post.item} />
       )}
       extraData={[]}
       // onMomentumScrollEnd={onScrollEnd}

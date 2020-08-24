@@ -42,7 +42,6 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <HomeHeader dispatch={dispatch} account={account} />
       <PostList
         isLoading={isLoading}
         posts={result || tempPostData}
