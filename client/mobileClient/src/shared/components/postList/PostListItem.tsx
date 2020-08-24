@@ -13,6 +13,7 @@ import { useUpvote, useDownvote } from "../../../api/posts/PostsApiHook";
 import { useNavigation } from "@react-navigation/native";
 import { extractNodesFromInputText } from "../../../screens/addPost/AddPostUtils";
 import { TextWithTags } from "../../../screens/addPost/TextWithTags";
+import VotePanel from "../VotePanel";
 
 interface Props {
   post: PostViewModel;
@@ -36,13 +37,6 @@ export function PostListItem({ post }: Props) {
     result: downvoteResult,
     isError: downvoteFailed,
   } = useDownvote(post.id);
-
-  const upVoteIconStyle = post.isUpvoted
-    ? styles.votedIconColor
-    : styles.notVotedIconColor;
-  const downVoteIconStyle = post.isDownvoted
-    ? styles.votedIconColor
-    : styles.notVotedIconColor;
 
   useEffect(() => {
     if (
@@ -69,25 +63,18 @@ export function PostListItem({ post }: Props) {
         navigation.navigate("Post", { post });
       }}
     >
-      <View style={styles.voteActionContainer}>
-        <Icon
-          size={30}
-          onPress={() => {
-            upvote({});
-          }}
-          style={upVoteIconStyle}
-          name="chevron-up"
-        />
-        <Text>{post.voteCount}</Text>
-        <Icon
-          size={30}
-          onPress={() => {
-            downvote({});
-          }}
-          style={downVoteIconStyle}
-          name="chevron-down"
-        />
-      </View>
+      <VotePanel
+        downvote={() => {
+          downvote({});
+        }}
+        upvote={() => {
+          upvote({});
+        }}
+        isDownvoted={post.isDownvoted}
+        isUpvoted={post.isUpvoted}
+        voteCount={post.voteCount}
+        size={"large"}
+      />
       <View style={styles.content}>
         <View style={styles.topSection}>
           <AvatarCustom photoUrl={post.authorProfilePic} />
@@ -210,9 +197,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 5,
   },
-  notVotedIconColor: {
-    color: "gray",
-  },
   postText: {
     paddingBottom: 10,
     paddingHorizontal: 5,
@@ -230,17 +214,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 10,
-  },
-  voteActionContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-    marginLeft: 10,
-    marginRight: 15,
-    // borderWidth: 1,
-    // borderColor: "red",
-  },
-  votedIconColor: {
-    color: "#386083",
   },
   content: {
     flex: 1,
