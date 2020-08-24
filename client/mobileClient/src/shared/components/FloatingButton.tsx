@@ -6,14 +6,16 @@ interface Props {
   readonly onPress: () => void;
   readonly color: string;
   readonly type: "add" | "confirm";
+  readonly disabled?: boolean;
 }
 
-export default function AddPostButton(props: Props) {
+export default function FloatingButton(props: Props) {
   return (
     <Button
       containerStyle={styles.addButtonContainer}
       buttonStyle={{ ...styles.addButton, backgroundColor: props.color }}
       onPress={props.onPress}
+      disabled={props.disabled}
       icon={
         <Icon
           name={props.type == "add" ? "plus" : "check"}
