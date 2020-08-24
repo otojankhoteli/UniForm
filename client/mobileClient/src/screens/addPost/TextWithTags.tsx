@@ -12,19 +12,19 @@ export const TextWithTags = memo(({ nodes }: Props) => {
     switch (node.type) {
       case "#":
         return (
-          <Text key={getKey(node)} style={{ color: "blue", fontSize: 18 }}>
+          <Text key={getKey(node)} style={{ color: "blue", fontSize: 16 }}>
             {node.value}
           </Text>
         );
       case "@":
         return (
-          <Text key={getKey(node)} style={{ color: "green", fontSize: 18 }}>
+          <Text key={getKey(node)} style={{ color: "green", fontSize: 16 }}>
             {node.value}
           </Text>
         );
       default:
         return (
-          <Text key={getKey(node)} style={{ fontSize: 18 }}>
+          <Text key={getKey(node)} style={{ fontSize: 16 }}>
             {node.value}
           </Text>
         );

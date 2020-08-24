@@ -16,6 +16,7 @@ import { useUsersByEmail } from "../../api/users/UsersApiHook";
 import MediaSection, { UploadedImage } from "./MediaSection";
 import { UserTagNode } from "./AddPostUtils";
 import { HomeStackParamList } from "../../shared/navigation/HomeStackScreen";
+import FloatingButton from "../../shared/components/FloatingButton";
 
 type AddPostScreenNavigationProp = StackNavigationProp<
   HomeStackParamList,
@@ -34,6 +35,7 @@ export default function AddPostScreen() {
   const { post, result, isError } = usePostCreate();
   const { result: hashTags, setRequestInfo: fetchTags } = useHashtagByName();
   const { result: userTags, setRequestInfo: fetchUserTags } = useUsersByEmail();
+  const [hashs, setHashs] = useState([]);
 
   const [submitState, setSubmitState] = useState<SubmitState>({
     category: undefined,
@@ -84,13 +86,27 @@ export default function AddPostScreen() {
 
   const onHashTagChange = (searchText: string) => {
     console.log("onHashTagChange");
-    fetchTags((prev) => ({
-      wait: false,
-      info: {
-        ...prev.info,
-        queryParams: [{ key: "name", value: searchText }],
-      },
-    }));
+    // fetchTags((prev) => ({
+    //   wait: false,
+    //   info: {
+    //     ...prev.info,
+    //     queryParams: [{ key: "name", value: searchText }],
+    //   },
+    // }));
+    setHashs([
+      { name: "ako1" },
+      { name: "ako2" },
+      { name: "ako3" },
+      { name: "ako4" },
+      { name: "ako5" },
+      { name: "ako6" },
+      { name: "ako7" },
+      { name: "ako8" },
+      { name: "ako9" },
+      { name: "ako10" },
+      { name: "ako11" },
+      { name: "ako12" },
+    ]);
   };
 
   const onUserTagChange = (searchText: string) => {
@@ -129,48 +145,34 @@ export default function AddPostScreen() {
       uploadedContentsId: photos.map((p) => p.fileId),
     }));
   };
-
-  React.useLayoutEffect(() => {
-    if (!navigation) return;
-    navigation.setOptions({
-      headerRight: () => (
-        <Icon
-          containerStyle={{ marginRight: 5 }}
-          disabledStyle={{ backgroundColor: "white" }}
-          disabled={!submitState.isValid}
-          onPress={onSubmit}
-          type="font-awesome"
-          name="check"
-          color={submitState.isValid ? "green" : "gray"}
-        />
-      ),
-    });
-  }, [navigation, submitState]);
-
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }}>
-          <ChooseCategoryPanel
-            chosenCategory={submitState.category}
-            style={styles.chooseCategoryPanel}
-            onClick={navigateToChooseCategory}
-          />
-          <HorizontalLine mode="fill" />
-          <PostText
-            onHashTagChange={onHashTagChange}
-            onUserTagChange={onUserTagChange}
-            onTextChange={onTextChange}
-            placeHolder="Your post text"
-            hashTags={hashTags || []}
-            userTags={userTags || []}
-          />
-        </ScrollView>
+      <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1 }}>
+        <ChooseCategoryPanel
+          chosenCategory={submitState.category}
+          style={styles.chooseCategoryPanel}
+          onClick={navigateToChooseCategory}
+        />
+        <PostText
+          onHashTagChange={onHashTagChange}
+          onUserTagChange={onUserTagChange}
+          onTextChange={onTextChange}
+          placeHolder="Post text..."
+          hashTags={hashs || []}
+          userTags={userTags || []}
+        />
         <MediaSection onUploadedContentsChange={onUploadedContentsChange} />
-      </View>
+      </ScrollView>
+      <FloatingButton
+        color={"rgb(50,255,100)"}
+        onPress={() => {}}
+        type={"confirm"}
+        disabled={!submitState.isValid}
+      />
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   chooseCategoryPanel: {
     marginBottom: 10,
