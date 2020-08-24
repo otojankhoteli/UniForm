@@ -38,12 +38,12 @@ export default function DevelopmentLoginScreen() {
   }, [result, isError]);
 
   const onPress = async () => {
-    // let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-    // const deviceId = await Notifications.getExpoPushTokenAsync();
+    let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    const deviceId = await Notifications.getExpoPushTokenAsync();
     post({
-      deviceId: "emulator123",
+      deviceId,
       accessToken:
-        "ya29.a0AfH6SMBkMUZzx-SQA8zq8JPaChNMxooek4my7QiY7eyYpT9dAZjjrhG4tIpfTNG8bCwYJnvyzFXw-yvjlFfxC8Yv9Lp3NsIpV-pgShqaqtMTpJRhvdDiY6BN2z3hgpaiLkPx591qN7LLZF7eXhmgTy1r_JflQRiLWCw",
+        "ya29.a0AfH6SMB4l_ML8d9u0FphFTETv406X4-ISKvFEQltCXiqiIF0Zgr550I6OpznnYkyEnRywC13t-UUg7M9kHUODR3Qm5PL0UNl-oRBPtt4ikKhotVSzFPcY3QBMNYsDk2_JXesHXFXTYxXc_wVdYu36jeX7IIvWrtIW3o",
     });
   };
 
