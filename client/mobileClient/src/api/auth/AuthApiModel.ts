@@ -1,4 +1,6 @@
-export type ApiMethodType = "post" | "put" | "delete" | "get"
+import { UserViewModel } from "../users/UsersApiModel";
+
+export type ApiMethodType = "post" | "put" | "delete" | "get";
 
 export interface SignUpRequest {
   accessToken: string;
@@ -7,7 +9,7 @@ export interface SignUpRequest {
 export interface SignUpResponse {
   token: string;
   refreshToken: string;
-  user: User;
+  user: UserViewModel;
 }
 export type Role = "student" | "academicAuthority";
 export interface User {
