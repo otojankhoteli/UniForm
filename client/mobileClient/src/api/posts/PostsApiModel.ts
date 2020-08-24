@@ -1,4 +1,6 @@
 import { EmptyRequest, EmptyResponse } from "../shared/ApiResponse";
+import { User } from "../auth/AuthApiModel";
+import { UserViewModel } from "../users/UsersApiModel";
 
 export interface CreatePostRequest {
   categoryId: string;
@@ -23,4 +25,15 @@ export interface PostViewModel {
   isJoined: boolean;
   createdAt?: string;
   files: string[];
+}
+
+export interface CommentViewModel {
+  id: string;
+  author: UserViewModel;
+  text: string;
+  userTags: string[];
+  post: string;
+  upVoters: string[];
+  downVoters: string[];
+  voteCount: number;
 }
