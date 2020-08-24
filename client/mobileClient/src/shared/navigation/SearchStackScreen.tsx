@@ -21,7 +21,7 @@ const SearchStackScreen: React.FC = () => {
       <SearchStack.Screen
         name={"Search"}
         component={SearchScreen}
-        options={{ headerTitle: "Categories" }}
+        options={{ headerShown: false }}
       ></SearchStack.Screen>
       <SearchStack.Screen
         name={"AddCategory"}

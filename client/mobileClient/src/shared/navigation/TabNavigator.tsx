@@ -8,6 +8,7 @@ import SimpleLineIcon from "react-native-vector-icons/SimpleLineIcons";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome5";
 import FeatherIcon from "react-native-vector-icons/Feather";
+import HomeDrawerNavigator from "./HomeDrawerNavigator";
 
 export type TabParamList = {
   Home: undefined;
@@ -20,10 +21,13 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 const MainNavigator: React.FC = () => {
   return (
-    <Tab.Navigator tabBarOptions={{ showLabel: false }}>
+    <Tab.Navigator
+      tabBarOptions={{ showLabel: false }}
+      backBehavior={"initialRoute"}
+    >
       <Tab.Screen
         name={"Home"}
-        component={HomeStackScreen}
+        component={HomeDrawerNavigator}
         options={{
           tabBarIcon: ({ focused, color }) => {
             return (
@@ -70,7 +74,6 @@ const MainNavigator: React.FC = () => {
         name={"ProfileStack"}
         component={ProfileStackScreen}
         options={{
-          unmountOnBlur: true,
           tabBarIcon: ({ focused, color }) => {
             return (
               <FontAwesomeIcon

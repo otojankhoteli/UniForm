@@ -7,6 +7,10 @@ import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
 import PostScreen from "../../screens/post/PostScreen";
 import { PostViewModel } from "../../api/posts/PostsApiModel";
 import ProfileScreen from "../../screens/profile/ProfileScreen";
+import { TouchableHighlight } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import Icon from "react-native-vector-icons/Feather";
 
 export type HomeStackParamList = {
   Home: undefined;
@@ -20,12 +24,35 @@ export type HomeStackParamList = {
 const HomeStack = createStackNavigator<HomeStackParamList>();
 
 const HomeStackScreen: React.FC = () => {
+  const navigation = useNavigation<DrawerNavigationProp<{}>>();
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen
         name={"Home"}
         component={HomeScreen}
-        options={{ headerShown: false }}
+        options={{
+          headerTitle: "UniForm",
+          headerTitleAlign: "center",
+          headerLeft: (props) => {
+            return (
+              <TouchableHighlight
+                style={{
+                  width: 40,
+                  height: 40,
+                  marginLeft: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                underlayColor={"rgba(0,0,0,0)"}
+                onPress={() => {
+                  navigation.openDrawer();
+                }}
+              >
+                <Icon name={"menu"} size={24}></Icon>
+              </TouchableHighlight>
+            );
+          },
+        }}
       ></HomeStack.Screen>
       <HomeStack.Screen
         name="AddPost"
