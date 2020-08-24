@@ -1,7 +1,4 @@
-const LocalHost = "http://localhost:3000/";
-const DevHost = "";
-export const CurrentHost = LocalHost;
-export const IdentityHost = "http://62.212.35.13:8081/";
-export const PostHost = "http://62.212.35.13:8082/";
-export const BlobHost = "http://62.212.35.13:8083/";
-export const Uri = `${CurrentHost}/`;
+export const IdentityHost = "http://104.248.45.200:3000/";
+export const PostHost = "http://104.248.45.200:3001/";
+export const BlobHost = "http://104.248.45.200:3002/";
+export const NotificationHost = "http://104.248.45.200:3003/";
