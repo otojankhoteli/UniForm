@@ -13,3 +13,13 @@ export interface IUserSearchModel {
   _id: string,
   email: string,
 }
+
+export interface MQUserModel {
+  _id: string;
+  name: string;
+  surname: string;
+  email: string;
+  photoURL: string;
+  role: string;
+  deviceId: string,
+}
