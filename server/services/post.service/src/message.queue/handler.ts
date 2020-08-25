@@ -11,11 +11,11 @@ const registerUser = async (msg) => {
 
     const userService = Container.get(UserService);
     const user: MQUserModel = msg.body;
-    const newUser = {
+    const newUser: IUser = {
       ...user,
       imgUrl: user.photoURL,
     };
-    await userService.save(msg.body);
+    await userService.save(newUser);
     logger.silly('user registered successfully');
   } catch (e) {
     logger.error('error registering user');

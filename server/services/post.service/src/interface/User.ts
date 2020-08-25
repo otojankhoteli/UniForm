@@ -5,8 +5,8 @@ export interface IUser {
   email: string,
   role: string,
   imgUrl: string,
-  voteCount: number,
-  subscribedCategories: string[]
+  voteCount?: number,
+  subscribedCategories?: string[]
 }
 
 export interface IUserSearchModel {
