@@ -166,7 +166,6 @@ export class CommentService {
         isDownvoted: isDownvoted,
         createdAt: comment.createdAt,
         updatedAt: comment.updatedAt,
-        files: comment.files,
       };
       return result;
     });

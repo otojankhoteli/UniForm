@@ -35,7 +35,8 @@ router.get('/activity/posts',
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
       const userId = req.currentUser._id;
-      res.json(await postService.getPostsOf({userId, skip: req.query.skip, limit: req.query.limit}));
+      const profileId = req.query.profileId;
+      res.json(await postService.getPostsOf({userId, profileId, skip: req.query.skip, limit: req.query.limit}));
     }));
 
 router.get('/activity/comments',
@@ -50,8 +51,7 @@ router.get('/info',
     authenticate,
     asyncMw(async (req, res, _) => {
       const userService = Container.get(UserService);
-      const userId = req.currentUser._id;
-      // const userId = '5ebc4ef165f4ab9597d4aa1e';
+      const userId = req.query.profileId;
       res.json(await userService.findById(userId));
     }));
 

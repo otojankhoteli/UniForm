@@ -38,5 +38,4 @@ export interface CommentResponse extends LogDates {
   isDownvoted: boolean;
   createdAt: string;
   updatedAt: string,
-  files: string[];
 }
