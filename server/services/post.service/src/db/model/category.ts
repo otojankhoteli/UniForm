@@ -30,7 +30,9 @@ const category = new mongoose.Schema<ICategoryDTO>({
     default: 0,
   },
 
-  image: String,
+  imgUrl: {
+    type: String,
+  },
 
   isVerified: {
     type: Boolean,
