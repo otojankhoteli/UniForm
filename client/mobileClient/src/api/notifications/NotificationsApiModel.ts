@@ -1,15 +1,29 @@
 export interface NotificationViewModel {
-  type: NotificationType;
-  id: string;
-  text: string;
+  id?: string;
+  type: string;
   fromId: string;
   fromName: string;
-  fromProfilePictureUri: string;
-  whereId: string;
+  toId: string;
+  toName: string;
+  toDeviceId: string;
+  postId?: string;
+  postText?: string;
+  commentId?: string;
+  commentText?: string;
+  notificationText?: string;
+  seen?: boolean;
   etc?: any;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export enum NotificationType {
-  Post = "POST",
-  Comment = "COMMENT",
+  SingleAddress = "single_address",
+  MultiAddress = "multi_address",
+  PostUpvote = "post_upvote",
+  PostDownvote = "post_downvote",
+  PostReact = "post_react",
+  PostTag = "post_tag",
+  CommentNew = "comment_new",
+  CommentTag = "comment_tag",
 }
