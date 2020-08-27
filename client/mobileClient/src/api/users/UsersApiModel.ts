@@ -1,3 +1,5 @@
+import { Role } from "../auth/AuthApiModel";
+
 export type GetUsersByEmailResponse = UserViewModel[];
 export interface UserViewModel {
   id: string;
@@ -5,5 +7,5 @@ export interface UserViewModel {
   surname: string;
   email: string;
   photoURL: string;
-  role: string;
+  role: Role;
 }
