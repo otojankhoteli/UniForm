@@ -30,12 +30,23 @@ const CustomInput: React.FC<Props> = (props) => {
         )}
       </View>
       <TextInput
-        style={{ height: 50 }}
+        style={{
+          borderRadius: 5,
+          borderWidth: 0.5,
+          borderColor: "rgba(0,0,0,0.4)",
+          padding: 10,
+          backgroundColor: "white",
+        }}
         underlineColorAndroid={"transparent"}
         value={props.value}
         onChangeText={(text: string) => {
-          if (text.length <= props.characterLimit) props.onChangeText(text);
+          if (props.characterLimit) {
+            if (text.length <= props.characterLimit) props.onChangeText(text);
+          } else {
+            props.onChangeText(text);
+          }
         }}
+        placeholder={props.placeholder}
         multiline={props.multiline}
       ></TextInput>
     </View>
