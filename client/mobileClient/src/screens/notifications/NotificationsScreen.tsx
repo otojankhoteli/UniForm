@@ -17,15 +17,23 @@ const NotificationsScreen: React.FC = () => {
 export default NotificationsScreen;
 
 let tempData: NotificationViewModel[] = [];
-for (let i = 0; i < 17; i++) {
+for (let i = 0; i < 8; i++) {
   tempData.push({
+    id: "",
+    type: NotificationType[i],
     fromId: "",
-    fromName: "ako" + i,
-    fromProfilePictureUri: "",
-    id: i.toString(),
-    text:
-      "did something to your something.did something to your something.did something to your something.did something to your something.did something to your something.did something to your something.did something to your something.did something to your something.did something to your something.did something to your something.",
-    type: NotificationType.Post,
-    whereId: "",
+    fromName: "Aleksandre Javakhishvili",
+    toId: "",
+    toName: "",
+    toDeviceId: "",
+    postId: "1",
+    postText: "Naxet ra magari rame gavakete bichebo",
+    commentId: "1",
+    commentText: "Va ra magari rame gagiketebia, yochag!",
+    notificationText: 'commented on your post: "..."',
+    seen: false,
+    etc: {},
+    createdAt: new Date(),
+    updatedAt: new Date(),
   });
 }
