@@ -1,20 +1,11 @@
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { HomeStackParamList } from "../../shared/navigation/HomeStackScreen";
-import React, { useMemo, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text } from "react-native-elements";
-import Icon from "react-native-vector-icons/FontAwesome5";
-import OctIcon from "react-native-vector-icons/Octicons";
-import FeatherIcon from "react-native-vector-icons/Feather";
-import AvatarCustom from "../../shared/components/Avatar";
-import { getTimeFormat } from "../../shared/Utils";
-import { TextWithTags } from "../addPost/TextWithTags";
-import { MainColor } from "../../shared/Const";
-import { extractNodesFromInputText } from "../addPost/AddPostUtils";
-import { useUpvote, useDownvote } from "../../api/posts/PostsApiHook";
+import React, { useEffect, useRef, useState } from "react";
+import { View } from "react-native";
 import { PostListItem } from "../../shared/components/postList/PostListItem";
 import CommentList from "./CommentList";
 import { CommentViewModel } from "../../api/posts/PostsApiModel";
+import CommentInput from "./CommentInput";
 
 const PostScreen: React.FC = () => {
   const route = useRoute<RouteProp<HomeStackParamList, "Post">>();
@@ -40,7 +31,7 @@ const PostScreen: React.FC = () => {
         id: "1",
         post: "2",
         text:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis",
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, niam, quis",
         upVoters: [],
         userTags: [],
         voteCount: 12,
@@ -51,7 +42,15 @@ const PostScreen: React.FC = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <CommentList comments={comments} header={<PostListItem post={post} />} />
+      <CommentList
+        comments={comments}
+        header={
+          <View>
+            <PostListItem post={post} />
+            <CommentInput />
+          </View>
+        }
+      />
     </View>
   );
 };

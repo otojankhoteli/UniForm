@@ -18,7 +18,7 @@ const CommentList: React.FC<Props> = (props) => {
         return index.toString();
       }}
       renderItem={(item) => {
-        return <Comment comment={item.item} />;
+        return <Comment comment={item.item} index={item.index} />;
       }}
     ></FlatList>
   );

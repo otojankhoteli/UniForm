@@ -7,11 +7,21 @@ import { getTimeFormat } from "../../shared/Utils";
 
 interface Props {
   readonly comment: CommentViewModel;
+  readonly index: number;
 }
 
 const Comment: React.FC<Props> = (props) => {
   return (
-    <View style={{ flexDirection: "row", marginTop: 10, marginLeft: 5 }}>
+    <View
+      style={{
+        flexDirection: "row",
+        paddingTop: 10,
+        paddingBottom: 15,
+        paddingLeft: 5,
+        backgroundColor:
+          props.index % 2 == 0 ? "rgb(235,235,235)" : "rgb(250,250,250)",
+      }}
+    >
       <VotePanel
         downvote={() => {}}
         upvote={() => {}}
