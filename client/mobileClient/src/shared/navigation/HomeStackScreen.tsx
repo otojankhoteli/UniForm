@@ -11,6 +11,7 @@ import { TouchableHighlight } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import Icon from "react-native-vector-icons/Feather";
+import CategoryScreen from "../../screens/category/CategoryScreen";
 
 export type HomeStackParamList = {
   Home: undefined;
@@ -19,6 +20,7 @@ export type HomeStackParamList = {
   Feed: { sort: "latest" | "top" } | undefined;
   Post: { post: PostViewModel };
   Profile: { userId: string };
+  Category: { categoryId: string; categoryName: string };
 };
 
 const HomeStack = createStackNavigator<HomeStackParamList>();
@@ -74,6 +76,11 @@ const HomeStackScreen: React.FC = () => {
         component={ProfileScreen}
         options={{ headerTitle: "Profile" }}
       />
+      <HomeStack.Screen
+        name={"Category"}
+        component={CategoryScreen}
+        options={{ headerTitle: "Category" }}
+      ></HomeStack.Screen>
     </HomeStack.Navigator>
   );
 };

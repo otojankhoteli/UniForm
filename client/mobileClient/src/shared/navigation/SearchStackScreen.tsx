@@ -5,12 +5,14 @@ import AddCategoryScreen from "../../screens/addCategory/AddCategoryScreen";
 import { PostViewModel } from "../../api/posts/PostsApiModel";
 import ProfileScreen from "../../screens/profile/ProfileScreen";
 import PostScreen from "../../screens/post/PostScreen";
+import CategoryScreen from "../../screens/category/CategoryScreen";
 
 export type SearchStackParamList = {
   Search: undefined;
   AddCategory: undefined;
   Post: { post: PostViewModel };
   Profile: { userId: string };
+  Category: { categoryId: string; categoryName: string };
 };
 
 const SearchStack = createStackNavigator<SearchStackParamList>();
@@ -26,7 +28,7 @@ const SearchStackScreen: React.FC = () => {
       <SearchStack.Screen
         name={"AddCategory"}
         component={AddCategoryScreen}
-        options={{ headerTitle: "Add Category" }}
+        options={{ headerTitle: "Create Category" }}
       ></SearchStack.Screen>
       <SearchStack.Screen
         name={"Profile"}
@@ -37,6 +39,11 @@ const SearchStackScreen: React.FC = () => {
         name={"Post"}
         component={PostScreen}
         options={{ headerTitle: "Post" }}
+      ></SearchStack.Screen>
+      <SearchStack.Screen
+        name={"Category"}
+        component={CategoryScreen}
+        options={{ headerTitle: "Category" }}
       ></SearchStack.Screen>
     </SearchStack.Navigator>
   );

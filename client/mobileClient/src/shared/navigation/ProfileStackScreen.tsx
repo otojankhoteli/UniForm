@@ -4,11 +4,13 @@ import ProfileScreen from "../../screens/profile/ProfileScreen";
 import PostScreen from "../../screens/post/PostScreen";
 import { PostViewModel } from "../../api/posts/PostsApiModel";
 import EditProfileScreen from "../../screens/editProfile/EditProfileScreen";
+import CategoryScreen from "../../screens/category/CategoryScreen";
 
 export type ProfileStackParamList = {
   Post: { post: PostViewModel };
   Profile: { userId: string };
   EditProfile: undefined;
+  Category: { categoryId: string; categoryName: string };
 };
 
 const ProfileStack = createStackNavigator<ProfileStackParamList>();
@@ -30,6 +32,11 @@ const ProfileStackScreen: React.FC = () => {
         name={"Post"}
         component={PostScreen}
         options={{ headerTitle: "Post" }}
+      ></ProfileStack.Screen>
+      <ProfileStack.Screen
+        name={"Category"}
+        component={CategoryScreen}
+        options={{ headerTitle: "Category" }}
       ></ProfileStack.Screen>
     </ProfileStack.Navigator>
   );
