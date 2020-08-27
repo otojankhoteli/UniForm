@@ -14,13 +14,17 @@ import { useNavigation } from "@react-navigation/native";
 import { extractNodesFromInputText } from "../../../screens/addPost/AddPostUtils";
 import { TextWithTags } from "../../../screens/addPost/TextWithTags";
 import VotePanel from "../VotePanel";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { HomeStackParamList } from "../../navigation/HomeStackScreen";
 
 interface Props {
   post: PostViewModel;
 }
 
 export function PostListItem({ post }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<
+    StackNavigationProp<HomeStackParamList, "Post">
+  >();
 
   const textNodes = useMemo(() => extractNodesFromInputText(post.text), [
     post.text,
@@ -48,7 +52,14 @@ export function PostListItem({ post }: Props) {
   }, [upvoteResult, upvoteFailed, downvoteResult, downvoteFailed]);
 
   const navigateToCategoryScreen = () => {
-    //
+    navigation.push("Category", {
+      categoryId: post.categoryId,
+      categoryName: post.categoryName,
+    });
+  };
+
+  const navigateToProfile = () => {
+    navigation.push("Profile", { userId: post.authorId });
   };
 
   const joinCategory = () => {
@@ -90,7 +101,7 @@ export function PostListItem({ post }: Props) {
             <View style={styles.authorSection}>
               <Text style={styles.timePassedText}>Posted by </Text>
               <Text style={styles.clickableAuthorName}>s/</Text>
-              <TouchableOpacity onPress={navigateToCategoryScreen}>
+              <TouchableOpacity onPress={navigateToProfile}>
                 <Text style={styles.clickableAuthorName}>
                   {post.authorUsername}
                 </Text>
