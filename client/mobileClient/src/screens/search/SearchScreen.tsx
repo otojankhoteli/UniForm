@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { View, TextInput, ScrollView, StatusBar } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import CategoryList from "./categories/CategoryList";
@@ -11,47 +11,60 @@ const SearchScreen: React.FC = () => {
   const [inputText, setInputText] = useState("");
   const [tabIndex, setTabIndex] = useState(0);
 
+  const viewPagerRef = useRef<ViewPager>(null);
+
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: "white",
-        marginTop: StatusBar.currentHeight ? StatusBar.currentHeight : 24,
       }}
     >
       <View
         style={{
-          height: 50,
-          margin: 10,
-          borderWidth: 0.5,
-          borderColor: "black",
-          borderRadius: 10,
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: 10,
+          elevation: 3,
         }}
       >
-        <FeatherIcon name={"search"} size={30} />
-        <TextInput
-          style={{ flex: 1, marginLeft: 10, fontSize: 16 }}
-          placeholder={"Search Categories..."}
-          value={inputText}
-          onChangeText={(text) => {
-            setInputText(text);
+        <View
+          style={{
+            marginTop:
+              (StatusBar.currentHeight ? StatusBar.currentHeight : 24) + 10,
+            height: 50,
+            margin: 10,
+            marginBottom: 3,
+            borderWidth: 0.5,
+            borderColor: "black",
+            borderRadius: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: 10,
           }}
-          onSubmitEditing={() => {
-            alert("search for " + inputText);
+        >
+          <FeatherIcon name={"search"} size={30} />
+          <TextInput
+            style={{ flex: 1, marginLeft: 10, fontSize: 16 }}
+            placeholder={`Search ${searchItems[tabIndex]}...`}
+            value={inputText}
+            onChangeText={(text) => {
+              setInputText(text);
+            }}
+            onSubmitEditing={() => {
+              alert("search for " + inputText);
+            }}
+          />
+        </View>
+        <SearchTabs
+          tabIndex={tabIndex}
+          onPress={(index) => {
+            viewPagerRef.current?.setPage(index);
+            setTimeout(() => {
+              setTabIndex(index);
+            });
           }}
         />
       </View>
-      <SearchTabs
-        tabIndex={tabIndex}
-        onPress={(index) => {
-          console.log(index);
-          setTabIndex(index);
-        }}
-      />
       <ViewPager
+        ref={viewPagerRef}
         style={{ flex: 1 }}
         onPageSelected={(e) => {
           setTabIndex(e.nativeEvent.position);
@@ -72,3 +85,5 @@ const SearchScreen: React.FC = () => {
 };
 
 export default SearchScreen;
+
+const searchItems = ["Categories", "Users", "Posts"];

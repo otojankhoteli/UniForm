@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
 import PostList from "../../../shared/components/postList/PostList";
 import { PostViewModel } from "../../../api/posts/PostsApiModel";
 import { ActivityIndicator } from "react-native";

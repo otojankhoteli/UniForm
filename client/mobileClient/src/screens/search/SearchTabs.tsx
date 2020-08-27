@@ -44,8 +44,8 @@ const SearchTabs: React.FC<Props> = (props) => {
           marginRight: 0,
           marginTop: 0,
           marginBottom: 0,
-          elevation: 3,
           borderWidth: 0,
+          borderRadius: 0,
         }}
         selectedButtonStyle={{ backgroundColor: "rgba(0,0,0,0.1)" }}
       />
