@@ -10,8 +10,7 @@ export interface IUser {
 }
 
 export interface IUserSearchModel {
-  _id: string,
-  email: string,
+   name: string,
 }
 
 export interface MQUserModel {

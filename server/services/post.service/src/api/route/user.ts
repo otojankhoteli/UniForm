@@ -55,17 +55,12 @@ router.get('/info',
       res.json(await userService.findById(userId));
     }));
 
-// router.get('/feed/:id',
-//   // authenticate,
-//   asyncMw(async (req, res, _) => {
-//     const postService = Container.get(PostService);
-//
-//     // todo get from token
-//     // const userId = req.currentUser._id;
-//     const userId = req.params.id;
-//
-//     res.send(await postService.getFeed(userId, req.query.skip, req.query.limit));
-//   }));
+router.get('/',
+    // authenticate,
+    asyncMw(async (req, res, _) => {
+      const userService = Container.get(UserService);
+      res.json(await userService.search({name: req.query.name, skip: req.query.skip, limit: req.query.limit}));
+    }));
 
 
 export {router as userRouter};

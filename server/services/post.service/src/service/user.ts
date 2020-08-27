@@ -21,9 +21,12 @@ export class UserService {
 
     return existingUser;
   }
-
-  public async find(options) {
-    return this.UserModel.find(options)
+  public async search({name, skip=0, limit=10}) {
+    const regex = new RegExp(`${name}`, 'i');
+    return this.UserModel
+        .find({$or: [{name: {$regex: regex}}, {email: {$regex: regex}}]})
+        .skip(skip)
+        .limit(limit)
         .lean();
   }
 

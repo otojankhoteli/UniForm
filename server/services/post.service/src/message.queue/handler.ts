@@ -14,6 +14,7 @@ const registerUser = async (msg) => {
     const newUser: IUser = {
       ...user,
       imgUrl: user.photoURL,
+      name: user.name + ' ' + user.surname,
     };
     await userService.save(newUser);
     logger.silly('user registered successfully');
