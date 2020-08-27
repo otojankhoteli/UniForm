@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 0.5,
     borderColor: "rgba(0,0,0,0.3)",
-    padding: 5,
+    padding: 10,
   },
   textBottomActionContainer: {
     flexDirection: "row",

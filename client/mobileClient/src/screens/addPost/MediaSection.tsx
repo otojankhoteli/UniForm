@@ -168,8 +168,8 @@ export default function MediaSection({ onUploadedContentsChange }: Props) {
                 <Icon
                   name="camera"
                   type="font-awesome"
-                  color="gray"
-                  size={50}
+                  color="black"
+                  size={40}
                 />
               </TouchableHighlight>
               <TouchableHighlight
@@ -186,7 +186,12 @@ export default function MediaSection({ onUploadedContentsChange }: Props) {
                 underlayColor={"rgba(0,0,0,0.2)"}
                 onPress={onImagePick}
               >
-                <Icon name="image" type="font-awesome" color="gray" size={50} />
+                <Icon
+                  name="image"
+                  type="font-awesome"
+                  color="black"
+                  size={40}
+                />
               </TouchableHighlight>
             </View>
           );
