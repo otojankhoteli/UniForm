@@ -24,7 +24,7 @@ export class NotificationPublisher extends Publisher {
 
 @Service()
 export class PostNotificationPublisher {
-  private postNotificationEnum = NotificationType;
+  private notificationEnum = NotificationType;
 
   constructor(
     @Inject('NotificationPublisher')
@@ -43,9 +43,7 @@ export class PostNotificationPublisher {
   }
 
 
-  private async _react({postId, reactorId, reaction}) {
-    this.logger.silly('sending upvote notification');
-
+  private async _postReact({postId, reactorId, reaction}) {
     const post = await this.PostModel
         .findById(postId)
         .populate('author', ['name', 'imgUrl', 'deviceId'])
@@ -62,20 +60,16 @@ export class PostNotificationPublisher {
       to: post.author,
       postId: post._id,
       postText: post.text,
-      // where: {
-      //   _id: post._id,
-      //   text: post.text,
-      // },
     };
-    return this.publish({msg: result, type: this.postNotificationEnum.SingleAddress});
+    return this.publish({msg: result, type: this.notificationEnum.SingleAddress});
   }
 
-  public async upVote({postId, upvoterId}) {
-    return this._react({postId, reactorId: upvoterId, reaction: this.postNotificationEnum.PostUpvote});
+  public async postUpVote({postId, upvoterId}) {
+    return this._postReact({postId, reactorId: upvoterId, reaction: this.notificationEnum.PostUpvote});
   }
 
-  public async downVote({postId, downvoterId}) {
-    return this._react({postId, reactorId: downvoterId, reaction: this.postNotificationEnum.PostDownvote});
+  public async postDownVote({postId, downvoterId}) {
+    return this._postReact({postId, reactorId: downvoterId, reaction: this.notificationEnum.PostDownvote});
   }
 
   public async postTag(postId: string) {
@@ -89,18 +83,14 @@ export class PostNotificationPublisher {
 
     if (post.userTags.length) {
       const result: PostTagNotification = {
-        type: this.postNotificationEnum.PostTag,
+        type: this.notificationEnum.PostTag,
         from: post.author,
         to: post.userTags,
         postId: post._id,
         postText: post.text,
-        // where: {
-        //   _id: post._id,
-        //   text: post.text,
-        // },
       };
 
-      return this.publish({msg: result, type: this.postNotificationEnum.MultiAddress});
+      return this.publish({msg: result, type: this.notificationEnum.MultiAddress});
     }
   }
 
@@ -116,41 +106,54 @@ export class PostNotificationPublisher {
         .lean();
 
     const newCommentNotification = {
-      type: this.postNotificationEnum.CommentNew,
+      type: this.notificationEnum.CommentNew,
       from: comment.author,
       to: comment.post.author,
       commentId: comment._id,
       commentText: comment.text,
       postId: comment.post._id,
-      // where: {
-      //   _id: comment._id,
-      //   text: comment.text,
-      // },
-      // etc: {
-      //   postId: comment.post._id,
-      // },
     };
-    await this.publish({msg: newCommentNotification, type: this.postNotificationEnum.SingleAddress});
+    await this.publish({msg: newCommentNotification, type: this.notificationEnum.SingleAddress});
 
     const commentTagsNotification = {
-      type: this.postNotificationEnum.CommentTag,
+      type: this.notificationEnum.CommentTag,
       from: comment.author,
       to: comment.userTags,
       postId: comment.post._id,
       commentId: comment._id,
       commentText: comment.text,
-      // where: {
-      //   _id: comment._id,
-      //   text: comment.text,
-      // },
-      // etc: {
-      //   postId: comment.post._id,
-      // },
     };
 
-    await this.publish({msg: commentTagsNotification, type: this.postNotificationEnum.MultiAddress});
+    await this.publish({msg: commentTagsNotification, type: this.notificationEnum.MultiAddress});
   }
 
+  private async _commentReact({commentId, reactorId, reaction}) {
+    const comment = await this.CommentModel
+        .findById(commentId)
+        .populate('author', ['name', 'imgUrl', 'deviceId'])
+        .lean();
 
-  // public async commentOnPost()
+    const reactor = await this.UserModel.findById(reactorId).lean();
+
+    const result = {
+      type: reaction,
+      from: {
+        _id: reactor._id,
+        name: reactor.name,
+      },
+      to: comment.author,
+      postId: comment.post._id,
+      commentId: comment._id,
+      commentText: comment.text,
+    };
+    return this.publish({msg: result, type: this.notificationEnum.SingleAddress});
+  }
+
+  async commentUpVote({commentId, upvoterId}) {
+    return this._commentReact({commentId, reactorId: upvoterId, reaction: this.notificationEnum.CommentUpvote});
+  }
+
+  async commentDownVote({commentId, downvoterId}) {
+    return this._commentReact({commentId, reactorId: downvoterId, reaction: this.notificationEnum.CommentDownvote});
+  }
 }

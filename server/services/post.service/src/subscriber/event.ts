@@ -7,5 +7,7 @@ export const Events = {
   },
   comment: {
     new: 'comment_new',
+    upvote: 'comment_upvote',
+    downVote: 'comment_downvote',
   },
 };

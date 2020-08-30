@@ -13,7 +13,7 @@ export class VoteService {
 
   public async upVote(userId: string, votable: any) {
     if (await this._hasUpvoted(votable, userId)) {
-      throw new OperationError('post is already upvoted');
+      throw new OperationError('Item is already upvoted');
     } else if (await this._hasDownVoted(votable, userId)) {
       votable.downVoters = votable.downVoters.filter((downVoter) => downVoter.toString() !== userId);
       votable.upVoters.push(userId);
@@ -39,7 +39,7 @@ export class VoteService {
 
   public async downVote(userId: string, votable: any) {
     if (await this._hasDownVoted(votable, userId)) {
-      throw new OperationError('post is already downvoted');
+      throw new OperationError('Item is already downvoted');
     } else if (await this._hasUpvoted(votable, userId)) {
       votable.upVoters = votable.upVoters.filter((upVoter) => upVoter.toString() !== userId);
       votable.downVoters.push(userId);

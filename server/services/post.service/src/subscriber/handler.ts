@@ -23,11 +23,11 @@ const registerHandlers = () => {
 
   emitter.on(Events.post.upvote, async (data: {postId: string, upvoterId: string}) => {
     logger.silly('sending post upvote notification');
-    await postNotificationPublisher.upVote(data);
+    await postNotificationPublisher.postUpVote(data);
   });
   emitter.on(Events.post.downVote, async (data: {postId: string, downvoterId: string}) => {
     logger.silly('sending post downvote notification');
-    await postNotificationPublisher.downVote(data);
+    await postNotificationPublisher.postDownVote(data);
   });
   emitter.on(Events.post.new, async (postId) => {
     logger.silly('sending post tag notification');
@@ -36,6 +36,14 @@ const registerHandlers = () => {
   emitter.on(Events.comment.new, async (commentId) => {
     logger.silly('sending notifications for new comment');
     await postNotificationPublisher.newComment(commentId);
+  });
+  emitter.on(Events.comment.upvote, async (data: {commentId: string, upvoterId: string}) => {
+    logger.silly('sending comment upvote notification');
+    await postNotificationPublisher.commentUpVote(data);
+  });
+  emitter.on(Events.comment.downVote, async (data: {commentId: string, downvoterId: string}) => {
+    logger.silly('sending comment upvote notification');
+    await postNotificationPublisher.commentDownVote(data);
   });
   logger.info('user signup handler registered');
 };
