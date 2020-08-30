@@ -21,6 +21,7 @@ export class UserService {
 
     return existingUser;
   }
+
   public async search({name, skip=0, limit=10}) {
     const regex = new RegExp(`${name}`, 'i');
     return this.UserModel
@@ -33,10 +34,6 @@ export class UserService {
   public async findById(id) {
     return this.UserModel.findById(id)
         .lean();
-  }
-
-  public isAdmin(user) {
-    return user.isAdmin;
   }
 
   private async isSubscribedTo(userId, categoryId) {
