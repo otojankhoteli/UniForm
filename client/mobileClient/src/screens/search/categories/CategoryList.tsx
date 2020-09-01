@@ -1,10 +1,10 @@
-import React, { useMemo, useEffect } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import { CategoryViewModel } from "../../../api/categories/CategoriesApiModel";
 import { FlatList, View, ActivityIndicator } from "react-native";
 import CategoryListItem from "./CategoryListItem";
 import FloatingButton from "../../../shared/components/FloatingButton";
 import { useNavigation } from "@react-navigation/native";
-import { useCategoriesByName } from "../../../api/categories/CategoriesApiHook";
+import { useCategoriesByName, useSubscribeCategory, useUnsubscribeCategory } from "../../../api/categories/CategoriesApiHook";
 
 interface Props {
   readonly searchTerm: string;
@@ -13,6 +13,9 @@ interface Props {
 
 const CategoryList: React.FC<Props> = (props) => {
   const navigation = useNavigation();
+  const [targetCategory, setTargetCategory] = useState<CategoryViewModel>({} as any);
+  const { post: subscribe, isError: failedSubscribe, result: subscribeResult } = useSubscribeCategory(targetCategory && targetCategory.id);
+  const { post: unsubscribe, isError: failedUnsubscribe, result: unsubscribeResult } = useUnsubscribeCategory(targetCategory && targetCategory.id);
 
   const {
     result: categories,
@@ -36,31 +39,22 @@ const CategoryList: React.FC<Props> = (props) => {
     });
   }, [props.searchTerm]);
 
-  console.log(categories);
 
-  const tempData = useMemo(() => {
-    let data: CategoryViewModel[] = [];
-    for (let i = 1; i < 18; i++) {
-      data.push({
-        author: {
-          email: "g",
-          id: "1",
-          name: "ako",
-          photoURL: "",
-          role: "student",
-          surname: "javaxa",
-        },
-        id: "1",
-        isVerified: true,
-        memberCount: 10,
-        name: "Category" + i,
-        description: "Category Description",
-        photoUri: "",
-        postCount: 100,
-      });
+  useEffect(() => {
+    if (targetCategory.isSubscribed) {
+      unsubscribe({});
+    } else {
+      subscribe({});
     }
-    return data;
-  }, []);
+  }, [targetCategory]);
+
+  useEffect(() => {
+    if ((!failedSubscribe && subscribeResult) ||
+      (!failedUnsubscribe && unsubscribeResult)) {
+      refetch();
+    }
+  }, [failedSubscribe, subscribeResult, failedUnsubscribe, unsubscribeResult])
+
 
   if (!props.visible || isLoading)
     return <ActivityIndicator style={{ marginTop: 20 }} size="large" />;
@@ -73,7 +67,7 @@ const CategoryList: React.FC<Props> = (props) => {
           return index.toString();
         }}
         renderItem={(item) => {
-          return <CategoryListItem categoryData={item.item}></CategoryListItem>;
+          return <CategoryListItem onSubscribe={(category) => setTargetCategory(category)} categoryData={item.item}></CategoryListItem>;
         }}
         ListFooterComponent={<View style={{ height: 70 }}></View>}
       ></FlatList>
