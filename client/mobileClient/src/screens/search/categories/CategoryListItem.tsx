@@ -8,6 +8,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 interface Props {
   readonly categoryData: CategoryViewModel;
+  onSubscribe: (category: CategoryViewModel) => void;
 }
 
 const CategoryListItem: React.FC<Props> = (props) => {
@@ -78,11 +79,11 @@ const CategoryListItem: React.FC<Props> = (props) => {
           }}
           underlayColor={"rgba(0,0,0,0.1)"}
           onPress={() => {
-            alert("subscribed");
+            props.onSubscribe(props.categoryData);
           }}
         >
           <Icon
-            color={false ? "#AA061A" : "gray"}
+            color={props.categoryData.isSubscribed ? "#AA061A" : "gray"}
             size={20}
             solid={false}
             name={"heart"}

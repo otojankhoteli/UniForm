@@ -1,5 +1,5 @@
 import { GetCategoriesResponse, CategoryViewModel } from "./CategoriesApiModel";
-import { CategoriesByNameUri, CreateCategoryUri } from "./CategoriesApiUri";
+import { CategoriesByNameUri, CreateCategoryUri, SubscribeCategoryUri, UnsubscribeCategoryUri } from "./CategoriesApiUri";
 import {
   useGetApi,
   GetRequestOptions,
@@ -7,6 +7,7 @@ import {
   usePostApiWithAuth,
 } from "../shared/ApiHook";
 import { HashtagViewModel } from "../hashtags/HashtagsApiModel";
+import { EmptyRequest, EmptyResponse } from "../shared/ApiResponse";
 
 const initialRequestInfo: GetRequestOptions<CategoryViewModel> = {
   wait: false,
@@ -26,4 +27,14 @@ export function useCategoriesByName() {
 
 export function useCreateCategory() {
   return usePostApiWithAuth<CategoryViewModel, any>(CreateCategoryUri);
+}
+
+
+export function useSubscribeCategory(categoryId: string) {
+  return usePostApiWithAuth<EmptyRequest, EmptyResponse>(SubscribeCategoryUri(categoryId));
+}
+
+
+export function useUnsubscribeCategory(categoryId: string) {
+  return usePostApiWithAuth<EmptyRequest, EmptyResponse>(UnsubscribeCategoryUri(categoryId));
 }

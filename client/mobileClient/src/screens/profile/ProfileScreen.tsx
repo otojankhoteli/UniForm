@@ -65,6 +65,7 @@ const ProfileScreen: React.FC = () => {
               }}
               onPress={() => {
                 alert("log out"); //TODO
+                logout();
               }}
             >
               Log Out
