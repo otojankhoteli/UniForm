@@ -5,11 +5,20 @@ export interface IUser {
   email: string,
   role: string,
   imgUrl: string,
-  voteCount: number,
-  subscribedCategories: string[]
+  voteCount?: number,
+  subscribedCategories?: string[]
 }
 
 export interface IUserSearchModel {
-  _id: string,
-  email: string,
+   name: string,
+}
+
+export interface MQUserModel {
+  _id: string;
+  name: string;
+  surname: string;
+  email: string;
+  photoURL: string;
+  role: string;
+  deviceId: string,
 }

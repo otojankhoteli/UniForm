@@ -7,6 +7,8 @@ export enum NotificationType {
   PostTag = 'post_tag',
   CommentNew = 'comment_new',
   CommentTag = 'comment_tag',
+  CommentUpvote = 'comment_upvote',
+  CommentDownvote = 'comment_downvote',
 }
 
 export interface NotificationViewModel {

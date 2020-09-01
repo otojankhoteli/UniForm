@@ -7,6 +7,7 @@ export interface IUser {
   email: string;
   photoURL: string;
   role: string;
+  deviceId: string,
 }
 
 

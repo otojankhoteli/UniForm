@@ -52,6 +52,7 @@ export class CategoryService {
       memberCount: category.memberCount,
       description: category.description,
       name: category.name,
+      imgUrl: category.imgUrl,
       postCount: category.postCount,
     }));
   }
@@ -74,6 +75,7 @@ export class CategoryService {
       memberCount: category.memberCount,
       description: category.description,
       name: category.name,
+      imgUrl: category.imgUrl,
       postCount: category.postCount,
     }));
   }

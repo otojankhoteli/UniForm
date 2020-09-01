@@ -1,3 +1,7 @@
 export default (email: string): string => {
-  return 'student';//TODO implement logic academicAuthority
-}
+  const prefix = email.split('@')[0];
+  if (Number.isInteger(parseInt(prefix[prefix.length-1]))) {
+    return 'student';
+  }
+  return 'admin';
+};

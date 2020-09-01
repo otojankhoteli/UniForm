@@ -28,7 +28,7 @@ const user = new mongoose.Schema<IUser>({
 
   role: {
     type: String,
-    default: 'user',
+    default: 'student',
   },
 });
 

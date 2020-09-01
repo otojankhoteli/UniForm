@@ -12,6 +12,8 @@ services:
       - /data/uniform/user-service/data:/data/db
     networks:
       - uniform-net
+    ports:
+    - 27017:27017
 
   mongo-post:
     container_name: mongo-post
@@ -24,6 +26,8 @@ services:
       - /data/uniform/post-service/data:/data/db
     networks:
       - uniform-net
+    ports:
+      - 27018:27017
 
   mongo-blob:
     container_name: mongo-blob
@@ -35,6 +39,8 @@ services:
       - /data/uniform/blob-service/data:/data/db
     networks:
       - uniform-net
+    ports:
+      - 27019:27017
 
   mongo-notification:
     container_name: mongo-notification
@@ -46,6 +52,8 @@ services:
       - /data/uniform/notification-service/data:/data/db
     networks:
       - uniform-net
+    ports:
+      - 27020:27017
 
   rabbitmq:
     container_name: rabbitmq

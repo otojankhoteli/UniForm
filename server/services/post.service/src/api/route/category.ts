@@ -12,10 +12,12 @@ const router = Router();
 
 router.use('/', pageParser);
 
-router.post('/', asyncMw(async (req, res, _) => {
+router.post('/',
+  authenticate,
+  asyncMw(async (req, res, _) => {
   const categoryService = Container.get(CategoryService);
-  // todo get user id from token
-  const category: ICategoryDTO = {...req.body};
+  const userId = req.currentUser._id;
+  const category: ICategoryDTO = {...req.body, author: userId};
   res.send(await categoryService.save(category));
 }));
 

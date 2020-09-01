@@ -127,17 +127,21 @@ export class CommentService {
 
   public async upVote(commentId: string, userId: string) {
     const comment = await this._validateVoteAndGetComment(commentId);
-    return this.VoteService.upVote(userId, comment);
+    const result = await this.VoteService.upVote(userId, comment);
+    this.eventEmitter.emit(Events.comment.upvote, {commentId, upvoterId: userId});
+    return result;
   }
 
   public async downVote(commentId: string, userId: string) {
     const comment = await this._validateVoteAndGetComment(commentId);
-    return this.VoteService.downVote(userId, comment);
+    const result = await this.VoteService.downVote(userId, comment);
+    this.eventEmitter.emit(Events.comment.downVote, {commentId, downvoterId: userId});
+    return result;
   }
 
   async unReact(commentId: any, userId: string) {
     const comment = await this._validateVoteAndGetComment(commentId);
-    return this.VoteService.unReact(userId, comment);
+    return await this.VoteService.unReact(userId, comment);
   }
 
   private async commentResponse(comments: IComment[] | IComment, userId: string) {
@@ -166,7 +170,6 @@ export class CommentService {
         isDownvoted: isDownvoted,
         createdAt: comment.createdAt,
         updatedAt: comment.updatedAt,
-        files: comment.files,
       };
       return result;
     });

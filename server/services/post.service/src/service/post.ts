@@ -309,11 +309,11 @@ export class PostService {
     return this.postResponse(result, search.userId);
   }
 
-  public async getPostsOf({userId, skip = this.skip, limit = this.limit}): Promise<PostResponse[]> {
+  public async getPostsOf({userId, profileId, skip = this.skip, limit = this.limit}): Promise<PostResponse[]> {
     const result = await this.PostModel
         .find()
         .where('author')
-        .equals(userId)
+        .equals(profileId)
         .populate('userTags', ['name', 'imgUrl'])
         .populate('author', ['name', 'imgUrl'])
         .populate('category', ['name'])

@@ -1,6 +1,7 @@
 import logger from '../util/logger';
 import {Container} from 'typedi';
 import {UserService} from '../service/user';
+import {IUser, MQUserModel} from '../interface/User';
 
 
 const registerUser = async (msg) => {
@@ -9,7 +10,13 @@ const registerUser = async (msg) => {
     msg.ack();
 
     const userService = Container.get(UserService);
-    await userService.save(msg.body);
+    const user: MQUserModel = msg.body;
+    const newUser: IUser = {
+      ...user,
+      imgUrl: user.photoURL,
+      name: user.name + ' ' + user.surname,
+    };
+    await userService.save(newUser);
     logger.silly('user registered successfully');
   } catch (e) {
     logger.error('error registering user');

@@ -11,9 +11,10 @@ const router = Router();
 
 router.post('/signup', asyncMw(async (req, res, _) => {
   const googleUser = await extractGoogleToken(req.body.accessToken);
+  const deviceId = req.body.deviceId;
 
   const authService = Container.get(AuthService);
-  const user = await authService.logIn({ ...googleUser });
+  const user = await authService.logIn({ ...googleUser, deviceId });
 
   const token = generateToken(user);
   const refreshToken = generateRefreshToken(user);

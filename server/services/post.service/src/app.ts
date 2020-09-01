@@ -24,7 +24,7 @@ const startApp = async () => {
     app.use(express.json());
     app.use(express.urlencoded({extended: true}));
     app.get('/ping', (req, res, next) => {
-      res.send('pong1');
+      res.send('pong');
     });
 
     app.use('/category', categoryRouter);
