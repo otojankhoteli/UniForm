@@ -1,12 +1,21 @@
 import React, { useState, useMemo } from "react";
 import { useGlobalState } from "../../shared/globalState/AppContext";
-import { View, Text, Image, TextInput } from "react-native";
+import { View, Text, Image, TextInput, TouchableHighlight } from "react-native";
 import { UserViewModel } from "../../api/users/UsersApiModel";
+import { useCreateComment } from "../../api/comments/CommentsApiHook";
+import Icon from "react-native-vector-icons/Feather";
 
-const CommentInput: React.FC = () => {
+interface Props {
+  readonly postId: string;
+}
+
+const CommentInput: React.FC<Props> = (props) => {
   const [{ account }] = useGlobalState();
+
+  const { post: createComment, isLoading, error, isError } = useCreateComment();
+
   const user: UserViewModel = useMemo(() => {
-    if (account && account.user) return account.user;
+    // if (account && account.user) return account.user;
     return {
       id: "1",
       email: "tbubu14@freeuni.edu.ge",
@@ -35,7 +44,11 @@ const CommentInput: React.FC = () => {
           {user.name} {user.surname}
         </Text>
       </Text>
-      <View style={{ padding: 5 }}>
+      <View
+        style={{
+          padding: 5,
+        }}
+      >
         {/* <Image
           style={{
             width: 40,
@@ -58,6 +71,34 @@ const CommentInput: React.FC = () => {
           }}
           placeholder={"Add a comment..."}
         ></TextInput>
+        <TouchableHighlight
+          style={{
+            position: "absolute",
+            right: 15,
+            top: 10,
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: "rgba(0,0,0,0)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          underlayColor={"rgba(0,0,0,0.1)"}
+          onPress={() => {
+            createComment({
+              authorId: user.id,
+              postId: props.postId,
+              text: inputText,
+              userTags: [],
+            });
+          }}
+        >
+          <Icon
+            name={"send"}
+            size={25}
+            color={inputText.length > 0 ? "rgb(100,200,255)" : "gray"}
+          ></Icon>
+        </TouchableHighlight>
       </View>
       <Text
         style={{

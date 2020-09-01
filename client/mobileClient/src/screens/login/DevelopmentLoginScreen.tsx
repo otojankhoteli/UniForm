@@ -43,7 +43,7 @@ export default function DevelopmentLoginScreen() {
     post({
       deviceId,
       accessToken:
-        "ya29.a0AfH6SMB4l_ML8d9u0FphFTETv406X4-ISKvFEQltCXiqiIF0Zgr550I6OpznnYkyEnRywC13t-UUg7M9kHUODR3Qm5PL0UNl-oRBPtt4ikKhotVSzFPcY3QBMNYsDk2_JXesHXFXTYxXc_wVdYu36jeX7IIvWrtIW3o",
+        "ya29.a0AfH6SMBxLJ5AXzQ2lri1JsQBDdNeKBNgmR7SBVk3Vf_raZFJs0H8jL2VzSrtja69QfZcgJ89nJv0rVqWgmd1mGFaA-8XKjTrMsPmeo6pF2pQNTntSXl8nQFqvv2wuQsOG0tuxudFPiIEZliuNZn6lkaYVUhKW9IMVHHf",
     });
   };
 
@@ -54,19 +54,7 @@ export default function DevelopmentLoginScreen() {
       style={styles.backgroundImage}
       blurRadius={2}
     >
-      <Text style={styles.welcomeText}>Welcome Development Login</Text>
-      <TextInput
-        onChangeText={(text) => setAccessToken(text)}
-        style={{
-          borderRadius: 1,
-          borderColor: "red",
-          backgroundColor: "white",
-          width: "100%",
-        }}
-        multiline
-      >
-        {accessToken}
-      </TextInput>
+      <Text style={styles.welcomeText}>Welcome</Text>
       <View style={styles.signInButtons}>
         <Button
           type="solid"

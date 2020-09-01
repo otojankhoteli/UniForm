@@ -32,7 +32,7 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      {false ? (
+      {!state.account ? (
         <AuthStackScreen />
       ) : (
         <Suspense

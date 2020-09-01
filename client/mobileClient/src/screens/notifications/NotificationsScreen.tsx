@@ -16,6 +16,16 @@ const NotificationsScreen: React.FC = () => {
 
 export default NotificationsScreen;
 
+const tempText = [
+  'upvoted your post: your post: "Lorem ipsum dolor sit amet, consectetur adipi..."',
+  'downvoted your post: "Lorem ipsum dolor sit amet, consectetur adipi..."',
+  'commented on your post: "Lorem ipsum dolor sit amet, consectetur adipi..."',
+  'tagged you in a post: "Lorem ipsum dolor sit amet, consectetur adipi..."',
+  'upvoted your post: your post: "Lorem ipsum dolor sit amet, consectetur adipi..."',
+  'downvoted your post: "Lorem ipsum dolor sit amet, consectetur adipi..."',
+  'commented on your post: "Lorem ipsum dolor sit amet, consectetur adipi..."',
+  'tagged you in a post: "Lorem ipsum dolor sit amet, consectetur adipi..."',
+];
 let tempData: NotificationViewModel[] = [];
 for (let i = 0; i < 8; i++) {
   tempData.push({
@@ -30,7 +40,7 @@ for (let i = 0; i < 8; i++) {
     postText: "Naxet ra magari rame gavakete bichebo",
     commentId: "1",
     commentText: "Va ra magari rame gagiketebia, yochag!",
-    notificationText: 'commented on your post: "..."',
+    notificationText: tempText[i],
     seen: false,
     etc: {},
     createdAt: new Date(),

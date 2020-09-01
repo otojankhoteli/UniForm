@@ -7,6 +7,7 @@ interface Props {
   readonly color: string;
   readonly type: "add" | "confirm";
   readonly disabled?: boolean;
+  readonly loading?: boolean;
 }
 
 export default function FloatingButton(props: Props) {
@@ -14,8 +15,10 @@ export default function FloatingButton(props: Props) {
     <Button
       containerStyle={styles.addButtonContainer}
       buttonStyle={{ ...styles.addButton, backgroundColor: props.color }}
+      style={{ borderRadius: 50 }}
       onPress={props.onPress}
       disabled={props.disabled}
+      iconContainerStyle={{ borderRadius: 50 }}
       icon={
         <Icon
           name={props.type == "add" ? "plus" : "check"}
@@ -43,5 +46,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 15,
     bottom: 15,
+    borderRadius: 50,
   },
 });

@@ -165,7 +165,7 @@ export default function AddPostScreen() {
       </ScrollView>
       <FloatingButton
         color={"rgb(50,255,100)"}
-        onPress={() => {}}
+        onPress={onSubmit}
         type={"confirm"}
         disabled={!submitState.isValid}
       />

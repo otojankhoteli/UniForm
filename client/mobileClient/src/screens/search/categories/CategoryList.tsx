@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { CategoryViewModel } from "../../../api/categories/CategoriesApiModel";
 import { FlatList, View, ActivityIndicator } from "react-native";
 import CategoryListItem from "./CategoryListItem";
 import FloatingButton from "../../../shared/components/FloatingButton";
 import { useNavigation } from "@react-navigation/native";
+import { useCategoriesByName } from "../../../api/categories/CategoriesApiHook";
 
 interface Props {
   readonly searchTerm: string;
@@ -12,6 +13,30 @@ interface Props {
 
 const CategoryList: React.FC<Props> = (props) => {
   const navigation = useNavigation();
+
+  const {
+    result: categories,
+    setRequestInfo,
+    fetchNextPage,
+    fetchPrevPage,
+    refetch,
+    error,
+    isError,
+    isLoading,
+  } = useCategoriesByName();
+
+  useEffect(() => {
+    setRequestInfo({
+      wait: false,
+      info: {
+        limit: 10,
+        queryParams: [{ key: "name", value: props.searchTerm }],
+        skip: 0,
+      },
+    });
+  }, [props.searchTerm]);
+
+  console.log(categories);
 
   const tempData = useMemo(() => {
     let data: CategoryViewModel[] = [];
@@ -37,19 +62,20 @@ const CategoryList: React.FC<Props> = (props) => {
     return data;
   }, []);
 
-  if (!props.visible)
+  if (!props.visible || isLoading)
     return <ActivityIndicator style={{ marginTop: 20 }} size="large" />;
 
   return (
     <View style={{ flex: 1 }}>
       <FlatList
-        data={tempData}
+        data={categories}
         keyExtractor={(_, index) => {
           return index.toString();
         }}
         renderItem={(item) => {
           return <CategoryListItem categoryData={item.item}></CategoryListItem>;
         }}
+        ListFooterComponent={<View style={{ height: 70 }}></View>}
       ></FlatList>
       <FloatingButton
         onPress={() => {

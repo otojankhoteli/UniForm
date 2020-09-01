@@ -17,7 +17,7 @@ const ProfileScreen: React.FC = () => {
   const [{ account }, dispatch] = useGlobalState();
   const [user, setUser] = useState<UserViewModel>({
     id: "1",
-    email: "t",
+    email: "tbubu14@freeuni.edu.ge",
     role: "student",
     name: "Tornike",
     surname: "Bubuteishvili",
@@ -89,7 +89,7 @@ const ProfileScreen: React.FC = () => {
         text:
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         authorId: "5f1c90ca2fe410a227a969f7",
-        authorUsername: "ako",
+        authorUsername: "tbubu14",
         authorProfilePic: "",
         voteCount: 0,
         categoryName: "MACS",

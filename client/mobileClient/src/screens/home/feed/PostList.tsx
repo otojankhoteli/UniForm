@@ -73,9 +73,9 @@ export function PostList({
       )}
       extraData={[]}
       // onMomentumScrollEnd={onScrollEnd}
-      // refreshControl={
-      //   <RefreshControl refreshing={isLoading} onRefresh={onRefreshInternal} />
-      // }
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={onRefreshInternal} />
+      }
     />
   );
 }

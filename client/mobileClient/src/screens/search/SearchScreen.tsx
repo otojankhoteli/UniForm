@@ -71,13 +71,13 @@ const SearchScreen: React.FC = () => {
         }}
       >
         <View key="1">
-          <CategoryList searchTerm={""} visible={tabIndex == 0} />
+          <CategoryList searchTerm={inputText} visible={tabIndex == 0} />
         </View>
         <View key={"2"}>
-          <UserList searchTerm={""} visible={tabIndex == 1} />
+          <UserList searchTerm={inputText} visible={tabIndex == 1} />
         </View>
         <View key={"3"}>
-          <PostSearchList searchTerm={""} visible={tabIndex == 2} />
+          <PostSearchList searchTerm={inputText} visible={tabIndex == 2} />
         </View>
       </ViewPager>
     </View>

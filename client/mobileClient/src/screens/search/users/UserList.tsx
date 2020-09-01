@@ -1,7 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { FlatList, ActivityIndicator } from "react-native";
 import { UserViewModel } from "../../../api/users/UsersApiModel";
 import UserListItem from "./UserListItem";
+import { useUsersByEmail } from "../../../api/users/UsersApiHook";
 
 interface Props {
   readonly searchTerm: string;
@@ -9,6 +10,28 @@ interface Props {
 }
 
 const UserList: React.FC<Props> = (props) => {
+  const {
+    result: users,
+    setRequestInfo,
+    fetchNextPage,
+    fetchPrevPage,
+    refetch,
+    error,
+    isError,
+    isLoading,
+  } = useUsersByEmail();
+
+  useEffect(() => {
+    setRequestInfo({
+      wait: false,
+      info: {
+        limit: 10,
+        queryParams: [{ key: "name", value: props.searchTerm }],
+        skip: 0,
+      },
+    });
+  }, [props.searchTerm]);
+
   const tempData = useMemo(() => {
     let data: UserViewModel[] = [];
     for (let i = 0; i < 10; i++) {
@@ -30,7 +53,7 @@ const UserList: React.FC<Props> = (props) => {
   return (
     <FlatList
       style={{ flex: 1 }}
-      data={tempData}
+      data={users}
       keyExtractor={(_, index) => {
         return index.toString();
       }}
