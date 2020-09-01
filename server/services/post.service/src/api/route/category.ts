@@ -13,22 +13,25 @@ const router = Router();
 router.use('/', pageParser);
 
 router.post('/',
-  authenticate,
-  asyncMw(async (req, res, _) => {
-  const categoryService = Container.get(CategoryService);
-  const userId = req.currentUser._id;
-  const category: ICategoryDTO = {...req.body, author: userId};
-  res.send(await categoryService.save(category));
-}));
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const categoryService = Container.get(CategoryService);
+      const userId = req.currentUser._id;
+      const category: ICategoryDTO = {...req.body, author: userId};
+      res.send(await categoryService.save(category));
+    }));
 
-router.get('/', asyncMw(async (req, res, _) => {
-  const categoryService = Container.get(CategoryService);
-  const searchModel: ICategorySearchModel = {...req.query};
-  const result: ICategoryDTO[] = searchModel?.name ?
-    (await categoryService.findByPrefix(searchModel)) :
-    (await categoryService.findTop(searchModel));
-  res.send(result);
-}));
+router.get('/',
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const categoryService = Container.get(CategoryService);
+      const searchModel: ICategorySearchModel = {...req.query};
+      const userId = req.currentUser._id;
+      const result: ICategoryDTO[] = searchModel?.name ?
+    (await categoryService.findByPrefix(searchModel, userId)) :
+    (await categoryService.findTop(searchModel, userId));
+      res.send(result);
+    }));
 
 router.get('/posts', asyncMw(async (req, res, _) => {
   const postService = Container.get(PostService);
