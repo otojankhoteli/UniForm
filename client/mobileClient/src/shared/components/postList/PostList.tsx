@@ -6,6 +6,7 @@ import { PostListItem } from "./PostListItem";
 interface Props {
   readonly posts: PostViewModel[];
   readonly header: React.ReactElement;
+  refresh?: () => void;
 }
 
 const PostList: React.FC<Props> = (props) => {
@@ -18,7 +19,7 @@ const PostList: React.FC<Props> = (props) => {
         return index.toString();
       }}
       renderItem={(item) => {
-        return <PostListItem post={item.item} />;
+        return <PostListItem refresh={props.refresh} post={item.item} />;
       }}
     ></FlatList>
   );

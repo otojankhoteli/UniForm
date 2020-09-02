@@ -1,5 +1,5 @@
 import { GetCategoriesResponse, CategoryViewModel } from "./CategoriesApiModel";
-import { CategoriesByNameUri, CreateCategoryUri, SubscribeCategoryUri, UnsubscribeCategoryUri } from "./CategoriesApiUri";
+import { CategoriesByNameUri, CreateCategoryUri, SubscribeCategoryUri, UnsubscribeCategoryUri, CategoryByIdUri } from "./CategoriesApiUri";
 import {
   useGetApi,
   GetRequestOptions,
@@ -29,6 +29,12 @@ export function useCreateCategory() {
   return usePostApiWithAuth<CategoryViewModel, any>(CreateCategoryUri);
 }
 
+export function useCategoryById(categoryId: string) {
+  return useGetApi<CategoryViewModel, any>(CategoryByIdUri(categoryId), true, {
+    wait: true
+  });
+}
+
 
 export function useSubscribeCategory(categoryId: string) {
   return usePostApiWithAuth<EmptyRequest, EmptyResponse>(SubscribeCategoryUri(categoryId));
@@ -38,3 +44,4 @@ export function useSubscribeCategory(categoryId: string) {
 export function useUnsubscribeCategory(categoryId: string) {
   return usePostApiWithAuth<EmptyRequest, EmptyResponse>(UnsubscribeCategoryUri(categoryId));
 }
+

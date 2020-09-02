@@ -36,7 +36,7 @@ const UserList: React.FC<Props> = (props) => {
     let data: UserViewModel[] = [];
     for (let i = 0; i < 10; i++) {
       data.push({
-        id: "" + i,
+        _id: "" + i,
         email: `ako${i}@gmail.com`,
         name: "Aleksandre" + i,
         surname: "Javakhishvili",

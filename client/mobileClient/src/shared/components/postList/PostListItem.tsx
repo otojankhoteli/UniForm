@@ -19,9 +19,10 @@ import { HomeStackParamList } from "../../navigation/HomeStackScreen";
 
 interface Props {
   post: PostViewModel;
+  refresh: () => void;
 }
 
-export function PostListItem({ post }: Props) {
+export function PostListItem({ post, refresh }: Props) {
   const navigation = useNavigation<
     StackNavigationProp<HomeStackParamList, "Post">
   >();
@@ -48,6 +49,9 @@ export function PostListItem({ post }: Props) {
       (downvoteResult && !downvoteFailed)
     ) {
       //TODO
+      if (refresh) {
+        refresh();
+      }
     }
   }, [upvoteResult, upvoteFailed, downvoteResult, downvoteFailed]);
 

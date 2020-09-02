@@ -24,7 +24,7 @@ const UserListItem: React.FC<Props> = (props) => {
       }}
       underlayColor={"rgba(0,0,0,0.1)"}
       onPress={() => {
-        navigation.push("Profile", { userId: props.user.id });
+        navigation.push("Profile", { userId: props.user._id });
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
