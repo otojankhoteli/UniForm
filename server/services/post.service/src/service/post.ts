@@ -324,10 +324,8 @@ export class PostService {
 
   public async searchPost(search: PostSearch): Promise<PostResponse[]> {
     const {skip, limit} = this.getPageParams(search);
-
-    const result = await this.PostModel.find({
-      $text: {$search: search.text},
-    })
+    const condition = search.text ? {$text: {$search: search.text}} : {};
+    const result = await this.PostModel.find(condition)
         .populate('userTags', ['name', 'imgUrl'])
         .populate('author', ['name', 'imgUrl'])
         .populate('category', 'name')
