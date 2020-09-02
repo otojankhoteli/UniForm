@@ -42,6 +42,7 @@ export class CategoryService {
 
     const result = await this.CategoryModel.find()
         .sort({name: 'desc'})
+        .populate('author', ['role', 'imgUrl', 'name', 'email'])
         .skip(query.skip)
         .limit(query.limit);
 
@@ -75,6 +76,7 @@ export class CategoryService {
         .find()
         .where('name')
         .regex(new RegExp(`^${query.name}`))
+        .populate('author', ['role', 'imgUrl', 'name', 'email'])
         .skip(query.skip)
         .limit(query.limit);
 

@@ -22,11 +22,12 @@ router.post('/',
     }));
 
 router.get('/',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const categoryService = Container.get(CategoryService);
       const searchModel: ICategorySearchModel = {...req.query};
       const userId = req.currentUser._id;
+      // const userId = '5ebfd7a5c2be538124b18cd7';
       const result: ICategoryDTO[] = searchModel?.name ?
     (await categoryService.findByPrefix(searchModel, userId)) :
     (await categoryService.findTop(searchModel, userId));
