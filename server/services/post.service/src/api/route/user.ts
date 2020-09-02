@@ -10,7 +10,10 @@ import {CommentService} from '../../service/comment';
 
 const router = Router();
 
-router.use('/', pageParser);
+router.use('/',
+  pageParser,
+  authenticate,
+);
 
 
 // api for test purposes, should not be directly used
@@ -21,15 +24,16 @@ router.post('/', asyncMw(async (req, res, _) => {
 }));
 
 router.get('/feed',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
+      console.log('user feed', req.currentUser);
       const userId = req.currentUser._id;
       res.json(await postService.getFeed(userId, req.query.skip, req.query.limit));
     }));
 
 router.get('/activity/posts',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
       const userId = req.currentUser._id;
@@ -38,7 +42,7 @@ router.get('/activity/posts',
     }));
 
 router.get('/activity/comments',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const commentService = Container.get(CommentService);
       const userId = req.currentUser._id;
@@ -46,7 +50,7 @@ router.get('/activity/comments',
     }));
 
 router.get('/info',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const userService = Container.get(UserService);
       const userId = req.query.profileId;
