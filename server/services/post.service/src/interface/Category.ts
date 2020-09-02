@@ -2,7 +2,7 @@ import {Page} from './Common';
 
 export interface ICategoryDTO {
   id: string;
-  author: string,
+  author: any,
   name: string,
   description: string,
   memberCount: number,

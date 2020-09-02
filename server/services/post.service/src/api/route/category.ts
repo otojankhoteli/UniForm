@@ -22,7 +22,7 @@ router.post('/',
     }));
 
 router.get('/',
-    // authenticate,
+    authenticate,
     asyncMw(async (req, res, _) => {
       const categoryService = Container.get(CategoryService);
       const searchModel: ICategorySearchModel = {...req.query};
@@ -34,10 +34,14 @@ router.get('/',
       res.send(result);
     }));
 
-router.get('/posts', asyncMw(async (req, res, _) => {
-  const postService = Container.get(PostService);
-  res.send(await postService.getCategoryPosts({...req.query}));
-}));
+router.get('/posts',
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const postService = Container.get(PostService);
+      // const userId = '5ebfd7a5c2be538124b18cd7';
+      const userId = req.currentUser._id;
+      res.send(await postService.getCategoryPosts({...req.query, userId}));
+    }));
 
 router.post('/:id/_subscribe',
     authenticate,
