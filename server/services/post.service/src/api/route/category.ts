@@ -10,10 +10,20 @@ import authenticate from '../middleware/authenticate';
 
 const router = Router();
 
-router.use('/', pageParser);
+// router.use('/', (req, res, next) => {
+//   // @ts-ignore
+//   req.currentUser = {
+//     _id: '5ebfd7a5c2be538124b18cd7',
+//   };
+//   next();
+// });
+router.use('/',
+    pageParser,
+    authenticate,
+);
 
 router.post('/',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const categoryService = Container.get(CategoryService);
       const userId = req.currentUser._id;
@@ -22,7 +32,7 @@ router.post('/',
     }));
 
 router.get('/:id',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const categoryService = Container.get(CategoryService);
       // const userId = '5ebfd7a5c2be538124b18cd7';
@@ -31,7 +41,7 @@ router.get('/:id',
     }));
 
 router.get('/',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const categoryService = Container.get(CategoryService);
       const searchModel: ICategorySearchModel = {...req.query};
@@ -45,7 +55,7 @@ router.get('/',
     }));
 
 router.get('/posts',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
       // const userId = '5ebfd7a5c2be538124b18cd7';
@@ -54,7 +64,7 @@ router.get('/posts',
     }));
 
 router.post('/:id/_subscribe',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const userService = Container.get(UserService);
       res.status(204)
@@ -62,7 +72,7 @@ router.post('/:id/_subscribe',
     }));
 
 router.post('/:id/_unsubscribe',
-    authenticate,
+    // authenticate,
     asyncMw(async (req, res, _) => {
       const userService = Container.get(UserService);
       res.status(204)

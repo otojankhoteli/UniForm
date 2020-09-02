@@ -64,12 +64,12 @@ export class CategoryService {
         .limit(query.limit);
 
     return Promise.all(result.map(async (category) => ({
-      id: category._id,
+      id: category.id,
       author: category.author,
       isVerified: category.isVerified,
       memberCount: category.memberCount,
       description: category.description,
-      isSubscribed: await this.isSubscribedTo(userId, category._id),
+      isSubscribed: await this.isSubscribedTo(userId, category.id),
       name: category.name,
       imgUrl: category.imgUrl,
       postCount: category.postCount,
