@@ -41,6 +41,7 @@ export interface GetApiHookResult<TResponse, TResponseViewModel = {}> {
   >;
   requestInfo: GetRequestOptions<TResponseViewModel>;
   refetch: () => void;
+  setUri: React.Dispatch<React.SetStateAction<string>>;
   fetchPrevPage: () => void;
   fetchNextPage: () => void;
   fetchFirstPage: () => void;
@@ -457,6 +458,7 @@ export function useGetApi<TResponse, TResponseViewModel = {}>(
     requestInfo: internalRequestInfo,
     error: responseState.error,
     isError: responseState.isError,
+    setUri: setInternalUri,
     fetchNextPage,
     fetchPrevPage,
     fetchFirstPage,

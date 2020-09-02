@@ -30,8 +30,14 @@ export function useCreateCategory() {
 }
 
 export function useCategoryById(categoryId: string) {
-  return useGetApi<CategoryViewModel, any>(CategoryByIdUri(categoryId), true, {
-    wait: true
+  console.log("useCategoryById", categoryId)
+  return useGetApi<CategoryViewModel>(CategoryByIdUri(categoryId), true, {
+    wait: true,
+    info: {
+      limit: 15,
+      queryParams: [],
+      skip: 0,
+    }
   });
 }
 
