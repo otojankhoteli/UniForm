@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
 import PostList from "../../../shared/components/postList/PostList";
 import { PostViewModel } from "../../../api/posts/PostsApiModel";
 import { ActivityIndicator } from "react-native";
+import { usePostSearchByTerm } from "../../../api/posts/PostsApiHook";
 
 interface Props {
   readonly searchTerm: string;
@@ -9,6 +10,23 @@ interface Props {
 }
 
 const PostSearchList: React.FC<Props> = (props) => {
+
+  const { result: posts, setRequestInfo: fetch } = usePostSearchByTerm();
+
+
+  useEffect(() => {
+    if (props.searchTerm) {
+      fetch(prev => ({
+        wait: prev.wait,
+        info: {
+          queryParams: [{ key: "text", value: props.searchTerm }],
+          limit: prev?.info?.limit,
+          skip: prev?.info?.skip
+        }
+      }));
+    }
+  }, [props.searchTerm]);
+
   const tempPosts = useMemo(() => {
     let data: PostViewModel[] = [];
     for (let i = 0; i < 10; i++) {
@@ -35,7 +53,7 @@ const PostSearchList: React.FC<Props> = (props) => {
   if (!props.visible)
     return <ActivityIndicator style={{ marginTop: 20 }} size="large" />;
 
-  return <PostList refresh={() => { }} header={undefined} posts={tempPosts} />;
+  return <PostList refresh={() => { }} header={undefined} posts={posts} />;
 };
 
 export default PostSearchList;
