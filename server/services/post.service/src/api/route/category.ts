@@ -21,6 +21,15 @@ router.post('/',
       res.send(await categoryService.save(category));
     }));
 
+router.get('/:id',
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const categoryService = Container.get(CategoryService);
+      // const userId = '5ebfd7a5c2be538124b18cd7';
+      const userId = req.currentUser._id;
+      res.send(await categoryService.findById(req.params.id, userId));
+    }));
+
 router.get('/',
     authenticate,
     asyncMw(async (req, res, _) => {

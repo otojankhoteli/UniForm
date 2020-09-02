@@ -32,8 +32,25 @@ export class CategoryService {
   }
 
 
-  public async findById(id: string) {
-    return this.CategoryModel.findById(id);
+  public async findById(id: string, userId) {
+    const result = await this.CategoryModel.findById(id)
+        .populate('author', ['role', 'imgUrl', 'name', 'email']);
+
+    return this.toViewModel(result, userId);
+  }
+
+  private async toViewModel(category, userId) {
+    return {
+      id: category.id,
+      author: category.author,
+      isVerified: category.isVerified,
+      memberCount: category.memberCount,
+      description: category.description,
+      isSubscribed: await this.isSubscribedTo(userId, category.id),
+      name: category.name,
+      imgUrl: category.imgUrl,
+      postCount: category.postCount,
+    };
   }
 
   public async findTop(query: ICategorySearchModel, userId: string) {
@@ -47,12 +64,12 @@ export class CategoryService {
         .limit(query.limit);
 
     return Promise.all(result.map(async (category) => ({
-      id: category.id,
+      id: category._id,
       author: category.author,
       isVerified: category.isVerified,
       memberCount: category.memberCount,
       description: category.description,
-      isSubscribed: await this.isSubscribedTo(userId, category.id),
+      isSubscribed: await this.isSubscribedTo(userId, category._id),
       name: category.name,
       imgUrl: category.imgUrl,
       postCount: category.postCount,
