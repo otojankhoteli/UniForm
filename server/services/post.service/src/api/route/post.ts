@@ -60,20 +60,23 @@ router.put('/:postId',
 router.post('/:postId/_upvote',
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
-      res.json(await postService.upVote(req.params.postId, req.currentUser._id));
+      await postService.upVote(req.params.postId, req.currentUser._id);
+      res.sendStatus(200);
     }));
 
 
 router.post('/:postId/_downvote',
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
-      res.json(await postService.downVote(req.params.postId, req.currentUser._id));
+      await postService.downVote(req.params.postId, req.currentUser._id);
+      res.sendStatus(200);
     }));
 
 router.post('/:postId/_unreact',
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
-      res.json(await postService.unReact(req.params.postId, req.currentUser._id));
+      await postService.unReact(req.params.postId, req.currentUser._id);
+      res.sendStatus(200);
     }));
 
 router.post('/test/:userId',

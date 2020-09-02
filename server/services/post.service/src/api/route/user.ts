@@ -27,7 +27,6 @@ router.get('/feed',
     // authenticate,
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
-      console.log('user feed', req.currentUser);
       const userId = req.currentUser._id;
       res.json(await postService.getFeed(userId, req.query.skip, req.query.limit));
     }));
