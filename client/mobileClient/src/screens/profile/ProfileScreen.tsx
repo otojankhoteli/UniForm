@@ -12,6 +12,7 @@ import { SearchStackParamList } from "../../shared/navigation/SearchStackScreen"
 import { NotificationsStackParamList } from "../../shared/navigation/NotificationsStackScreen";
 import { User } from "../../api/auth/AuthApiModel";
 import { UserViewModel } from "../../api/users/UsersApiModel";
+import { useUserPosts } from "../../api/posts/PostsApiHook";
 
 const ProfileScreen: React.FC = () => {
   const [{ account }, dispatch] = useGlobalState();
@@ -23,7 +24,8 @@ const ProfileScreen: React.FC = () => {
     surname: "Bubuteishvili",
     photoURL: null,
   });
-  const [profilePosts, setProfilePosts] = useState<PostViewModel[]>([]);
+
+  const { result: posts, refetch } = useUserPosts();
 
   const route = useRoute<
     RouteProp<
@@ -35,6 +37,9 @@ const ProfileScreen: React.FC = () => {
     >
   >();
   const navigation = useNavigation();
+
+
+  console.log("posts", posts)
 
   const isSelf = useMemo(() => {
     if (!route.params || !route.params.userId) return true;
@@ -81,30 +86,6 @@ const ProfileScreen: React.FC = () => {
     if (isSelf && account && account.user) setUser(account.user);
   }, []);
 
-  useEffect(() => {
-    //TODO actually fetch posts
-    let tempPosts: PostViewModel[] = [];
-    for (let i = 0; i < 10; i++) {
-      tempPosts.push({
-        id: "1",
-        text:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        authorId: "5f1c90ca2fe410a227a969f7",
-        authorUsername: "tbubu14",
-        authorProfilePic: "",
-        voteCount: 0,
-        categoryName: "MACS",
-        categoryId: "5f1ca0e1038af74494cbeda4",
-        isJoined: false,
-        isUpvoted: false,
-        isDownvoted: false,
-        createdAt: "2020-07-25T21:27:43.160Z",
-        files: ["string"],
-      });
-    }
-    setProfilePosts(tempPosts);
-  }, []);
-
   const logout = () => {
     dispatch({
       type: "setLoggedInUser",
@@ -115,7 +96,7 @@ const ProfileScreen: React.FC = () => {
   return (
     <View style={{ flex: 1 }}>
       <PostList
-        posts={profilePosts}
+        posts={posts || []}
         header={<ProfileHeader isSelf={isSelf} user={user} />}
       />
     </View>

@@ -15,6 +15,8 @@ import {
   DownvoteUri,
   UpvoteUri,
   CategoryPostUri,
+  UserPostsUri,
+  PostSearchByTermUri,
 } from "./PostsApiUri";
 import { EmptyRequest, EmptyResponse } from "../shared/ApiResponse";
 
@@ -159,4 +161,12 @@ export function useCategoryPosts() {
   return useGetApi<GetPostsResponse, PostViewModel>(CategoryPostUri, true, {
     wait: true
   });
+}
+
+export function useUserPosts() {
+  return useGetApi<GetPostsResponse, PostViewModel>(UserPostsUri);
+}
+
+export function usePostSearchByTerm() {
+  return useGetApi<GetPostsResponse, PostViewModel>(PostSearchByTermUri);
 }
