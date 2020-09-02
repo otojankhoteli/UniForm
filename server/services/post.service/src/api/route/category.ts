@@ -13,27 +13,36 @@ const router = Router();
 router.use('/', pageParser);
 
 router.post('/',
-  authenticate,
-  asyncMw(async (req, res, _) => {
-  const categoryService = Container.get(CategoryService);
-  const userId = req.currentUser._id;
-  const category: ICategoryDTO = {...req.body, author: userId};
-  res.send(await categoryService.save(category));
-}));
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const categoryService = Container.get(CategoryService);
+      const userId = req.currentUser._id;
+      const category: ICategoryDTO = {...req.body, author: userId};
+      res.send(await categoryService.save(category));
+    }));
 
-router.get('/', asyncMw(async (req, res, _) => {
-  const categoryService = Container.get(CategoryService);
-  const searchModel: ICategorySearchModel = {...req.query};
-  const result: ICategoryDTO[] = searchModel?.name ?
-    (await categoryService.findByPrefix(searchModel)) :
-    (await categoryService.findTop(searchModel));
-  res.send(result);
-}));
+router.get('/',
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const categoryService = Container.get(CategoryService);
+      const searchModel: ICategorySearchModel = {...req.query};
+      console.log(req.currentUser);
+      const userId = req.currentUser._id;
+      // const userId = '5ebfd7a5c2be538124b18cd7';
+      const result: ICategoryDTO[] = searchModel?.name ?
+    (await categoryService.findByPrefix(searchModel, userId)) :
+    (await categoryService.findTop(searchModel, userId));
+      res.send(result);
+    }));
 
-router.get('/posts', asyncMw(async (req, res, _) => {
-  const postService = Container.get(PostService);
-  res.send(await postService.getCategoryPosts({...req.query}));
-}));
+router.get('/posts',
+    authenticate,
+    asyncMw(async (req, res, _) => {
+      const postService = Container.get(PostService);
+      // const userId = '5ebfd7a5c2be538124b18cd7';
+      const userId = req.currentUser._id;
+      res.send(await postService.getCategoryPosts({...req.query, userId}));
+    }));
 
 router.post('/:id/_subscribe',
     authenticate,

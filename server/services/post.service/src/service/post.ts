@@ -133,18 +133,34 @@ export class PostService {
         .limit(query.limit);
   }
 
-  public async getCategoryPosts({categoryId, skip, limit}) {
+  public async getCategoryPosts({categoryId, userId, skip, limit}) {
     this.logger.silly('getting posts from category: %o', categoryId);
     if (!skip) skip = this.skip;
     if (!limit) limit = this.limit;
 
-    return this.PostModel
+    // d: string;
+    // text: string;
+    // authorId: string;
+    // authorUsername: string;
+    // authorProfilePic?: string;
+    // voteCount: number;
+    // categoryName: string;
+    // categoryId: string;
+    // isUpvoted: boolean;
+    // isDownvoted: boolean;
+    // isJoined: boolean;
+    // createdAt?: string;
+    // files: string[];
+
+    const posts = await this.PostModel
         .find()
         .where('category')
+        .populate('author', ['role', 'imgUrl', 'name', 'email'])
         .equals(categoryId)
         .skip(skip)
-        .limit(limit)
-        .lean();
+        .limit(limit);
+
+    return this.postResponse(posts, userId);
   }
 
   private async _validateVoteAndGetPost(postId) {
@@ -213,6 +229,20 @@ export class PostService {
       const postId = post._id.toString();
       const isUpvoted = upVotedPosts.includes(postId);
       const isDownvoted = downVotedPosts.includes(postId);
+
+      // d: string;
+      // text: string;
+      // authorId: string;
+      // authorUsername: string;
+      // authorProfilePic?: string;
+      // voteCount: number;
+      // categoryName: string;
+      // categoryId: string;
+      // isUpvoted: boolean;
+      // isDownvoted: boolean;
+      // isJoined: boolean;
+      // createdAt?: string;
+      // files: string[];
 
       const resp: PostResponse = {
         id: post._id.toString(),

@@ -36,28 +36,39 @@ export class CategoryService {
     return this.CategoryModel.findById(id);
   }
 
-  public async findTop(query: ICategorySearchModel) {
+  public async findTop(query: ICategorySearchModel, userId: string) {
     if (!query.skip) query.skip = this.skip;
     if (!query.limit) query.limit = this.limit;
 
     const result = await this.CategoryModel.find()
         .sort({name: 'desc'})
+        .populate('author', ['role', 'imgUrl', 'name', 'email'])
         .skip(query.skip)
         .limit(query.limit);
 
-    return result.map<ICategoryDTO>((category) => ({
+    return Promise.all(result.map(async (category) => ({
       id: category.id,
       author: category.author,
       isVerified: category.isVerified,
       memberCount: category.memberCount,
       description: category.description,
+      isSubscribed: await this.isSubscribedTo(userId, category.id),
       name: category.name,
       imgUrl: category.imgUrl,
       postCount: category.postCount,
-    }));
+    })));
   }
 
-  public async findByPrefix(query: ICategorySearchModel) {
+  private async isSubscribedTo(userId, categoryId) {
+    const res = await this.UserModel
+        .findOne({_id: userId, subscribedCategories: categoryId});
+    if (res) {
+      return true;
+    }
+    return false;
+  }
+
+  public async findByPrefix(query: ICategorySearchModel, userId: string) {
     if (!query.skip) query.skip = this.skip;
     if (!query.limit) query.limit = this.limit;
 
@@ -65,18 +76,20 @@ export class CategoryService {
         .find()
         .where('name')
         .regex(new RegExp(`^${query.name}`))
+        .populate('author', ['role', 'imgUrl', 'name', 'email'])
         .skip(query.skip)
         .limit(query.limit);
 
-    return result.map<ICategoryDTO>((category) => ({
+    return Promise.all(result.map(async (category) => ({
       id: category.id,
       author: category.author,
       isVerified: category.isVerified,
       memberCount: category.memberCount,
       description: category.description,
+      isSubscribed: await this.isSubscribedTo(userId, category.id),
       name: category.name,
       imgUrl: category.imgUrl,
       postCount: category.postCount,
-    }));
+    })));
   }
 }
