@@ -17,7 +17,7 @@ const CommentInput: React.FC<Props> = (props) => {
   const user: UserViewModel = useMemo(() => {
     // if (account && account.user) return account.user;
     return {
-      id: "1",
+      _id: "1",
       email: "tbubu14@freeuni.edu.ge",
       name: "Tornike",
       surname: "Bubuteishvili",
@@ -86,7 +86,7 @@ const CommentInput: React.FC<Props> = (props) => {
           underlayColor={"rgba(0,0,0,0.1)"}
           onPress={() => {
             createComment({
-              authorId: user.id,
+              authorId: user._id,
               postId: props.postId,
               text: inputText,
               userTags: [],

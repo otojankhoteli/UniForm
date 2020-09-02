@@ -16,7 +16,7 @@ import { UserViewModel } from "../../api/users/UsersApiModel";
 const ProfileScreen: React.FC = () => {
   const [{ account }, dispatch] = useGlobalState();
   const [user, setUser] = useState<UserViewModel>({
-    id: "1",
+    _id: "1",
     email: "tbubu14@freeuni.edu.ge",
     role: "student",
     name: "Tornike",
@@ -38,8 +38,8 @@ const ProfileScreen: React.FC = () => {
 
   const isSelf = useMemo(() => {
     if (!route.params || !route.params.userId) return true;
-    if (account && account.user && account.user.id)
-      return account.user.id == route.params.userId;
+    if (account && account.user && account.user._id)
+      return account.user._id == route.params.userId;
     return true;
   }, []);
 

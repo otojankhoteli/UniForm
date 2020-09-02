@@ -35,7 +35,7 @@ const PostSearchList: React.FC<Props> = (props) => {
   if (!props.visible)
     return <ActivityIndicator style={{ marginTop: 20 }} size="large" />;
 
-  return <PostList header={undefined} posts={tempPosts} />;
+  return <PostList refresh={() => { }} header={undefined} posts={tempPosts} />;
 };
 
 export default PostSearchList;

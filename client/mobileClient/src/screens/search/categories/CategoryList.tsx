@@ -41,6 +41,9 @@ const CategoryList: React.FC<Props> = (props) => {
 
 
   useEffect(() => {
+    if (targetCategory.id == null || targetCategory.id == undefined) {
+      return;
+    }
     if (targetCategory.isSubscribed) {
       unsubscribe({});
     } else {

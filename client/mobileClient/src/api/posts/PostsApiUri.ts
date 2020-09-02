@@ -6,3 +6,6 @@ export const UpvoteUri = (postId: string) =>
   `${PostHost}post/${postId}/_upvote`;
 export const DownvoteUri = (postId: string) =>
   `${PostHost}post/${postId}/_downvote`;
+
+export const CategoryPostUri =
+  `${PostHost}category/posts`;

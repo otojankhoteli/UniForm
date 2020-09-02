@@ -18,7 +18,7 @@ export default function UserTagSuggestionPopUp({ userTags, isVisible, onSelect }
   return isVisible && userTags.length > 0 ?
     <View style={styles.container}>
       {userTags.map(user => <TouchableOpacity key={user.email}
-        onPress={() => onSelect(getPrefix(user.email), user.id)}
+        onPress={() => onSelect(getPrefix(user.email), user._id)}
       >
         <Text>{getPrefix(user.email)}</Text>
       </TouchableOpacity>)}

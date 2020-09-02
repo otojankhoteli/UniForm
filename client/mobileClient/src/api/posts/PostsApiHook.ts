@@ -14,6 +14,7 @@ import {
   GetFeedUri,
   DownvoteUri,
   UpvoteUri,
+  CategoryPostUri,
 } from "./PostsApiUri";
 import { EmptyRequest, EmptyResponse } from "../shared/ApiResponse";
 
@@ -151,4 +152,11 @@ export function useUpvote(postId: string) {
 
 export function useDownvote(postId: string) {
   return usePostApiWithAuth<EmptyRequest, EmptyResponse>(DownvoteUri(postId));
+}
+
+
+export function useCategoryPosts() {
+  return useGetApi<GetPostsResponse, PostViewModel>(CategoryPostUri, true, {
+    wait: true
+  });
 }
