@@ -26,6 +26,7 @@ router.get('/',
     asyncMw(async (req, res, _) => {
       const categoryService = Container.get(CategoryService);
       const searchModel: ICategorySearchModel = {...req.query};
+      console.log(req.currentUser);
       const userId = req.currentUser._id;
       // const userId = '5ebfd7a5c2be538124b18cd7';
       const result: ICategoryDTO[] = searchModel?.name ?
