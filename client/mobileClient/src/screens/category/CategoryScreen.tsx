@@ -8,6 +8,7 @@ import PostList from "../../shared/components/postList/PostList";
 import { CategoryViewModel } from "../../api/categories/CategoriesApiModel";
 import { useCategoryPosts } from "../../api/posts/PostsApiHook";
 import { useCategoryById } from "../../api/categories/CategoriesApiHook";
+import { CategoryByIdUri } from "../../api/categories/CategoriesApiUri";
 
 const CategoryScreen: React.FC = () => {
   const route = useRoute<RouteProp<HomeStackParamList, "Category">>();
@@ -16,12 +17,14 @@ const CategoryScreen: React.FC = () => {
   >();
 
   const [categoryId, setCategoryId] = useState<string>("");
-  const { result: category, refetch } = useCategoryById(categoryId);
+  const { result: category, setUri } = useCategoryById(categoryId);
   const { result: posts, setRequestInfo: fetch } = useCategoryPosts();
+
+  console.log("category", category)
 
   useEffect(() => {
     navigation.setOptions({ headerTitle: "u/" + route.params.categoryName });
-    console.log(route.params);
+    console.log("params", route.params);
     setCategoryId(route.params.categoryId);
     fetch(prev => ({
       wait: false,
@@ -37,7 +40,8 @@ const CategoryScreen: React.FC = () => {
   useEffect(() => {
     if (categoryId == null || categoryId == undefined)
       return;
-    refetch();
+    console.log("refetch category by id", categoryId)
+    setUri(CategoryByIdUri(categoryId))
   }, [categoryId]);
 
   return (
