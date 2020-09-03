@@ -125,12 +125,17 @@ export class PostService {
     if (!query.skip) query.skip = this.skip;
     if (!query.limit) query.limit = this.limit;
 
-    return this.HashTagModel
-        .find()
-        .where('name')
-        .regex(new RegExp(`^${query.name}`))
+    const regex = new RegExp(`^${query.name}`);
+    const conditions = query.name ? {name: {$regex: regex}} : {};
+
+    const result = await this.HashTagModel
+        .find(conditions)
         .skip(query.skip)
         .limit(query.limit);
+
+    return result.map((hashtag) => {
+      return {name: hashtag.name};
+    });
   }
 
   public async getCategoryPosts({categoryId, userId, skip, limit}) {
