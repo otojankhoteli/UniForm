@@ -13,6 +13,7 @@ export interface IPost extends LogDates{
   upVoters: string[],
   downVoters: string[],
   voteCount: number,
+  commentCount: number,
 }
 
 export interface IPostPage extends PageResponse {
@@ -44,6 +45,7 @@ export interface PostResponse {
   isDownvoted: boolean;
   createdAt: string;
   files: string[];
+  commentCount: number,
 }
 
 export interface FeedPostResponsePage extends PageResponse {

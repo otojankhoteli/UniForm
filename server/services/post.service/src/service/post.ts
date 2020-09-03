@@ -270,6 +270,7 @@ export class PostService {
         isDownvoted: isDownvoted,
         createdAt: post.createdAt,
         files: post.files,
+        commentCount: post.commentCount,
       };
       return resp;
     });
