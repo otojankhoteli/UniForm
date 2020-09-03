@@ -31,6 +31,15 @@ router.post('/',
       res.send(await categoryService.save(category));
     }));
 
+router.get('/posts',
+    // authenticate,
+    asyncMw(async (req, res, _) => {
+      const postService = Container.get(PostService);
+      // const userId = '5ebfd7a5c2be538124b18cd7';
+      const userId = req.currentUser._id;
+      res.send(await postService.getCategoryPosts({...req.query, userId}));
+    }));
+
 router.get('/:id',
     // authenticate,
     asyncMw(async (req, res, _) => {
@@ -53,14 +62,6 @@ router.get('/',
       res.send(result);
     }));
 
-router.get('/posts',
-    // authenticate,
-    asyncMw(async (req, res, _) => {
-      const postService = Container.get(PostService);
-      // const userId = '5ebfd7a5c2be538124b18cd7';
-      const userId = req.currentUser._id;
-      res.send(await postService.getCategoryPosts({...req.query, userId}));
-    }));
 
 router.post('/:id/_subscribe',
     // authenticate,
