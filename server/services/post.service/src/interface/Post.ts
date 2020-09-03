@@ -1,7 +1,6 @@
 import {Page, PageResponse, LogDates} from './Common';
 
 
-
 export interface IPost extends LogDates{
   _id: string,
   author: any,
@@ -14,7 +13,6 @@ export interface IPost extends LogDates{
   upVoters: string[],
   downVoters: string[],
   voteCount: number,
-
 }
 
 export interface IPostPage extends PageResponse {
@@ -30,6 +28,7 @@ export interface UpsertPostRequest {
   text: string,
   files: string[],
 }
+
 export interface PostResponse {
   id: string;
   text: string;

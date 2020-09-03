@@ -11,6 +11,9 @@ const notification = new mongoose.Schema({
   fromName: {
     type: String,
   },
+  fromImgUrl: {
+    type: String,
+  },
   toId: {
     type: String,
   },

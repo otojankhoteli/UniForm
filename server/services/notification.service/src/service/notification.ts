@@ -43,6 +43,7 @@ export class NotificationService {
       type: e.type,
       fromId: e.fromId,
       fromName: e.fromName,
+      fromImgUrl: e.fromImgUrl,
       toId: e.toId,
       toName: e.toName,
       toDeviceId: e.toDeviceId,
