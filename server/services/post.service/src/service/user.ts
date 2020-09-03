@@ -25,11 +25,24 @@ export class UserService {
 
   public async search({name, skip=0, limit=10}) {
     const regex = new RegExp(`${name}`, 'i');
-    return this.UserModel
+    const result = await this.UserModel
         .find({$or: [{name: {$regex: regex}}, {email: {$regex: regex}}]})
         .skip(skip)
         .limit(limit)
         .lean();
+
+    return result.map((user) => {
+      return {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        deviceId: user.deviceId,
+        imgUrl: user.imgUrl,
+        subscribedCategories: user.subscribedCategories,
+        role: user.role,
+        voteCount: user.voteCount,
+      };
+    });
   }
 
   public async findById(id) {
