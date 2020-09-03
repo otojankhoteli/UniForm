@@ -143,20 +143,6 @@ export class PostService {
     if (!skip) skip = this.skip;
     if (!limit) limit = this.limit;
 
-    // d: string;
-    // text: string;
-    // authorId: string;
-    // authorUsername: string;
-    // authorProfilePic?: string;
-    // voteCount: number;
-    // categoryName: string;
-    // categoryId: string;
-    // isUpvoted: boolean;
-    // isDownvoted: boolean;
-    // isJoined: boolean;
-    // createdAt?: string;
-    // files: string[];
-
     const posts = await this.PostModel
         .find()
         .where('category')
@@ -236,19 +222,6 @@ export class PostService {
       const isUpvoted = upVotedPosts.includes(postId);
       const isDownvoted = downVotedPosts.includes(postId);
 
-      // d: string;
-      // text: string;
-      // authorId: string;
-      // authorUsername: string;
-      // authorProfilePic?: string;
-      // voteCount: number;
-      // categoryName: string;
-      // categoryId: string;
-      // isUpvoted: boolean;
-      // isDownvoted: boolean;
-      // isJoined: boolean;
-      // createdAt?: string;
-      // files: string[];
       const resp: PostResponse = {
         id: post._id.toString(),
         text: post.text,
@@ -257,13 +230,6 @@ export class PostService {
         authorProfilePic: post.author.imgUrl,
         voteCount: post.voteCount,
         categoryId: post.category._id.toString(),
-        // userTags: post.userTags.map((userTag) => {
-        //   return {
-        //     id: userTag._id.toString(),
-        //     name: userTag.name,
-        //     imgUrl: userTag.imgUrl,
-        //   };
-        // }),
         userTags: post.userTags,
         categoryName: post.category.name,
         isUpvoted: isUpvoted,
@@ -292,15 +258,6 @@ export class PostService {
         .skip(skip)
         .limit(limit)
         .lean();
-
-    // const postsRaw = posts.map((post) => {
-    //   return {
-    //     ...post,
-    //     _id: post._id.toString(),
-    //   };
-    // })
-    //
-    // console.log(postsRaw);
   }
 
 

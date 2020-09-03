@@ -52,7 +52,7 @@ router.get('/info',
     // authenticate,
     asyncMw(async (req, res, _) => {
       const userService = Container.get(UserService);
-      const userId = req.query.profileId;
+      const userId = req.query.profileId || req.currentUser._id;
       res.json(await userService.findById(userId));
     }));
 
