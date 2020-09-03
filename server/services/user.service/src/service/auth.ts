@@ -14,6 +14,8 @@ export class AuthService {
   }
 
   public async logIn(userInputDTO: IUser): Promise<IUser> {
+    await this.checkUser(userInputDTO.email);
+
     const role = getRole(userInputDTO.email);
 
     let user = await this.UserModel.findOneAndUpdate({ email: userInputDTO.email },
@@ -71,5 +73,11 @@ export class AuthService {
   //   }// TODO create specific error type?!
   //   return true;
   // }
+  private async checkUser(email: string) {
+    const suffix = email.split('@')[1];
+    if (suffix !== 'freeuni.edu.ge') {
+      throw new Error("You need to be a member of Free University");
+    }
+  }
 }
 // TODO remove dependency on Mongo specific repository
