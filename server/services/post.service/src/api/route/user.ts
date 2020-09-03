@@ -11,20 +11,12 @@ import {CommentService} from '../../service/comment';
 const router = Router();
 
 router.use('/',
-  pageParser,
-  authenticate,
+    pageParser,
+    authenticate,
 );
 
 
-// api for test purposes, should not be directly used
-router.post('/', asyncMw(async (req, res, _) => {
-  const userService = Container.get(UserService);
-  const user: IUser = req.body;
-  res.json(await userService.save(user));
-}));
-
 router.get('/feed',
-    // authenticate,
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
       const userId = req.currentUser._id;
@@ -32,7 +24,6 @@ router.get('/feed',
     }));
 
 router.get('/activity/posts',
-    // authenticate,
     asyncMw(async (req, res, _) => {
       const postService = Container.get(PostService);
       const userId = req.currentUser._id;
@@ -41,7 +32,6 @@ router.get('/activity/posts',
     }));
 
 router.get('/activity/comments',
-    // authenticate,
     asyncMw(async (req, res, _) => {
       const commentService = Container.get(CommentService);
       const userId = req.currentUser._id;
@@ -49,7 +39,6 @@ router.get('/activity/comments',
     }));
 
 router.get('/info',
-    // authenticate,
     asyncMw(async (req, res, _) => {
       const userService = Container.get(UserService);
       const userId = req.query.profileId || req.currentUser._id;
@@ -57,7 +46,6 @@ router.get('/info',
     }));
 
 router.get('/',
-    // authenticate,
     asyncMw(async (req, res, _) => {
       const userService = Container.get(UserService);
       res.json(await userService.search({name: req.query.name, skip: req.query.skip, limit: req.query.limit}));

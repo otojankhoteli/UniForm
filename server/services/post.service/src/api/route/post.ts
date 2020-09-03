@@ -9,13 +9,6 @@ import authenticate from '../middleware/authenticate';
 
 const router = Router();
 
-// router.use('/', (req, res, next) => {
-//   // @ts-ignore
-//   req.currentUser = {
-//     _id: '5ebc4ef165f4ab9597d4aa1e',
-//   };
-//   next();
-// });
 
 router.use('/',
     pageParser,

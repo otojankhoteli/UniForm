@@ -39,6 +39,41 @@ export class PostService {
   ) {
   }
 
+  private async postResponse(posts: IPost[] | IPost, userId: string) {
+    posts = [].concat(posts);
+    const postIds = posts.map((post) => post._id.toString());
+
+    const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
+        .map((post) => post._id.toString());
+    const downVotedPosts = (await this.filterReactedPosts(postIds, userId, 'downvote'))
+        .map((post) => post._id.toString());
+
+    const postsWithReacts = posts.map((post) => {
+      const postId = post._id.toString();
+      const isUpvoted = upVotedPosts.includes(postId);
+      const isDownvoted = downVotedPosts.includes(postId);
+
+      const resp: PostResponse = {
+        id: post._id.toString(),
+        text: post.text,
+        authorId: post.author._id.toString(),
+        authorUsername: post.author.name,
+        authorProfilePic: post.author.imgUrl,
+        voteCount: post.voteCount,
+        categoryId: post.category._id.toString(),
+        userTags: post.userTags,
+        categoryName: post.category.name,
+        isUpvoted: isUpvoted,
+        isDownvoted: isDownvoted,
+        createdAt: post.createdAt,
+        files: post.files,
+        commentCount: post.commentCount,
+      };
+      return resp;
+    });
+    return postsWithReacts;
+  }
+
   private async _validateBeforeInsert(post: UpsertPostRequest) {
     const category = await this.CategoryModel.findById(post.categoryId);
 
@@ -206,43 +241,6 @@ export class PostService {
     const posts = await this.getRawFeed(userId, skip, limit);
     return this.postResponse(posts, userId);
   }
-
-
-  private async postResponse(posts: IPost[] | IPost, userId: string) {
-    posts = [].concat(posts);
-    const postIds = posts.map((post) => post._id.toString());
-
-    const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
-        .map((post) => post._id.toString());
-    const downVotedPosts = (await this.filterReactedPosts(postIds, userId, 'downvote'))
-        .map((post) => post._id.toString());
-
-    const postsWithReacts = posts.map((post) => {
-      const postId = post._id.toString();
-      const isUpvoted = upVotedPosts.includes(postId);
-      const isDownvoted = downVotedPosts.includes(postId);
-
-      const resp: PostResponse = {
-        id: post._id.toString(),
-        text: post.text,
-        authorId: post.author._id.toString(),
-        authorUsername: post.author.name,
-        authorProfilePic: post.author.imgUrl,
-        voteCount: post.voteCount,
-        categoryId: post.category._id.toString(),
-        userTags: post.userTags,
-        categoryName: post.category.name,
-        isUpvoted: isUpvoted,
-        isDownvoted: isDownvoted,
-        createdAt: post.createdAt,
-        files: post.files,
-        commentCount: post.commentCount,
-      };
-      return resp;
-    });
-    return postsWithReacts;
-  }
-
 
   private async getRawFeed(userId: string, skip, limit): Promise<IPost[]> {
     // const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
