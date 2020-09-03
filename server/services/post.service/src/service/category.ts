@@ -36,11 +36,11 @@ export class CategoryService {
     const result = await this.CategoryModel.findById(id)
         .populate('author', ['role', 'imgUrl', 'name', 'email']);
 
-    return this.toViewModel(result, userId);
+    return this.categoryResponse(userId)(result);
   }
 
-  private async toViewModel(category, userId) {
-    return {
+  private categoryResponse = (userId) => {
+    return async (category) => ({
       id: category.id,
       author: category.author,
       isVerified: category.isVerified,
@@ -50,7 +50,7 @@ export class CategoryService {
       name: category.name,
       imgUrl: category.imgUrl,
       postCount: category.postCount,
-    };
+    });
   }
 
   public async findTop(query: ICategorySearchModel, userId: string) {
@@ -63,17 +63,7 @@ export class CategoryService {
         .skip(query.skip)
         .limit(query.limit);
 
-    return Promise.all(result.map(async (category) => ({
-      id: category.id,
-      author: category.author,
-      isVerified: category.isVerified,
-      memberCount: category.memberCount,
-      description: category.description,
-      isSubscribed: await this.isSubscribedTo(userId, category.id),
-      name: category.name,
-      imgUrl: category.imgUrl,
-      postCount: category.postCount,
-    })));
+    return Promise.all(result.map(this.categoryResponse(userId)));
   }
 
   private async isSubscribedTo(userId, categoryId) {
@@ -97,17 +87,7 @@ export class CategoryService {
         .skip(query.skip)
         .limit(query.limit);
 
-    return Promise.all(result.map(async (category) => ({
-      id: category.id,
-      author: category.author,
-      isVerified: category.isVerified,
-      memberCount: category.memberCount,
-      description: category.description,
-      isSubscribed: await this.isSubscribedTo(userId, category.id),
-      name: category.name,
-      imgUrl: category.imgUrl,
-      postCount: category.postCount,
-    })));
+    return Promise.all(result.map(this.categoryResponse(userId)));
   }
 
   async getSubscriptionsOf({profileId, userId}) {
@@ -116,23 +96,16 @@ export class CategoryService {
         .populate('subscribedCategories');
 
     return Promise.all(user.subscribedCategories.map(async (category: any) => {
-      return {
-        id: category.id,
-        author: {
-          role: user.role,
-          _id: user._id,
-          name: user.name,
-          imgUrl: user.imgUrl,
-          email: user.email,
-        },
-        isVerified: category.isVerified,
-        memberCount: category.memberCount,
-        description: category.description,
-        isSubscribed: await this.isSubscribedTo(userId, category.id),
-        name: category.name,
-        imgUrl: category.imgUrl,
-        postCount: category.postCount,
+      const author = {
+        role: user.role,
+        _id: user._id,
+        name: user.name,
+        imgUrl: user.imgUrl,
+        email: user.email,
       };
+      const categoryResponse = await this.categoryResponse(userId)(category);
+      categoryResponse.author = author;
+      return categoryResponse;
     }));
   }
 }
