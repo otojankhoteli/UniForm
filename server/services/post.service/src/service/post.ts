@@ -156,6 +156,7 @@ export class PostService {
         .find()
         .where('category')
         .populate('author', ['role', 'imgUrl', 'name', 'email'])
+        .populate('category', 'name')
         .equals(categoryId)
         .skip(skip)
         .limit(limit);
@@ -243,7 +244,6 @@ export class PostService {
       // isJoined: boolean;
       // createdAt?: string;
       // files: string[];
-
       const resp: PostResponse = {
         id: post._id.toString(),
         text: post.text,
