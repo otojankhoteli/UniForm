@@ -32,10 +32,18 @@ const CategoryScreen: React.FC = () => {
   const { post: subscribe } = useSubscribeCategory(route.params.categoryId);
   const { post: unsubscribe } = useUnsubscribeCategory(route.params.categoryId);
 
-  const [isSubscribed, setIsSubscribed] = useState(
-    category?.isSubscribed || false
-  );
-  const [memberCount, setMemberCount] = useState(category?.memberCount || 0);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [memberCount, setMemberCount] = useState(0);
+
+  console.log("category by id ", category)
+
+  useEffect(() => {
+    if (category) {
+      setMemberCount(prev => prev + (category?.memberCount || 0));
+      setIsSubscribed(category.isSubscribed)
+    }
+
+  }, [category])
 
   const onSubscribePress = useCallback(() => {
     if (isSubscribed) {
@@ -51,7 +59,6 @@ const CategoryScreen: React.FC = () => {
 
   useEffect(() => {
     navigation.setOptions({ headerTitle: "u/" + route.params.categoryName });
-    console.log("params", route.params);
     setCategoryId(route.params.categoryId);
     fetch((prev) => ({
       wait: false,
@@ -65,7 +72,6 @@ const CategoryScreen: React.FC = () => {
 
   useEffect(() => {
     if (categoryId == null || categoryId == undefined) return;
-    console.log("refetch category by id", categoryId);
     setUri(CategoryByIdUri(categoryId));
   }, [categoryId]);
 

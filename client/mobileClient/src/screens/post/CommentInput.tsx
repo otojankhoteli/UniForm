@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useGlobalState } from "../../shared/globalState/AppContext";
 import { View, Text, Image, TextInput, TouchableHighlight } from "react-native";
 import { UserViewModel } from "../../api/users/UsersApiModel";
@@ -7,12 +7,13 @@ import Icon from "react-native-vector-icons/Feather";
 
 interface Props {
   readonly postId: string;
+  readonly refresh: () => void;
 }
 
 const CommentInput: React.FC<Props> = (props) => {
   const [{ account }] = useGlobalState();
 
-  const { post: createComment, isLoading, error, isError } = useCreateComment();
+  const { post: createComment, result, isLoading, error, isError } = useCreateComment();
 
   const user: UserViewModel = useMemo(() => {
     if (account && account.user) return account.user;
@@ -28,6 +29,14 @@ const CommentInput: React.FC<Props> = (props) => {
   }, []);
 
   const [inputText, setInputText] = useState("");
+
+
+  useEffect(() => {
+    if (!isError && result) {
+      props.refresh();
+      setInputText("");
+    }
+  }, [result, isError])
 
   return (
     <View

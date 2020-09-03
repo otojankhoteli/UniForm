@@ -15,6 +15,7 @@ const PostScreen: React.FC = () => {
   const postId = useRef(route.params.postId).current;
 
   const { result: post } = usePostById(route.params.postId);
+  const { result: comments, refetch } = useGetComments(postId);
 
   if (!post)
     return (
@@ -30,11 +31,11 @@ const PostScreen: React.FC = () => {
   return (
     <View style={{ flex: 1 }}>
       <CommentList
-        postId={postId}
+        comments={comments || []}
         header={
           <View>
-            <PostListItem post={post || EmptyPost} refresh={() => {}} />
-            <CommentInput postId={postId} />
+            <PostListItem post={post || EmptyPost} refresh={() => { }} />
+            <CommentInput refresh={refetch} postId={postId} />
           </View>
         }
       />
