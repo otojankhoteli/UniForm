@@ -24,6 +24,7 @@ export interface NotificationViewModel {
   commentId?: string,
   commentText?: string,
   notificationText?: string,
+  pushText?: string,
   seen?: boolean,
   etc?: any,
   createdAt?: Date,
