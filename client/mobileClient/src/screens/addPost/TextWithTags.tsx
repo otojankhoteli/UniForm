@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { Text } from "react-native-elements";
 import { TextNode } from "./AddPostUtils";
+import { View, StyleSheet } from "react-native";
 
 interface Props {
   nodes: TextNode[];
@@ -31,5 +32,10 @@ export const TextWithTags = memo(({ nodes }: Props) => {
     }
   };
 
-  return <>{nodes.map(getText)}</>;
+  return <View style={styles.nodeContainer}>
+    {nodes.map(getText)}
+  </View>;
+});
+const styles = StyleSheet.create({
+  nodeContainer: { display: "flex", flexDirection: "row", flexWrap: 'wrap' },
 });
