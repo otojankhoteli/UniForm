@@ -109,4 +109,30 @@ export class CategoryService {
       postCount: category.postCount,
     })));
   }
+
+  async getSubscriptionsOf({profileId, userId}) {
+    const user = await this.UserModel
+        .findById(profileId)
+        .populate('subscribedCategories');
+
+    return Promise.all(user.subscribedCategories.map(async (category: any) => {
+      return {
+        id: category.id,
+        author: {
+          role: user.role,
+          _id: user._id,
+          name: user.name,
+          imgUrl: user.imgUrl,
+          email: user.email,
+        },
+        isVerified: category.isVerified,
+        memberCount: category.memberCount,
+        description: category.description,
+        isSubscribed: await this.isSubscribedTo(userId, category.id),
+        name: category.name,
+        imgUrl: category.imgUrl,
+        postCount: category.postCount,
+      };
+    }));
+  }
 }

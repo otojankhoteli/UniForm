@@ -40,6 +40,15 @@ router.get('/posts',
       res.send(await postService.getCategoryPosts({...req.query, userId}));
     }));
 
+router.get('/subscriptions',
+    // authenticate,
+    asyncMw(async (req, res, _) => {
+      const categoryService = Container.get(CategoryService);
+      // const userId = '5ebfd7a5c2be538124b18cd7';
+      const userId = req.currentUser._id;
+      res.send(await categoryService.getSubscriptionsOf({profileId: req.query.profileId, userId}));
+    }));
+
 router.get('/:id',
     // authenticate,
     asyncMw(async (req, res, _) => {
