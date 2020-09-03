@@ -6,10 +6,17 @@ import FloatingButton from "../../shared/components/FloatingButton";
 import PictureInput from "./PictureInput";
 import { useCreateCategory } from "../../api/categories/CategoriesApiHook";
 import { useGlobalState } from "../../shared/globalState/AppContext";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import { HomeStackParamList } from "../../shared/navigation/HomeStackScreen";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { SearchStackParamList } from "../../shared/navigation/SearchStackScreen";
 
 const AddCategoryScreen: React.FC = () => {
   const [{ account }, dispatch] = useGlobalState();
-  console.log(account);
+  const route = useRoute<RouteProp<SearchStackParamList, "AddCategory">>();
+  const navigation = useNavigation<
+    StackNavigationProp<SearchStackParamList, "AddCategory">
+  >();
 
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newCategoryDescription, setNewCategoryDescription] = useState("");
@@ -24,6 +31,12 @@ const AddCategoryScreen: React.FC = () => {
     isError,
     isLoading,
   } = useCreateCategory();
+
+  useEffect(() => {
+    if (result && !isError) {
+      navigation.navigate("Search");
+    }
+  }, [result, isError])
 
   useEffect(() => {
     if (newCategoryDescription.length !== 0 && newCategoryName.length !== 0) {
