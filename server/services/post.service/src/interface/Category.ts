@@ -7,8 +7,8 @@ export interface ICategoryDTO {
   description: string,
   memberCount: number,
   postCount: number,
-  isSubscribed: boolean,
   imgUrl: string,
+  isSubscribed: boolean,
   isVerified: boolean,
 }
 

@@ -22,10 +22,12 @@ export class UserService {
 
   public async search({name, skip=0, limit=10}) {
     const regex = new RegExp(`${name}`, 'i');
+    const conditions = name ? {$or: [{name: {$regex: regex}}, {email: {$regex: regex}}]} : {};
     const result = await this.UserModel
-        .find({$or: [{name: {$regex: regex}}, {email: {$regex: regex}}]})
+        .find()
         .skip(skip)
         .limit(limit)
+        .sort({voteCount: 'desc'})
         .lean();
 
     return result.map((user) => {
