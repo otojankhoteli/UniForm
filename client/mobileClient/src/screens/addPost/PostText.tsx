@@ -271,9 +271,9 @@ export const PostText = memo(
         state.selection.end >= state.activeNode.startIndex &&
         !(type === "#"
           ? hashTags.length === 1 &&
-            state.activeNode.value === hashTagSymbol + hashTags[0].name
+          state.activeNode.value === hashTagSymbol + hashTags[0].name
           : userTags.length === 1 &&
-            state.activeNode.value === userTagSymbol + userTags[0].email),
+          state.activeNode.value === userTagSymbol + userTags[0].email),
       [state, hashTags]
     );
 
@@ -305,7 +305,7 @@ export const PostText = memo(
             placeholder={placeHolder}
             maxLength={symbolLimit || SymbolLimit}
           >
-            <TextWithTags nodes={state.textNodes} />
+            <TextWithTags viewMode="Input" nodes={state.textNodes} />
           </TextInput>
           <View style={styles.textBottomPanel}>
             <View style={styles.textBottomActionContainer}>

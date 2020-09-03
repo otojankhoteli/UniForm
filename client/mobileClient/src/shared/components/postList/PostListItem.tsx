@@ -132,7 +132,7 @@ export function PostListItem({ post, refresh }: Props) {
         </View>
         {/* <Text style={styles.postText}>{post.text}</Text> */}
         <View style={styles.postText}>
-          <TextWithTags nodes={[...textNodes]} />
+          <TextWithTags viewMode="Rest" nodes={[...textNodes]} />
         </View>
         {post.files.length !== 0 && <PostFiles files={post.files} />}
         <View

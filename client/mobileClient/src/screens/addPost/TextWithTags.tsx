@@ -5,8 +5,10 @@ import { View, StyleSheet } from "react-native";
 
 interface Props {
   nodes: TextNode[];
+  viewMode: TextWithTagsViewMode;
 }
-export const TextWithTags = memo(({ nodes }: Props) => {
+export type TextWithTagsViewMode = "Input" | "Rest";
+export const TextWithTags = memo(({ nodes, viewMode }: Props) => {
   const getKey = (node: TextNode) =>
     `TextWithTags${node.value}${node.startIndex}${node.endIndex}`;
   const getText = (node: TextNode) => {
@@ -32,9 +34,9 @@ export const TextWithTags = memo(({ nodes }: Props) => {
     }
   };
 
-  return <View style={styles.nodeContainer}>
+  return viewMode === "Rest" ? <View style={styles.nodeContainer}>
     {nodes.map(getText)}
-  </View>;
+  </View> : <>{nodes.map(getText)}</>;
 });
 const styles = StyleSheet.create({
   nodeContainer: { display: "flex", flexDirection: "row", flexWrap: 'wrap' },
