@@ -1,15 +1,19 @@
 import { GetHashtagsResponse, HashtagViewModel } from "./HashtagsApiModel";
 import { useGetApi, GetRequestOptions } from "../shared/ApiHook";
-import { HashtagByNameUri } from "./HashtagApiUri";
+import { HashtagByNameUri } from "./HashtagsApiUri";
 
 const initialRequestInfo: GetRequestOptions<HashtagViewModel> = {
   wait: false,
   info: {
     limit: 5,
     queryParams: [],
-    skip: 0
-  }
-}
+    skip: 0,
+  },
+};
 export function useHashtagByName() {
-  return useGetApi<GetHashtagsResponse, HashtagViewModel>(HashtagByNameUri, true, initialRequestInfo);
+  return useGetApi<GetHashtagsResponse, HashtagViewModel>(
+    HashtagByNameUri,
+    true,
+    initialRequestInfo
+  );
 }

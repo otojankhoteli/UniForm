@@ -13,13 +13,17 @@ import { extractNodesFromInputText } from "../../addPost/AddPostUtils";
 import { TextWithTags } from "../../addPost/TextWithTags";
 import { useUpvote, useDownvote } from "../../../api/posts/PostsApiHook";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { HomeStackParamList } from "../../../shared/navigation/HomeStackScreen";
 
 interface Props {
   post: PostViewModel;
   refresh: () => void;
 }
 export function PostListItem({ post, refresh }: Props) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<
+    StackNavigationProp<HomeStackParamList, "Feed">
+  >();
 
   const textNodes = useMemo(() => extractNodesFromInputText(post.text), [
     post.text,
@@ -66,7 +70,7 @@ export function PostListItem({ post, refresh }: Props) {
       style={styles.container}
       activeOpacity={1}
       onPress={() => {
-        navigation.navigate("Post", { post });
+        navigation.navigate("Post", { postId: post.id });
       }}
     >
       <View style={styles.voteActionContainer}>

@@ -1,5 +1,12 @@
 import { GetCategoriesResponse, CategoryViewModel } from "./CategoriesApiModel";
-import { CategoriesByNameUri, CreateCategoryUri, SubscribeCategoryUri, UnsubscribeCategoryUri, CategoryByIdUri } from "./CategoriesApiUri";
+import {
+  CategoriesByNameUri,
+  CreateCategoryUri,
+  SubscribeCategoryUri,
+  UnsubscribeCategoryUri,
+  CategoryByIdUri,
+  SubscribedCategoriesUri,
+} from "./CategoriesApiUri";
 import {
   useGetApi,
   GetRequestOptions,
@@ -30,24 +37,40 @@ export function useCreateCategory() {
 }
 
 export function useCategoryById(categoryId: string) {
-  console.log("useCategoryById", categoryId)
+  console.log("useCategoryById", categoryId);
   return useGetApi<CategoryViewModel>(CategoryByIdUri(categoryId), true, {
-    wait: true,
+    wait: false,
     info: {
       limit: 15,
       queryParams: [],
       skip: 0,
-    }
+    },
   });
 }
 
-
 export function useSubscribeCategory(categoryId: string) {
-  return usePostApiWithAuth<EmptyRequest, EmptyResponse>(SubscribeCategoryUri(categoryId));
+  return usePostApiWithAuth<EmptyRequest, EmptyResponse>(
+    SubscribeCategoryUri(categoryId)
+  );
 }
-
 
 export function useUnsubscribeCategory(categoryId: string) {
-  return usePostApiWithAuth<EmptyRequest, EmptyResponse>(UnsubscribeCategoryUri(categoryId));
+  return usePostApiWithAuth<EmptyRequest, EmptyResponse>(
+    UnsubscribeCategoryUri(categoryId)
+  );
 }
 
+export function useSubscribedCategories(userId: string) {
+  return useGetApi<CategoryViewModel[], CategoryViewModel>(
+    SubscribedCategoriesUri,
+    true,
+    {
+      wait: false,
+      info: {
+        limit: 0,
+        queryParams: [{ key: "profileId", value: userId }],
+        skip: 0,
+      },
+    }
+  );
+}

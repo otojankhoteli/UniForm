@@ -10,50 +10,51 @@ interface Props {
 }
 
 const PostSearchList: React.FC<Props> = (props) => {
-
   const { result: posts, setRequestInfo: fetch } = usePostSearchByTerm();
 
-
   useEffect(() => {
-    if (props.searchTerm) {
-      fetch(prev => ({
+    if (props.visible) {
+      fetch((prev) => ({
         wait: prev.wait,
         info: {
-          queryParams: [{ key: "text", value: props.searchTerm }],
+          queryParams:
+            props.searchTerm != ""
+              ? [{ key: "text", value: props.searchTerm }]
+              : [],
           limit: prev?.info?.limit,
-          skip: prev?.info?.skip
-        }
+          skip: prev?.info?.skip,
+        },
       }));
     }
-  }, [props.searchTerm]);
+  }, [props.searchTerm, props.visible]);
 
-  const tempPosts = useMemo(() => {
-    let data: PostViewModel[] = [];
-    for (let i = 0; i < 10; i++) {
-      data.push({
-        id: "" + i,
-        text:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        authorId: "5f1c90ca2fe410a227a969f7",
-        authorUsername: "ako",
-        authorProfilePic: "",
-        voteCount: 0,
-        categoryName: "MACS",
-        categoryId: "5f1ca0e1038af74494cbeda4",
-        isJoined: false,
-        isUpvoted: false,
-        isDownvoted: false,
-        createdAt: "2020-07-25T21:27:43.160Z",
-        files: ["string"],
-      });
-    }
-    return data;
-  }, []);
+  // const tempPosts = useMemo(() => {
+  //   let data: PostViewModel[] = [];
+  //   for (let i = 0; i < 10; i++) {
+  //     data.push({
+  //       id: "" + i,
+  //       text:
+  //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+  //       authorId: "5f1c90ca2fe410a227a969f7",
+  //       authorUsername: "ako",
+  //       authorProfilePic: "",
+  //       voteCount: 0,
+  //       categoryName: "MACS",
+  //       categoryId: "5f1ca0e1038af74494cbeda4",
+  //       isJoined: false,
+  //       isUpvoted: false,
+  //       isDownvoted: false,
+  //       createdAt: "2020-07-25T21:27:43.160Z",
+  //       files: ["string"],
+  //     });
+  //   }
+  //   return data;
+  // }, []);
 
   if (!props.visible)
     return <ActivityIndicator style={{ marginTop: 20 }} size="large" />;
 
-  return <PostList refresh={() => { }} header={undefined} posts={posts} />;
+  return <PostList refresh={() => {}} header={undefined} posts={posts} />;
 };
 
 export default PostSearchList;

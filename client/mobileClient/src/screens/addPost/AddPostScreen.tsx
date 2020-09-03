@@ -35,7 +35,6 @@ export default function AddPostScreen() {
   const { post, result, isError } = usePostCreate();
   const { result: hashTags, setRequestInfo: fetchTags } = useHashtagByName();
   const { result: userTags, setRequestInfo: fetchUserTags } = useUsersByEmail();
-  const [hashs, setHashs] = useState([]);
 
   const [submitState, setSubmitState] = useState<SubmitState>({
     category: undefined,
@@ -55,6 +54,7 @@ export default function AddPostScreen() {
         text: submitState.text,
         hashTags: submitState.hashTags,
         userTags: submitState.userTags,
+        files: submitState.uploadedContentsId,
       });
     }
   }, [submitState]);
@@ -85,28 +85,13 @@ export default function AddPostScreen() {
   }, [route]);
 
   const onHashTagChange = (searchText: string) => {
-    console.log("onHashTagChange");
-    // fetchTags((prev) => ({
-    //   wait: false,
-    //   info: {
-    //     ...prev.info,
-    //     queryParams: [{ key: "name", value: searchText }],
-    //   },
-    // }));
-    setHashs([
-      { name: "ako1" },
-      { name: "ako2" },
-      { name: "ako3" },
-      { name: "ako4" },
-      { name: "ako5" },
-      { name: "ako6" },
-      { name: "ako7" },
-      { name: "ako8" },
-      { name: "ako9" },
-      { name: "ako10" },
-      { name: "ako11" },
-      { name: "ako12" },
-    ]);
+    fetchTags((prev) => ({
+      wait: false,
+      info: {
+        ...prev.info,
+        queryParams: [{ key: "name", value: searchText }],
+      },
+    }));
   };
 
   const onUserTagChange = (searchText: string) => {
@@ -158,7 +143,7 @@ export default function AddPostScreen() {
           onUserTagChange={onUserTagChange}
           onTextChange={onTextChange}
           placeHolder="Post text..."
-          hashTags={hashs || []}
+          hashTags={hashTags || []}
           userTags={userTags || []}
         />
         <MediaSection onUploadedContentsChange={onUploadedContentsChange} />

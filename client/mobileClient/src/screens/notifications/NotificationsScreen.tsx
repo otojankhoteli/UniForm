@@ -5,11 +5,15 @@ import {
   NotificationType,
 } from "../../api/notifications/NotificationsApiModel";
 import NotificationList from "./NotificationList";
+import { useGetNotifications } from "../../api/notifications/NotificationsApiHook";
 
 const NotificationsScreen: React.FC = () => {
+  const { result: notifications } = useGetNotifications();
+  console.log(notifications);
+
   return (
     <View style={{ flex: 1 }}>
-      <NotificationList data={tempData} />
+      <NotificationList data={notifications} />
     </View>
   );
 };
@@ -33,6 +37,7 @@ for (let i = 0; i < 8; i++) {
     type: NotificationType[i],
     fromId: "",
     fromName: "Aleksandre Javakhishvili",
+    fromImgUrl: "",
     toId: "",
     toName: "",
     toDeviceId: "",

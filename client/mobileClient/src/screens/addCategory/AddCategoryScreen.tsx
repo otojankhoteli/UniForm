@@ -9,6 +9,7 @@ import { useGlobalState } from "../../shared/globalState/AppContext";
 
 const AddCategoryScreen: React.FC = () => {
   const [{ account }, dispatch] = useGlobalState();
+  console.log(account);
 
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newCategoryDescription, setNewCategoryDescription] = useState("");
@@ -41,8 +42,9 @@ const AddCategoryScreen: React.FC = () => {
         id: "",
         isVerified: account.user.role == "academicAuthority",
         memberCount: 0,
-        photoUri: newCategoryPhotoUri,
+        imgUrl: newCategoryPhotoUri,
         postCount: 0,
+        isSubscribed: false,
       });
     }
   }, [canSubmit, newCategoryName, newCategoryDescription, newCategoryPhotoUri]);

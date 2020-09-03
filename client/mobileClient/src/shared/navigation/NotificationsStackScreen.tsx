@@ -8,7 +8,7 @@ import CategoryScreen from "../../screens/category/CategoryScreen";
 
 export type NotificationsStackParamList = {
   Notifications: undefined;
-  Post: { post: PostViewModel };
+  Post: { postId: string };
   Profile: { userId: string };
   Category: { categoryId: string; categoryName: string };
 };

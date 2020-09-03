@@ -1,4 +1,3 @@
-
 export interface ApiSuccessResponse<TResult> {
   message: string;
   date: string;
@@ -21,7 +20,9 @@ export interface TokenErrorResponse {
   type: "token";
 }
 
-export interface EmptyResponse {}
+export interface EmptyResponse {
+  ok: boolean;
+}
 export interface EmptyRequest {}
 
 export type ApiErrorUnion = ApiErrorResponse | TokenErrorResponse;
@@ -34,7 +35,7 @@ interface OrderingOption<TViewModel> {
   name: keyof TViewModel;
   ascending: "asc" | "desc";
 }
-export interface GetRequestInfo<TViewModel> extends PagingOption  {
+export interface GetRequestInfo<TViewModel> extends PagingOption {
   orderBy?: OrderingOption<TViewModel>;
   queryParams: QueryParamsType[];
 }

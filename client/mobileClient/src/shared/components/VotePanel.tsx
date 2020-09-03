@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     // borderColor: "red",
   },
   votedIconColor: {
-    color: "#386083",
+    color: "rgb(80,230,255)",
   },
   notVotedIconColor: {
     color: "gray",

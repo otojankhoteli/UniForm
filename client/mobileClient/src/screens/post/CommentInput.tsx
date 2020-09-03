@@ -15,7 +15,7 @@ const CommentInput: React.FC<Props> = (props) => {
   const { post: createComment, isLoading, error, isError } = useCreateComment();
 
   const user: UserViewModel = useMemo(() => {
-    // if (account && account.user) return account.user;
+    if (account && account.user) return account.user;
     return {
       _id: "1",
       email: "tbubu14@freeuni.edu.ge",

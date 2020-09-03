@@ -2,12 +2,20 @@ import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import AvatarCustom from "../../shared/components/Avatar";
 import { NotificationViewModel } from "../../api/notifications/NotificationsApiModel";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { HomeStackParamList } from "../../shared/navigation/HomeStackScreen";
+import { NotificationsStackParamList } from "../../shared/navigation/NotificationsStackScreen";
 
 interface Props {
   readonly data: NotificationViewModel;
 }
 
 const NotificationListItem: React.FC<Props> = (props) => {
+  const navigation = useNavigation<
+    StackNavigationProp<NotificationsStackParamList, "Notifications">
+  >();
+
   return (
     <TouchableOpacity
       style={{
@@ -16,7 +24,7 @@ const NotificationListItem: React.FC<Props> = (props) => {
       }}
       activeOpacity={1}
       onPress={() => {
-        alert("notification " + props.data.id);
+        navigation.push("Post", { postId: props.data.postId });
       }}
     >
       <View
@@ -30,6 +38,7 @@ const NotificationListItem: React.FC<Props> = (props) => {
           style={{ width: 40, height: 40, borderRadius: 20 }}
           source={{
             uri:
+              props.data.fromImgUrl ||
               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.askmen.com%2F1080x540%2F2016%2F01%2F25-021526-facebook_profile_picture_affects_chances_of_getting_hired.jpg&f=1&nofb=1",
           }}
         />

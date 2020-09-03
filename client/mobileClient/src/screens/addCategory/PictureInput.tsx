@@ -1,14 +1,17 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   View,
   Text,
   TouchableHighlight,
   Image,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import * as ImagePicker from "expo-image-picker";
 import * as Permissions from "expo-permissions";
+import { useFileUpload } from "../../api/blobs/BlobApiHook";
+import { GetFileUri } from "../../api/blobs/BlobApiUri";
 
 interface Props {
   readonly photoUri: string;
@@ -16,6 +19,7 @@ interface Props {
 }
 //TODO upload photo
 const PictureInput: React.FC<Props> = (props) => {
+  const { post: upload, result, isLoading } = useFileUpload();
   const onPress = useCallback(() => {
     Permissions.askAsync(Permissions.CAMERA_ROLL).then((result) => {
       if (result.granted) {
@@ -26,7 +30,13 @@ const PictureInput: React.FC<Props> = (props) => {
         }).then(
           (result) => {
             if (result.cancelled === false) {
-              props.onPhotoChosen(result.uri);
+              const { uri, base64 } = result as any;
+              let uriSplited = uri.split(".");
+              let type = uriSplited[uriSplited.length - 1];
+              upload({
+                content: base64,
+                type,
+              });
             }
           },
           (reason) => {
@@ -36,6 +46,12 @@ const PictureInput: React.FC<Props> = (props) => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (result) {
+      props.onPhotoChosen(GetFileUri(result.fileId));
+    }
+  }, [result]);
 
   return (
     <View style={{ padding: 10 }}>
@@ -68,6 +84,20 @@ const PictureInput: React.FC<Props> = (props) => {
             <Icon name={"times"}></Icon>
           </TouchableHighlight>
         </ImageBackground>
+      ) : isLoading ? (
+        <View
+          style={{
+            width: 100,
+            height: 100,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator
+            size={"large"}
+            color={"rgb(150,200,250)"}
+          ></ActivityIndicator>
+        </View>
       ) : (
         <TouchableHighlight
           style={{

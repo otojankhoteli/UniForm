@@ -3,6 +3,7 @@ export interface NotificationViewModel {
   type: string;
   fromId: string;
   fromName: string;
+  fromImgUrl: string;
   toId: string;
   toName: string;
   toDeviceId: string;

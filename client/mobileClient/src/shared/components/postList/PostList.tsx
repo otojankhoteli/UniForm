@@ -1,7 +1,10 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity } from "react-native";
 import { PostViewModel } from "../../../api/posts/PostsApiModel";
 import { PostListItem } from "./PostListItem";
+import { useNavigation } from "@react-navigation/native";
+import { HomeStackParamList } from "../../navigation/HomeStackScreen";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 interface Props {
   readonly posts: PostViewModel[];
@@ -10,6 +13,10 @@ interface Props {
 }
 
 const PostList: React.FC<Props> = (props) => {
+  const navigation = useNavigation<
+    StackNavigationProp<HomeStackParamList, "Post">
+  >();
+  console.log(props.posts);
   return (
     <FlatList
       style={{ flex: 1 }}
@@ -19,7 +26,16 @@ const PostList: React.FC<Props> = (props) => {
         return index.toString();
       }}
       renderItem={(item) => {
-        return <PostListItem refresh={props.refresh} post={item.item} />;
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.push("Post", { postId: item.item.id });
+            }}
+            activeOpacity={1}
+          >
+            <PostListItem refresh={props.refresh} post={item.item} />
+          </TouchableOpacity>
+        );
       }}
     ></FlatList>
   );

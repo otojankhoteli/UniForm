@@ -3,6 +3,7 @@ export interface CreatePostRequest {
   hashTags: string[];
   userTags: string[];
   text: string;
+  files: string[];
 }
 
 export type GetPostsResponse = PostViewModel[];
@@ -14,6 +15,7 @@ export interface PostViewModel {
   authorUsername: string;
   authorProfilePic?: string;
   voteCount: number;
+  commentCount: number;
   categoryName: string;
   categoryId: string;
   isUpvoted: boolean;

@@ -10,7 +10,7 @@ import CategoryScreen from "../../screens/category/CategoryScreen";
 export type SearchStackParamList = {
   Search: undefined;
   AddCategory: undefined;
-  Post: { post: PostViewModel };
+  Post: { postId: string };
   Profile: { userId: string };
   Category: { categoryId: string; categoryName: string };
 };

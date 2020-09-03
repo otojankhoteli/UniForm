@@ -43,7 +43,7 @@ const CategoryListItem: React.FC<Props> = (props) => {
           style={{ width: 40, height: 40, borderRadius: 20 }}
           source={{
             uri:
-              props.categoryData.photoUri ||
+              props.categoryData.imgUrl ||
               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.w3schools.com%2Fw3css%2Fimg_snowtops.jpg&f=1&nofb=1",
           }}
         ></Image>

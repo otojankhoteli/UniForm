@@ -1,5 +1,5 @@
-import React, { useMemo, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useMemo, useEffect, useCallback, useState } from "react";
+import { View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Text } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome5";
 import OctIcon from "react-native-vector-icons/Octicons";
@@ -9,13 +9,19 @@ import AvatarCustom from "../../../shared/components/Avatar";
 import { MainColor } from "../../../shared/Const";
 import HorizontalLine from "../../../shared/components/HorizontalLine";
 import { getTimeFormat } from "../../../shared/Utils";
-import { useUpvote, useDownvote } from "../../../api/posts/PostsApiHook";
+import {
+  useUpvote,
+  useDownvote,
+  useUnreact,
+} from "../../../api/posts/PostsApiHook";
 import { useNavigation } from "@react-navigation/native";
 import { extractNodesFromInputText } from "../../../screens/addPost/AddPostUtils";
 import { TextWithTags } from "../../../screens/addPost/TextWithTags";
 import VotePanel from "../VotePanel";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { HomeStackParamList } from "../../navigation/HomeStackScreen";
+import { GetFileUri } from "../../../api/blobs/BlobApiUri";
+import PostFiles from "./PostFiles";
 
 interface Props {
   post: PostViewModel;
@@ -31,29 +37,55 @@ export function PostListItem({ post, refresh }: Props) {
     post.text,
   ]);
 
-  const {
-    post: upvote,
-    result: upvoteResult,
-    isError: upvoteFailed,
-  } = useUpvote(post.id);
+  const { post: upvote } = useUpvote(post.id);
+  const { post: downvote } = useDownvote(post.id);
+  const { post: unreact } = useUnreact(post.id);
 
-  const {
-    post: downvote,
-    result: downvoteResult,
-    isError: downvoteFailed,
-  } = useDownvote(post.id);
+  const [isUpvoted, setIsUpvoted] = useState(post.isUpvoted);
+  const [isDownvoted, setIsDownvoted] = useState(post.isDownvoted);
+  const [voteCount, setVoteCount] = useState(post.voteCount);
 
-  useEffect(() => {
-    if (
-      (upvoteResult && !upvoteFailed) ||
-      (downvoteResult && !downvoteFailed)
-    ) {
-      //TODO
-      if (refresh) {
-        refresh();
-      }
+  const onUpvotePress = useCallback(() => {
+    if (isUpvoted) {
+      unreact({});
+      setVoteCount((prev) => prev - 1);
+      setIsUpvoted(false);
+    } else {
+      upvote({});
+      setIsUpvoted(true);
+      if (isDownvoted) {
+        setIsDownvoted(false);
+        setVoteCount((prev) => prev + 2);
+      } else setVoteCount((prev) => prev + 1);
     }
-  }, [upvoteResult, upvoteFailed, downvoteResult, downvoteFailed]);
+  }, [isUpvoted, isDownvoted]);
+
+  const onDownvotePress = useCallback(() => {
+    if (isDownvoted) {
+      unreact({});
+      setVoteCount((prev) => prev + 1);
+      setIsDownvoted(false);
+    } else {
+      downvote({});
+      setIsDownvoted(true);
+      if (isUpvoted) {
+        setIsUpvoted(false);
+        setVoteCount((prev) => prev - 2);
+      } else setVoteCount((prev) => prev - 1);
+    }
+  }, [isUpvoted, isDownvoted]);
+
+  // useEffect(() => {
+  //   if (
+  //     (upvoteResult && !upvoteFailed) ||
+  //     (downvoteResult && !downvoteFailed)
+  //   ) {
+  //     //TODO
+  //     if (refresh) {
+  //       refresh();
+  //     }
+  //   }
+  // }, [upvoteResult, upvoteFailed, downvoteResult, downvoteFailed]);
 
   const navigateToCategoryScreen = () => {
     navigation.push("Category", {
@@ -71,28 +103,21 @@ export function PostListItem({ post, refresh }: Props) {
   };
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      activeOpacity={1}
-      onPress={() => {
-        navigation.navigate("Post", { post });
-      }}
-    >
+    <View style={styles.container}>
       <VotePanel
-        downvote={() => {
-          downvote({});
-        }}
-        upvote={() => {
-          upvote({});
-        }}
-        isDownvoted={post.isDownvoted}
-        isUpvoted={post.isUpvoted}
-        voteCount={post.voteCount}
+        downvote={onDownvotePress}
+        upvote={onUpvotePress}
+        isDownvoted={isDownvoted}
+        isUpvoted={isUpvoted}
+        voteCount={voteCount}
         size={"large"}
       />
       <View style={styles.content}>
         <View style={styles.topSection}>
-          <AvatarCustom photoUrl={post.authorProfilePic} />
+          <Image
+            source={{ uri: post.authorProfilePic || "uri" }}
+            style={{ width: 40, height: 40, borderRadius: 20 }}
+          />
           <View style={styles.topMiddleSection}>
             <View style={styles.categorySection}>
               <Text style={styles.clickableCategoryName}>u/</Text>
@@ -116,19 +141,12 @@ export function PostListItem({ post, refresh }: Props) {
               </Text>
             </View>
           </View>
-          <Icon
-            color={post.isJoined ? "#AA061A" : "gray"}
-            size={20}
-            solid={post.isJoined}
-            style={styles.joinCategoryIcon}
-            onPress={joinCategory}
-            name="heart"
-          />
         </View>
         {/* <Text style={styles.postText}>{post.text}</Text> */}
         <View style={styles.postText}>
           <TextWithTags nodes={[...textNodes]} />
         </View>
+        {post.files.length !== 0 && <PostFiles files={post.files} />}
         <View
           style={{
             height: 0.5,
@@ -137,41 +155,30 @@ export function PostListItem({ post, refresh }: Props) {
           }}
         />
         <View style={styles.bottomSection}>
-          <TouchableOpacity
-            style={{ marginRight: 10 }}
-            onPress={() => {
-              alert("comments");
+          <OctIcon
+            name={"comment-discussion"}
+            size={27}
+            color={"black"}
+          ></OctIcon>
+          <Text
+            style={{
+              fontSize: 14,
+              color: "rgb(100,100,100)",
+              marginLeft: 5,
+              marginTop: 3,
             }}
           >
-            <OctIcon
-              name={"comment-discussion"}
-              size={27}
-              color={"black"}
-            ></OctIcon>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ marginRight: 10 }}
-            onPress={() => {
-              alert("comments");
-            }}
-          >
-            <FeatherIcon
-              name={"bookmark"}
-              size={27}
-              color={"black"}
-            ></FeatherIcon>
-          </TouchableOpacity>
+            {post.commentCount || 0}
+          </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   authorSection: {
     alignItems: "center",
-    alignSelf: "center",
-    display: "flex",
     flexDirection: "row",
     marginRight: "auto",
   },
@@ -225,9 +232,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   topSection: {
-    display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
     marginBottom: 10,
   },
   content: {

@@ -43,7 +43,7 @@ export default function DevelopmentLoginScreen() {
     post({
       deviceId,
       accessToken:
-        "ya29.a0AfH6SMD4RlnH6HDTxxw6OOGgPgkxW1n2oL3fR0mwll-xGDeKQBe418dkMpczfjcVQcQ4JYj3bSqDz6ye4N5AQ4GjhoNWUHiR8aizL_7Uh1BsV8FP66nWLVsfVGi2LK9fLm4uLxUvOC_kJUDE16iGfRHLYFW_uUFITuc",
+        "ya29.a0AfH6SMCDC3Je--qMBReYIcZlbMvTHufvy5S957dwPGP70gNawWFDtTBZT2yk358KRtx6Wk8mxu8gFf43kxmi5iASNlLqDZ63dzwLUezt3k9gSykXMxGvZze3CyaYrLdN3y6WxcpeAWlOFQPnOmfJlF1PMOCK-HL7wPxj",
     });
   };
 
