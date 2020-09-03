@@ -9,16 +9,24 @@ import {NotificationType} from '../interface/Notification';
 const getNotificationText = (notification: NotificationViewModel) => {
   switch (notification.type) {
     case NotificationType.PostUpvote:
-      return `${notification.fromName} upvoted your post: ${notification.postText}`;
+      return `upvoted your post: ${notification.postText}`;
     case NotificationType.PostDownvote:
-      return `${notification.fromName} downvoted your post: ${notification.postText}`;
+      return `downvoted your post: ${notification.postText}`;
     case NotificationType.CommentNew:
-      return `${notification.fromName} commented on your post: ${notification.postText}`;
+      return `commented on your post: ${notification.commentText}`;
     case NotificationType.PostTag:
-      return `${notification.fromName} tagged you in a post: ${notification.postText}`;
+      return `tagged you in a post: ${notification.postText}`;
     case NotificationType.CommentTag:
-      return `${notification.fromName} tagged you in a comment: ${notification.commentText}`;
+      return `tagged you in a comment: ${notification.commentText}`;
+    case NotificationType.CommentUpvote:
+      return `upvoted your comment ${notification.commentText}`;
+    case NotificationType.CommentDownvote:
+      return `downvoted your comment ${notification.commentText}`;
   }
+};
+
+const getPushText = (from: string, text: string) => {
+  return from + ' ' + text;
 };
 
 const wrapper = (fn) => {
@@ -36,6 +44,7 @@ const formatSingleNotification = (notification: SingleAddressNotification): Noti
     type: notification.type,
     fromId: notification.from._id,
     fromName: notification.from.name,
+    fromImgUrl: notification.from.imgUrl,
     toId: notification.to._id,
     toName: notification.to.name,
     toDeviceId: notification.to.deviceId,
@@ -53,6 +62,7 @@ const formatMultiAddressNotification = (notification: MultiAddressNotification):
       type: notification.type,
       fromId: notification.from._id,
       fromName: notification.from.name,
+      fromImgUrl: notification.from.imgUrl,
       toId: to._id,
       toName: to.name,
       toDeviceId: to.deviceId,
@@ -74,6 +84,7 @@ const singleAddressNotificationHandler = (msg) => {
 
     const formattedNotification = formatSingleNotification(notification);
     formattedNotification.notificationText = getNotificationText(formattedNotification);
+    formattedNotification.pushText = getPushText(formattedNotification.fromName, formattedNotification.notificationText);
 
     const notificationService = Container.get(NotificationService);
     await notificationService.save(formattedNotification);
@@ -96,6 +107,7 @@ const multiAddressNotificationHandler = (msg) => {
 
     notifications.forEach((e) => {
       e.notificationText = getNotificationText(e);
+      e.pushText = getPushText(e.fromName, e.notificationText);
     });
 
     await notificationService.saveBulk(notifications);

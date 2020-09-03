@@ -125,12 +125,17 @@ export class PostService {
     if (!query.skip) query.skip = this.skip;
     if (!query.limit) query.limit = this.limit;
 
-    return this.HashTagModel
-        .find()
-        .where('name')
-        .regex(new RegExp(`^${query.name}`))
+    const regex = new RegExp(`^${query.name}`);
+    const conditions = query.name ? {name: {$regex: regex}} : {};
+
+    const result = await this.HashTagModel
+        .find(conditions)
         .skip(query.skip)
         .limit(query.limit);
+
+    return result.map((hashtag) => {
+      return {name: hashtag.name};
+    });
   }
 
   public async getCategoryPosts({categoryId, userId, skip, limit}) {
@@ -156,6 +161,7 @@ export class PostService {
         .find()
         .where('category')
         .populate('author', ['role', 'imgUrl', 'name', 'email'])
+        .populate('category', 'name')
         .equals(categoryId)
         .skip(skip)
         .limit(limit);
@@ -243,7 +249,6 @@ export class PostService {
       // isJoined: boolean;
       // createdAt?: string;
       // files: string[];
-
       const resp: PostResponse = {
         id: post._id.toString(),
         text: post.text,
@@ -265,6 +270,7 @@ export class PostService {
         isDownvoted: isDownvoted,
         createdAt: post.createdAt,
         files: post.files,
+        commentCount: post.commentCount,
       };
       return resp;
     });

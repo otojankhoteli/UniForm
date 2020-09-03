@@ -1,10 +1,8 @@
 import {Service, Inject} from 'typedi';
 import {Document, Model} from 'mongoose';
 import {IUser} from '../interface/User';
-import NotFoundError from '../util/error/NotFoundError';
 
 
-// todo get user from messaging queue
 @Service()
 export class UserService {
   constructor(
@@ -24,16 +22,42 @@ export class UserService {
 
   public async search({name, skip=0, limit=10}) {
     const regex = new RegExp(`${name}`, 'i');
-    return this.UserModel
-        .find({$or: [{name: {$regex: regex}}, {email: {$regex: regex}}]})
+    const conditions = name ? {$or: [{name: {$regex: regex}}, {email: {$regex: regex}}]} : {};
+    const result = await this.UserModel
+        .find(conditions)
         .skip(skip)
         .limit(limit)
+        .sort({voteCount: 'desc'})
         .lean();
+
+    return result.map((user) => {
+      return {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+        deviceId: user.deviceId,
+        imgUrl: user.imgUrl,
+        subscribedCategories: user.subscribedCategories,
+        role: user.role,
+        voteCount: user.voteCount,
+      };
+    });
   }
 
   public async findById(id) {
-    return this.UserModel.findById(id)
+    const result = await this.UserModel.findById(id)
         .lean();
+    const response: IUser = {
+      _id: result._id,
+      email: result.email,
+      name: result.name,
+      deviceId: result.deviceId,
+      imgUrl: result.imgUrl,
+      subscribedCategories: result.subscribedCategories,
+      role: result.role,
+      voteCount: result.voteCount,
+    };
+    return response;
   }
 
   private async isSubscribedTo(userId, categoryId) {

@@ -19,7 +19,7 @@ export class NotificationSender {
     return {
       // title: 'UniForm',
       to: msg.toDeviceId,
-      body: msg.notificationText,
+      body: msg.pushText,
       data: msg,
     };
   }

@@ -62,6 +62,8 @@ export class CommentService {
 
     const result = await this.CommentModel.create(newComment);
 
+    await this.PostModel.findByIdAndUpdate(upsertCommentRequest.postId, {$inc: {commentCount: 1}});
+
     this.eventEmitter.emit(Events.comment.new, result._id);
 
     return result;

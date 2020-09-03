@@ -16,6 +16,7 @@ export interface NotificationViewModel {
   type: string,
   fromId: string,
   fromName: string,
+  fromImgUrl: string,
   toId: string,
   toName: string,
   toDeviceId: string,
@@ -24,6 +25,7 @@ export interface NotificationViewModel {
   commentId?: string,
   commentText?: string,
   notificationText?: string,
+  pushText?: string,
   seen?: boolean,
   etc?: any,
   createdAt?: Date,
@@ -48,6 +50,7 @@ interface PostServiceNotification {
   from: {
     _id: string,
     name: string,
+    imgUrl: string,
   },
   postId?: string,
   postText?: string,

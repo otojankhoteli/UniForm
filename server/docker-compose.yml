@@ -83,7 +83,7 @@ services:
     volumes:
       - /data/uniform/user-service/data:/data/db
     ports:
-      - 27021:27017
+      - 27017:27017
 
   mongo-post:
     container_name: mongo-post

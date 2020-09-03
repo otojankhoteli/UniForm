@@ -56,6 +56,7 @@ export class PostNotificationPublisher {
       from: {
         _id: reactor._id,
         name: reactor.name,
+        imgUrl: reactor.imgUrl,
       },
       to: post.author,
       postId: post._id,
@@ -97,7 +98,7 @@ export class PostNotificationPublisher {
   public async newComment(commentId) {
     const comment = await this.CommentModel
         .findById(commentId)
-        .populate('author', ['name'])
+        .populate('author', ['name', 'imgUrl'])
         .populate('userTags', ['name', 'deviceId'])
         .populate({
           path: 'post',
@@ -130,7 +131,7 @@ export class PostNotificationPublisher {
   private async _commentReact({commentId, reactorId, reaction}) {
     const comment = await this.CommentModel
         .findById(commentId)
-        .populate('author', ['name', 'imgUrl', 'deviceId'])
+        .populate('author', ['name', 'deviceId'])
         .lean();
 
     const reactor = await this.UserModel.findById(reactorId).lean();
@@ -140,6 +141,7 @@ export class PostNotificationPublisher {
       from: {
         _id: reactor._id,
         name: reactor.name,
+        imgUrl: reactor.imgUrl,
       },
       to: comment.author,
       postId: comment.post._id,
