@@ -1,11 +1,8 @@
 import {Service, Inject} from 'typedi';
 import {Document, Model} from 'mongoose';
 import {IUser} from '../interface/User';
-import NotFoundError from '../util/error/NotFoundError';
-import {Role} from "../../../../../client/mobileClient/src/api/auth/AuthApiModel";
 
 
-// todo get user from messaging queue
 @Service()
 export class UserService {
   constructor(
