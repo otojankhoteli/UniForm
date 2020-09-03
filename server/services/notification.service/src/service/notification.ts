@@ -46,13 +46,15 @@ export class NotificationService {
       toId: e.toId,
       toName: e.toName,
       toDeviceId: e.toDeviceId,
-      whereId: e.whereId,
-      whereText: e.whereText,
       notificationText: e.notificationText,
       seen: e.seen,
       etc: e.etc,
       createdAt: e.createdAt,
       updatedAt: e.updatedAt,
+      postId: e.postId,
+      postText: e.postText,
+      commentId: e.commentId,
+      commentText: e.commentText,
     };
   }
 }

@@ -18,6 +18,10 @@ const getNotificationText = (notification: NotificationViewModel) => {
       return `${notification.fromName} tagged you in a post: ${notification.postText}`;
     case NotificationType.CommentTag:
       return `${notification.fromName} tagged you in a comment: ${notification.commentText}`;
+    case NotificationType.CommentUpvote:
+      return `${notification.fromName} upvoted your comment ${notification.commentText}`;
+    case NotificationType.CommentDownvote:
+      return `${notification.fromName} downvoted your comment ${notification.commentText}`;
   }
 };
 
