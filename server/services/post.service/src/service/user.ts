@@ -11,6 +11,20 @@ export class UserService {
   ) {
   }
 
+  private userResponse = (user) => {
+    const result: IUser = {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      deviceId: user.deviceId,
+      imgUrl: user.imgUrl,
+      subscribedCategories: user.subscribedCategories,
+      role: user.role,
+      voteCount: user.voteCount,
+    };
+    return result;
+  }
+
   public async save(user: IUser) {
     let existingUser = await this.UserModel.findOne({email: user.email});
     if (!existingUser) {
@@ -30,34 +44,13 @@ export class UserService {
         .sort({voteCount: 'desc'})
         .lean();
 
-    return result.map((user) => {
-      return {
-        _id: user._id,
-        email: user.email,
-        name: user.name,
-        deviceId: user.deviceId,
-        imgUrl: user.imgUrl,
-        subscribedCategories: user.subscribedCategories,
-        role: user.role,
-        voteCount: user.voteCount,
-      };
-    });
+    return result.map(this.userResponse);
   }
 
   public async findById(id) {
     const result = await this.UserModel.findById(id)
         .lean();
-    const response: IUser = {
-      _id: result._id,
-      email: result.email,
-      name: result.name,
-      deviceId: result.deviceId,
-      imgUrl: result.imgUrl,
-      subscribedCategories: result.subscribedCategories,
-      role: result.role,
-      voteCount: result.voteCount,
-    };
-    return response;
+    return this.userResponse(result);
   }
 
   private async isSubscribedTo(userId, categoryId) {

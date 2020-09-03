@@ -34,6 +34,37 @@ export class CommentService {
   ) {
   }
 
+  private async commentResponse(comments: IComment[] | IComment, userId: string) {
+    comments = [].concat(comments);
+    const commentIds = comments.map((post) => post._id.toString());
+
+    const upVotedPosts = (await this.filterReactedComments(commentIds, userId, 'upvote'))
+        .map((comment) => comment._id.toString());
+    const downVotedPosts = (await this.filterReactedComments(commentIds, userId, 'downvote'))
+        .map((comment) => comment._id.toString());
+
+    const commentsWithReacts = comments.map((comment) => {
+      const commentId = comment._id.toString();
+      const isUpvoted = upVotedPosts.includes(commentId);
+      const isDownvoted = downVotedPosts.includes(commentId);
+
+      const result: CommentResponse = {
+        id: comment._id.toString(),
+        text: comment.text,
+        authorId: comment.author._id.toString(),
+        authorUsername: comment.author.name,
+        authorProfilePic: comment.author.imgUrl,
+        voteCount: comment.voteCount,
+        userTags: comment.userTags,
+        isUpvoted: isUpvoted,
+        isDownvoted: isDownvoted,
+        createdAt: comment.createdAt,
+        updatedAt: comment.updatedAt,
+      };
+      return result;
+    });
+    return commentsWithReacts;
+  }
 
   private async _validateBeforeInsert(comment: UpsertCommentRequest) {
     const post = await this.PostModel.findById(comment.postId);
@@ -48,7 +79,6 @@ export class CommentService {
       }
     }
   }
-
 
   public async save(upsertCommentRequest: UpsertCommentRequest): Promise<IComment & any> {
     this.logger.silly('creating new comment %o', upsertCommentRequest);
@@ -68,7 +98,6 @@ export class CommentService {
 
     return result;
   }
-
 
   public async update(upsertCommentRequest: UpsertCommentRequest): Promise<IComment & any> {
     this.logger.silly('updating comment %o', upsertCommentRequest);
@@ -144,38 +173,6 @@ export class CommentService {
   async unReact(commentId: any, userId: string) {
     const comment = await this._validateVoteAndGetComment(commentId);
     return await this.VoteService.unReact(userId, comment);
-  }
-
-  private async commentResponse(comments: IComment[] | IComment, userId: string) {
-    comments = [].concat(comments);
-    const commentIds = comments.map((post) => post._id.toString());
-
-    const upVotedPosts = (await this.filterReactedComments(commentIds, userId, 'upvote'))
-        .map((comment) => comment._id.toString());
-    const downVotedPosts = (await this.filterReactedComments(commentIds, userId, 'downvote'))
-        .map((comment) => comment._id.toString());
-
-    const commentsWithReacts = comments.map((comment) => {
-      const commentId = comment._id.toString();
-      const isUpvoted = upVotedPosts.includes(commentId);
-      const isDownvoted = downVotedPosts.includes(commentId);
-
-      const result: CommentResponse = {
-        id: comment._id.toString(),
-        text: comment.text,
-        authorId: comment.author._id.toString(),
-        authorUsername: comment.author.name,
-        authorProfilePic: comment.author.imgUrl,
-        voteCount: comment.voteCount,
-        userTags: comment.userTags,
-        isUpvoted: isUpvoted,
-        isDownvoted: isDownvoted,
-        createdAt: comment.createdAt,
-        updatedAt: comment.updatedAt,
-      };
-      return result;
-    });
-    return commentsWithReacts;
   }
 
   public async filterReactedComments(commentIds: string[], userId: string, reaction: 'upvote' | 'downvote') {

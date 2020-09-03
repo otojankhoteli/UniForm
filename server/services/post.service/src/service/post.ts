@@ -39,6 +39,41 @@ export class PostService {
   ) {
   }
 
+  private async postResponse(posts: IPost[] | IPost, userId: string) {
+    posts = [].concat(posts);
+    const postIds = posts.map((post) => post._id.toString());
+
+    const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
+        .map((post) => post._id.toString());
+    const downVotedPosts = (await this.filterReactedPosts(postIds, userId, 'downvote'))
+        .map((post) => post._id.toString());
+
+    const postsWithReacts = posts.map((post) => {
+      const postId = post._id.toString();
+      const isUpvoted = upVotedPosts.includes(postId);
+      const isDownvoted = downVotedPosts.includes(postId);
+
+      const resp: PostResponse = {
+        id: post._id.toString(),
+        text: post.text,
+        authorId: post.author._id.toString(),
+        authorUsername: post.author.name,
+        authorProfilePic: post.author.imgUrl,
+        voteCount: post.voteCount,
+        categoryId: post.category._id.toString(),
+        userTags: post.userTags,
+        categoryName: post.category.name,
+        isUpvoted: isUpvoted,
+        isDownvoted: isDownvoted,
+        createdAt: post.createdAt,
+        files: post.files,
+        commentCount: post.commentCount,
+      };
+      return resp;
+    });
+    return postsWithReacts;
+  }
+
   private async _validateBeforeInsert(post: UpsertPostRequest) {
     const category = await this.CategoryModel.findById(post.categoryId);
 
@@ -143,20 +178,6 @@ export class PostService {
     if (!skip) skip = this.skip;
     if (!limit) limit = this.limit;
 
-    // d: string;
-    // text: string;
-    // authorId: string;
-    // authorUsername: string;
-    // authorProfilePic?: string;
-    // voteCount: number;
-    // categoryName: string;
-    // categoryId: string;
-    // isUpvoted: boolean;
-    // isDownvoted: boolean;
-    // isJoined: boolean;
-    // createdAt?: string;
-    // files: string[];
-
     const posts = await this.PostModel
         .find()
         .where('category')
@@ -221,63 +242,6 @@ export class PostService {
     return this.postResponse(posts, userId);
   }
 
-
-  private async postResponse(posts: IPost[] | IPost, userId: string) {
-    posts = [].concat(posts);
-    const postIds = posts.map((post) => post._id.toString());
-
-    const upVotedPosts = (await this.filterReactedPosts(postIds, userId, 'upvote'))
-        .map((post) => post._id.toString());
-    const downVotedPosts = (await this.filterReactedPosts(postIds, userId, 'downvote'))
-        .map((post) => post._id.toString());
-
-    const postsWithReacts = posts.map((post) => {
-      const postId = post._id.toString();
-      const isUpvoted = upVotedPosts.includes(postId);
-      const isDownvoted = downVotedPosts.includes(postId);
-
-      // d: string;
-      // text: string;
-      // authorId: string;
-      // authorUsername: string;
-      // authorProfilePic?: string;
-      // voteCount: number;
-      // categoryName: string;
-      // categoryId: string;
-      // isUpvoted: boolean;
-      // isDownvoted: boolean;
-      // isJoined: boolean;
-      // createdAt?: string;
-      // files: string[];
-      const resp: PostResponse = {
-        id: post._id.toString(),
-        text: post.text,
-        authorId: post.author._id.toString(),
-        authorUsername: post.author.name,
-        authorProfilePic: post.author.imgUrl,
-        voteCount: post.voteCount,
-        categoryId: post.category._id.toString(),
-        // userTags: post.userTags.map((userTag) => {
-        //   return {
-        //     id: userTag._id.toString(),
-        //     name: userTag.name,
-        //     imgUrl: userTag.imgUrl,
-        //   };
-        // }),
-        userTags: post.userTags,
-        categoryName: post.category.name,
-        isUpvoted: isUpvoted,
-        isDownvoted: isDownvoted,
-        createdAt: post.createdAt,
-        files: post.files,
-        commentCount: post.commentCount,
-      };
-      return resp;
-    });
-    return postsWithReacts;
-  }
-
-
   private async getRawFeed(userId: string, skip, limit): Promise<IPost[]> {
     // const subscribedCategories = (await this.UserModel.findById(userId).select('subscribedCategories')).subscribedCategories;
 
@@ -292,15 +256,6 @@ export class PostService {
         .skip(skip)
         .limit(limit)
         .lean();
-
-    // const postsRaw = posts.map((post) => {
-    //   return {
-    //     ...post,
-    //     _id: post._id.toString(),
-    //   };
-    // })
-    //
-    // console.log(postsRaw);
   }
 
 

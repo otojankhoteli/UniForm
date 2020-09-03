@@ -22,23 +22,6 @@ export class CategoryService {
   ) {
   }
 
-  public async save(category: ICategoryDTO) {
-    const user = await this.UserModel.findById(category.author);
-    if (!user) {
-      throw new NotFoundError(`Can not create category, the user with the id: ${category.author} does not exist`);
-    }
-    category.isVerified = user.role === 'admin';
-    return this.CategoryModel.create(category);
-  }
-
-
-  public async findById(id: string, userId) {
-    const result = await this.CategoryModel.findById(id)
-        .populate('author', ['role', 'imgUrl', 'name', 'email']);
-
-    return this.categoryResponse(userId)(result);
-  }
-
   private categoryResponse = (userId) => {
     return async (category) => ({
       id: category.id,
@@ -51,6 +34,22 @@ export class CategoryService {
       imgUrl: category.imgUrl,
       postCount: category.postCount,
     });
+  }
+
+  public async save(category: ICategoryDTO) {
+    const user = await this.UserModel.findById(category.author);
+    if (!user) {
+      throw new NotFoundError(`Can not create category, the user with the id: ${category.author} does not exist`);
+    }
+    category.isVerified = user.role === 'admin';
+    return this.CategoryModel.create(category);
+  }
+
+  public async findById(id: string, userId) {
+    const result = await this.CategoryModel.findById(id)
+        .populate('author', ['role', 'imgUrl', 'name', 'email']);
+
+    return this.categoryResponse(userId)(result);
   }
 
   public async findTop(query: ICategorySearchModel, userId: string) {
