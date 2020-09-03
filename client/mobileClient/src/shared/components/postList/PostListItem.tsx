@@ -75,18 +75,6 @@ export function PostListItem({ post, refresh }: Props) {
     }
   }, [isUpvoted, isDownvoted]);
 
-  // useEffect(() => {
-  //   if (
-  //     (upvoteResult && !upvoteFailed) ||
-  //     (downvoteResult && !downvoteFailed)
-  //   ) {
-  //     //TODO
-  //     if (refresh) {
-  //       refresh();
-  //     }
-  //   }
-  // }, [upvoteResult, upvoteFailed, downvoteResult, downvoteFailed]);
-
   const navigateToCategoryScreen = () => {
     navigation.push("Category", {
       categoryId: post.categoryId,
