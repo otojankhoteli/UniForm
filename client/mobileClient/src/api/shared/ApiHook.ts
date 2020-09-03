@@ -19,6 +19,7 @@ interface PostApiHookResult<TRequest, TResponse> {
   error: ApiHookError | undefined;
   result: TResponse | undefined;
   isError: boolean;
+  isSuccess: boolean;
   isLoading: boolean;
   post: React.Dispatch<React.SetStateAction<TRequest | undefined>>;
 }
@@ -53,7 +54,8 @@ export type ApiHookError = BackendApiException;
 export interface ResponseState<TResponse> {
   error?: ApiHookError;
   result?: TResponse;
-  isError: boolean;
+  isError?: boolean;
+  isSuccess?: boolean;
 }
 
 export function usePostApi<TRequest = {}, TResponse = {}>(
@@ -107,7 +109,7 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
             });
             setIsLoading(false);
           } else {
-            setResponseState({ isError: false, result: body });
+            setResponseState({ isError: false, isSuccess: true, result: body });
           }
 
           setIsLoading(false);
@@ -136,6 +138,7 @@ export function usePostApi<TRequest = {}, TResponse = {}>(
     post: setRequestBody,
     error: responseState.error,
     isError: responseState.isError,
+    isSuccess: responseState.isSuccess,
   };
 }
 
@@ -223,6 +226,7 @@ export function usePutApi<TRequest = {}, TResponse = {}>(
     post: setRequestBody,
     error: responseState.error,
     isError: responseState.isError,
+    isSuccess: responseState.isSuccess,
   };
 }
 

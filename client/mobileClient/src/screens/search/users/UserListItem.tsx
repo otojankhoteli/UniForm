@@ -1,12 +1,15 @@
 import React from "react";
-import { UserViewModel } from "../../../api/users/UsersApiModel";
+import {
+  UserViewModel,
+  ProfileUserViewModel,
+} from "../../../api/users/UsersApiModel";
 import { View, Image, TouchableHighlight, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { SearchStackParamList } from "../../../shared/navigation/SearchStackScreen";
 
 interface Props {
-  readonly user: UserViewModel;
+  readonly user: ProfileUserViewModel;
 }
 
 const UserListItem: React.FC<Props> = (props) => {
@@ -32,13 +35,13 @@ const UserListItem: React.FC<Props> = (props) => {
           style={{ width: 40, height: 40, borderRadius: 20 }}
           source={{
             uri:
-              props.user.photoURL ||
+              props.user.imgUrl ||
               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.askmen.com%2F1080x540%2F2016%2F01%2F25-021526-facebook_profile_picture_affects_chances_of_getting_hired.jpg&f=1&nofb=1",
           }}
         ></Image>
         <View style={{ marginLeft: 10 }}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-            {props.user.name} {props.user.surname}
+            {props.user.name}
           </Text>
           <Text style={{ fontSize: 15, color: "rgb(100,100,100)" }}>
             {props.user.email}

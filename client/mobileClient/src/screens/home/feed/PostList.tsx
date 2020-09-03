@@ -7,10 +7,14 @@ import {
   View,
   Text,
   StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { PostViewModel } from "../../../api/posts/PostsApiModel";
 import { MainColor } from "../../../shared/Const";
 import { PostListItem } from "../../../shared/components/postList/PostListItem";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { HomeStackParamList } from "../../../shared/navigation/HomeStackScreen";
 
 interface Props {
   posts: PostViewModel[];
@@ -26,6 +30,9 @@ export function PostList({
   fetchNextPage,
   onRefresh,
 }: Props) {
+  const navigation = useNavigation<
+    StackNavigationProp<HomeStackParamList, "Post">
+  >();
   const [internalPosts, setInternalPosts] = useState<PostViewModel[]>([]);
 
   useEffect(() => {
@@ -68,8 +75,15 @@ export function PostList({
         </View>
       }
       data={posts}
-      renderItem={(post) => (
-        <PostListItem key={post.item.id} post={post.item} />
+      renderItem={(item) => (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.push("Post", { postId: item.item.id });
+          }}
+          activeOpacity={1}
+        >
+          <PostListItem refresh={() => {}} post={item.item} />
+        </TouchableOpacity>
       )}
       extraData={[]}
       // onMomentumScrollEnd={onScrollEnd}

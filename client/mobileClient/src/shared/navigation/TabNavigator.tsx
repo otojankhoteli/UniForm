@@ -74,6 +74,7 @@ const MainNavigator: React.FC = () => {
         name={"ProfileStack"}
         component={ProfileStackScreen}
         options={{
+          unmountOnBlur: true,
           tabBarIcon: ({ focused, color }) => {
             return (
               <FontAwesomeIcon

@@ -26,7 +26,7 @@ export function useGetComments(postId: string) {
       wait: false,
       info: {
         limit: 10,
-        queryParams: [{ key: "_id", value: postId }],
+        queryParams: [{ key: "postId", value: postId }],
         skip: 0,
       },
     }

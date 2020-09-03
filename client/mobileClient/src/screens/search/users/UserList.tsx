@@ -20,17 +20,23 @@ const UserList: React.FC<Props> = (props) => {
     isError,
     isLoading,
   } = useUsersByEmail();
+  console.log(users);
 
   useEffect(() => {
-    setRequestInfo({
-      wait: false,
-      info: {
-        limit: 10,
-        queryParams: [{ key: "name", value: props.searchTerm }],
-        skip: 0,
-      },
-    });
-  }, [props.searchTerm]);
+    if (props.visible) {
+      setRequestInfo({
+        wait: false,
+        info: {
+          limit: 10,
+          queryParams:
+            props.searchTerm != ""
+              ? [{ key: "name", value: props.searchTerm }]
+              : [],
+          skip: 0,
+        },
+      });
+    }
+  }, [props.searchTerm, props.visible]);
 
   const tempData = useMemo(() => {
     let data: UserViewModel[] = [];

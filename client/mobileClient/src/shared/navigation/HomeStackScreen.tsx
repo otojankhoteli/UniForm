@@ -18,7 +18,7 @@ export type HomeStackParamList = {
   AddPost: { category: CategoryViewModel };
   ChooseCategory: undefined;
   Feed: { sort: "latest" | "top" } | undefined;
-  Post: { post: PostViewModel };
+  Post: { postId: string };
   Profile: { userId: string };
   Category: { categoryId: string; categoryName: string };
 };

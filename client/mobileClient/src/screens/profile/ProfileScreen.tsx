@@ -13,19 +13,19 @@ import { NotificationsStackParamList } from "../../shared/navigation/Notificatio
 import { User } from "../../api/auth/AuthApiModel";
 import { UserViewModel } from "../../api/users/UsersApiModel";
 import { useUserPosts } from "../../api/posts/PostsApiHook";
+import { useGetUserById } from "../../api/users/UsersApiHook";
+import SubscribedModal from "./SubscribedModal";
 
 const ProfileScreen: React.FC = () => {
   const [{ account }, dispatch] = useGlobalState();
-  const [user, setUser] = useState<UserViewModel>({
-    _id: "1",
-    email: "tbubu14@freeuni.edu.ge",
-    role: "student",
-    name: "Tornike",
-    surname: "Bubuteishvili",
-    photoURL: null,
-  });
-
-  const { result: posts, refetch } = useUserPosts();
+  // const [user, setUser] = useState<UserViewModel>({
+  //   _id: "1",
+  //   email: "tbubu14@freeuni.edu.ge",
+  //   role: "student",
+  //   name: "Tornike",
+  //   surname: "Bubuteishvili",
+  //   photoURL: null,
+  // });
 
   const route = useRoute<
     RouteProp<
@@ -38,20 +38,32 @@ const ProfileScreen: React.FC = () => {
   >();
   const navigation = useNavigation();
 
+  const [subscribedModalVisible, setSubscribedModalVisible] = useState(false);
 
-  console.log("posts", posts)
+  const userId = useMemo(() => {
+    if (!route.params || !route.params.userId) {
+      if (account && account.user && account.user._id) {
+        return account.user._id;
+      } else return "";
+    }
+    return route.params.userId;
+  }, []);
+  const { result: user } = useGetUserById(userId);
+  const { result: posts, refetch } = useUserPosts(userId);
 
   const isSelf = useMemo(() => {
     if (!route.params || !route.params.userId) return true;
-    if (account && account.user && account.user._id)
+    if (account && account.user && account.user._id) {
+      console.log("have account", account.user._id);
       return account.user._id == route.params.userId;
+    }
     return true;
   }, []);
 
   useEffect(() => {
-    if (user.name) {
+    if (user && user.name) {
       navigation.setOptions({
-        headerTitle: user.name + " " + user.surname,
+        headerTitle: user.name,
       });
     }
   });
@@ -83,7 +95,7 @@ const ProfileScreen: React.FC = () => {
 
   useEffect(() => {
     //TODO actually fetch user
-    if (isSelf && account && account.user) setUser(account.user);
+    // if (isSelf && account && account.user) setUser(account.user);
   }, []);
 
   const logout = () => {
@@ -97,7 +109,31 @@ const ProfileScreen: React.FC = () => {
     <View style={{ flex: 1 }}>
       <PostList
         posts={posts || []}
-        header={<ProfileHeader isSelf={isSelf} user={user} />}
+        header={
+          <ProfileHeader
+            isSelf={isSelf}
+            user={
+              user || {
+                _id: "",
+                deviceId: "",
+                email: "",
+                imgUrl: "",
+                name: "",
+                role: "",
+                subscribedCategories: [],
+                voteCount: 0,
+              }
+            }
+            onSubscriptionsPress={() => {
+              setSubscribedModalVisible(true);
+            }}
+          />
+        }
+      />
+      <SubscribedModal
+        visible={subscribedModalVisible}
+        setVisible={setSubscribedModalVisible}
+        userId={userId}
       />
     </View>
   );

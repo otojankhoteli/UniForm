@@ -7,7 +7,7 @@ import EditProfileScreen from "../../screens/editProfile/EditProfileScreen";
 import CategoryScreen from "../../screens/category/CategoryScreen";
 
 export type ProfileStackParamList = {
-  Post: { post: PostViewModel };
+  Post: { postId: string };
   Profile: { userId: string };
   EditProfile: undefined;
   Category: { categoryId: string; categoryName: string };

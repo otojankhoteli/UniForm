@@ -26,14 +26,17 @@ import {
 } from "./AddPostUtils";
 import { TextWithTags } from "./TextWithTags";
 import { HashtagViewModel } from "../../api/hashtags/HashtagsApiModel";
-import { UserViewModel } from "../../api/users/UsersApiModel";
+import {
+  UserViewModel,
+  ProfileUserViewModel,
+} from "../../api/users/UsersApiModel";
 
 interface Props {
   style?: StyleProp<ViewStyle>;
   placeHolder?: string;
   hashTags: HashtagViewModel[];
   symbolLimit?: number;
-  userTags: UserViewModel[];
+  userTags: ProfileUserViewModel[];
   onHashTagChange: (searchText: string) => void;
   onUserTagChange: (searchText: string) => void;
   updateHashTags?: (tags: string[]) => void;

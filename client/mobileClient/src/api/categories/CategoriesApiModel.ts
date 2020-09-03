@@ -8,7 +8,7 @@ export interface CategoryViewModel {
   author: UserViewModel;
   name: string;
   description: string;
-  photoUri: string;
+  imgUrl: string;
   memberCount: number;
   postCount: number;
 }

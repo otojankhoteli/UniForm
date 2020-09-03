@@ -4,7 +4,11 @@ import { FlatList, View, ActivityIndicator } from "react-native";
 import CategoryListItem from "./CategoryListItem";
 import FloatingButton from "../../../shared/components/FloatingButton";
 import { useNavigation } from "@react-navigation/native";
-import { useCategoriesByName, useSubscribeCategory, useUnsubscribeCategory } from "../../../api/categories/CategoriesApiHook";
+import {
+  useCategoriesByName,
+  useSubscribeCategory,
+  useUnsubscribeCategory,
+} from "../../../api/categories/CategoriesApiHook";
 
 interface Props {
   readonly searchTerm: string;
@@ -13,9 +17,19 @@ interface Props {
 
 const CategoryList: React.FC<Props> = (props) => {
   const navigation = useNavigation();
-  const [targetCategory, setTargetCategory] = useState<CategoryViewModel>({} as any);
-  const { post: subscribe, isError: failedSubscribe, result: subscribeResult } = useSubscribeCategory(targetCategory && targetCategory.id);
-  const { post: unsubscribe, isError: failedUnsubscribe, result: unsubscribeResult } = useUnsubscribeCategory(targetCategory && targetCategory.id);
+  const [targetCategory, setTargetCategory] = useState<CategoryViewModel>(
+    {} as any
+  );
+  const {
+    post: subscribe,
+    isError: failedSubscribe,
+    result: subscribeResult,
+  } = useSubscribeCategory(targetCategory && targetCategory.id);
+  const {
+    post: unsubscribe,
+    isError: failedUnsubscribe,
+    result: unsubscribeResult,
+  } = useUnsubscribeCategory(targetCategory && targetCategory.id);
 
   const {
     result: categories,
@@ -27,18 +41,19 @@ const CategoryList: React.FC<Props> = (props) => {
     isError,
     isLoading,
   } = useCategoriesByName();
-
+  console.log(categories);
   useEffect(() => {
-    setRequestInfo({
-      wait: false,
-      info: {
-        limit: 10,
-        queryParams: [{ key: "name", value: props.searchTerm }],
-        skip: 0,
-      },
-    });
-  }, [props.searchTerm]);
-
+    if (props.visible) {
+      setRequestInfo({
+        wait: false,
+        info: {
+          limit: 10,
+          queryParams: [{ key: "name", value: props.searchTerm }],
+          skip: 0,
+        },
+      });
+    }
+  }, [props.searchTerm, props.visible]);
 
   useEffect(() => {
     if (targetCategory.id == null || targetCategory.id == undefined) {
@@ -52,12 +67,13 @@ const CategoryList: React.FC<Props> = (props) => {
   }, [targetCategory]);
 
   useEffect(() => {
-    if ((!failedSubscribe && subscribeResult) ||
-      (!failedUnsubscribe && unsubscribeResult)) {
+    if (
+      (!failedSubscribe && subscribeResult) ||
+      (!failedUnsubscribe && unsubscribeResult)
+    ) {
       refetch();
     }
-  }, [failedSubscribe, subscribeResult, failedUnsubscribe, unsubscribeResult])
-
+  }, [failedSubscribe, subscribeResult, failedUnsubscribe, unsubscribeResult]);
 
   if (!props.visible || isLoading)
     return <ActivityIndicator style={{ marginTop: 20 }} size="large" />;
@@ -70,7 +86,12 @@ const CategoryList: React.FC<Props> = (props) => {
           return index.toString();
         }}
         renderItem={(item) => {
-          return <CategoryListItem onSubscribe={(category) => setTargetCategory(category)} categoryData={item.item}></CategoryListItem>;
+          return (
+            <CategoryListItem
+              onSubscribe={(category) => setTargetCategory(category)}
+              categoryData={item.item}
+            ></CategoryListItem>
+          );
         }}
         ListFooterComponent={<View style={{ height: 70 }}></View>}
       ></FlatList>
