@@ -14,7 +14,7 @@ export class AuthService {
   }
 
   public async logIn(userInputDTO: IUser): Promise<IUser> {
-    await this.checkUser(userInputDTO.email);
+    // await this.checkUser(userInputDTO.email);
 
     const role = getRole(userInputDTO.email);
 
