@@ -24,7 +24,7 @@ export class UserService {
     const regex = new RegExp(`${name}`, 'i');
     const conditions = name ? {$or: [{name: {$regex: regex}}, {email: {$regex: regex}}]} : {};
     const result = await this.UserModel
-        .find()
+        .find(conditions)
         .skip(skip)
         .limit(limit)
         .sort({voteCount: 'desc'})
