@@ -2,6 +2,7 @@ import {Service, Inject} from 'typedi';
 import {Document, Model} from 'mongoose';
 import {IUser} from '../interface/User';
 import NotFoundError from '../util/error/NotFoundError';
+import {Role} from "../../../../../client/mobileClient/src/api/auth/AuthApiModel";
 
 
 // todo get user from messaging queue
@@ -32,8 +33,19 @@ export class UserService {
   }
 
   public async findById(id) {
-    return this.UserModel.findById(id)
+    const result = await this.UserModel.findById(id)
         .lean();
+    const response: IUser = {
+      _id: result._id,
+      email: result.email,
+      name: result.name,
+      deviceId: result.deviceId,
+      imgUrl: result.imgUrl,
+      subscribedCategories: result.subscribedCategories,
+      role: result.role,
+      voteCount: result.voteCount,
+    };
+    return response;
   }
 
   private async isSubscribedTo(userId, categoryId) {
