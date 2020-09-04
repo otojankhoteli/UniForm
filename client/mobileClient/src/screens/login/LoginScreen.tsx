@@ -8,7 +8,9 @@ import {
   TextInput,
 } from "react-native";
 import { Button, SocialIcon } from "react-native-elements";
+import { Notifications } from "expo";
 import * as GoogleSignIn from "expo-google-sign-in";
+import * as Permissions from "expo-permissions";
 import { MainColor } from "../../shared/Const";
 import { useGlobalState } from "../../shared/globalState/AppContext";
 import { useSignUp } from "../../api/auth/AuthApiHook";
@@ -20,7 +22,7 @@ const BackgroundImage2 = require("../../../assets/backgroundImage2.jpg");
 export default function LoginScreen() {
   const [, dispatch] = useGlobalState();
   const [user, setUser] = useState<GoogleSignIn.GoogleUser | null>();
-  const { post } = useSignUp();
+  const { post, result, isError } = useSignUp();
 
   useEffect(() => {
     GoogleSignIn.initAsync()
@@ -32,8 +34,8 @@ export default function LoginScreen() {
           type: "setError",
           exception: {
             type: "GoogleSignInException",
-            message: "Failed to setup google sign in"
-          }
+            message: "Failed to setup google sign in",
+          },
         });
       });
   }, []);
@@ -45,7 +47,18 @@ export default function LoginScreen() {
     //     googleClientId: user.auth.clientId
     //   });
     // }
-  }, [user])
+  }, [user]);
+
+  useEffect(() => {
+    if (result && !isError) {
+      console.log("result", result, isError);
+      dispatch({
+        type: "setLoggedInUser",
+        account: result,
+      });
+      // navigate("Home");
+    }
+  }, [result, isError]);
 
   const fetchUser = async () => {
     const user = await GoogleSignIn.signInSilentlyAsync();
@@ -65,6 +78,12 @@ export default function LoginScreen() {
       const { type, user } = await GoogleSignIn.signInAsync();
       if (type === "success") {
         // await fetchUser();
+        let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        const deviceId = await Notifications.getExpoPushTokenAsync();
+        post({
+          deviceId,
+          accessToken: user.auth.accessToken,
+        });
         setUser(user);
       }
     } catch (exception) {
@@ -73,9 +92,9 @@ export default function LoginScreen() {
         type: "setError",
         exception: {
           type: "GoogleSignInException",
-          message: "Failed to sign in"
-        }
-      })
+          message: "Failed to sign in",
+        },
+      });
     }
   };
 
@@ -111,7 +130,7 @@ export default function LoginScreen() {
           onPress={onPress}
         />
       </View>
-      <TextInput style={{ borderRadius: 1, borderColor: "red" }} multiline>{user && JSON.stringify(user)}</TextInput>
+      {/* <TextInput style={{ borderRadius: 1, borderColor: "red" }} multiline>{user && JSON.stringify(user)}</TextInput> */}
       {/* <TextInput style={{ borderRadius: 1, borderColor: "red" }} multiline>{user && user.auth && user.auth.accessToken}</TextInput> */}
       {/* <TextInput style={{ borderRadius: 1, borderColor: "red" }} multiline>{user && user.serverAuthCode}</TextInput> */}
     </ImageBackground>

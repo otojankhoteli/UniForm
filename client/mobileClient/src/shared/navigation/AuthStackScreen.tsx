@@ -1,6 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import DevelopmentLoginScreen from "../../screens/login/DevelopmentLoginScreen";
+import LoginScreen from "../../screens/login/LoginScreen";
 
 const AuthStack = createStackNavigator();
 
@@ -13,7 +14,7 @@ const AuthStackScreen: React.FC = () => {
     >
       <AuthStack.Screen
         name={"Login"}
-        component={DevelopmentLoginScreen}
+        component={LoginScreen}
       ></AuthStack.Screen>
     </AuthStack.Navigator>
   );
